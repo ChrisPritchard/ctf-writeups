@@ -2,8 +2,9 @@
 
 https://www.vulnhub.com/entry/sunset-dawn,341/
 
-1. Used netdiscover to find the machine - it was `PCS Systemtechnik GmbH` on the local network
-2. Running a `nmap -T4 -A -v` against the machine resulted in:
+## Initial reconnaissance
+
+I used netdiscover to find the machine - it was `PCS Systemtechnik GmbH` on the local network again. Running a `nmap -T4 -A -v` against the machine resulted in:
 
 ```
 PORT     STATE SERVICE     VERSION
@@ -26,7 +27,7 @@ PORT     STATE SERVICE     VERSION
 |_  Auth Plugin Name: mysql_native_password
 ```
 
-3. I ran dirb and nikto on the web site, but they found little:
+I ran dirb and nikto on the web site, but they found little:
 
 ```
 - Nikto v2.1.6
@@ -57,7 +58,7 @@ The log folder contained auth, daemon, error and management .log files. Only the
 `Config: Printing events (colored=true): processes=true | file-system-events=false ||| Scannning for processes every 100ms and on inotify events ||| Watching directories: [/usr /tmp /etc /home /var /opt] (recursive) | [] (non-recursive)
 Draining file system events due to startup...`
 
-Dirb running with its default list found the logs folder. When run with the big.txt wordlist it found two more things, both throwing 403:
+dirb running with its default list found the logs folder. When run with the big.txt wordlist it found two more things, both throwing 403:
 
 ```
 ---- Scanning URL: http://192.168.1.165/ ----
@@ -128,3 +129,5 @@ Hello! whitecr0wz here. I would like to congratulate and thank you for finishing
 
 flag{3a3e52f0a6af0d6e36d7c1ced3a9fd59}
 ```
+
+Reading other readups typically showed they found dawn could also access zsh as root, and so just ran that. I think my mariadb approach was more fun :)
