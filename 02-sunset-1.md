@@ -2,9 +2,11 @@
 
 https://www.vulnhub.com/entry/sunset-1,339/
 
+Second vulnhub vm. The next after fun with flags on the site is the latest in the sunset series, so I decided to skip to the beginning and do them in order. Sunset 1 came out in the middle of last year.
+
 ## netdiscover to find the vm, nmap
 
-A bit tricky, since I run a lot of things on my home network, and the machine didn't leap out at me. I got the ips and then started nmapping them to find the target.
+Unlike fun with flags, the sunset vms used normal network-assigned ips, so I needed to find where it was first. A bit tricky, since I run a lot of things on my home network, and the machine didn't leap out at me. I got the ips and then started nmapping them to find the target.
 
 Ultimately the machine netdiscover identified as `PCS Systemtechnik GmbH` was the correct one. A `nmap -p-` identified only 21 and 22 open, with an intense scan revealing:
 
@@ -48,3 +50,5 @@ I opened the above file and deleted all but sunset's hash, then used john with r
 Running `sudo -l` revealed sunset also had access to /usr/bin/ed, an ancient text editor (one line at a time) in linux. This tool runs as root (when run with sudo) and can execute commands. So, as sunset, `sudo /usr/bin/ed`, then use `!/bin/sh` to start a shell. Finally, cd to `/root` and cat the flag.
 
 /root/flag.txt: `25d7ce0ee3cbf71efbac61f85d0c14fe`
+
+Notably I learned more about sudo here. Initially I ran ed without sudo, and while it worked I was stuck with the sunset user, not root. I thought the sudo -l meant the things that ran as root always, so I was confused. Doing some research, I identified that sudo -l just showed things I could run as root with sudo without needing to be in the sudoers group, or require a password. Educational.
