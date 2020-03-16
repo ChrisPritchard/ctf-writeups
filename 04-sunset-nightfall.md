@@ -73,4 +73,26 @@ Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2020-03-15 18:27:
 Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2020-03-15 18:27:38
 ```
 
-I logged into FTP via the above credentials, and it appeared to be matt's home folder. However almost nothing in it was accessible to me.
+I logged into FTP via the above credentials, and it appeared to be matt's home folder. There was nothing of interest in it, but I soon discovered I had the ability to write to it.
+
+## SSH keys
+
+Uploading keys that would allow me to SSH in seemed to be the next step (one of my coworkers pointed this out the moment he saw the ftp directory), however in order for it to work I would need to be able to set the ownership to the user, and change the permissions.
+
+chmod was available, but nothing to chown. However, rename was available, which is effectively a poorman's move. And I discovered that if I ftp put into a file already owned by matt, it would stay owned by matt. Accordingly I:
+
+1. Created a ssh key via `ssh-keygen` on my kali machine, sticking it inside my .ssh folder.
+2. Found a useless file on the ftp server (.sh_history was empty), and put the id_rsa.pub file into it
+3. Found a useless folder on the ftp server (.local contained nothing of note), and renamed it to .ssh
+4. Used another rename to 'move' the .sh_history file into the new .ssh folder as 'authorized_keys'
+5. Finally, used chown to set the folder to be 700 and the keys file to be 644
+
+I found after doing this I could disconnect from ftp, and ssh right in as matt.
+
+## Find and switching users
+
+Browsing around (and with my coworker hovering over me), I looked for next steps. `sudo -l` failed - the user didn't have rights to do this, at least not without a password. My coworker pointed out a /scripts directory, where we found 'find', all by itself, with the suid bit set. It was owned by the other user on the machine, nightfall.
+
+I eventually found a combination command that used find to get a shell as nightfall: after creating a file named test.txt (though any single file would likely do), this command worked: `/scripts/find test.txt -exec /bin/bash -p \;`
+
+In this shell as nightfall, just to make my life easier, I made a .ssh dir and copied in the keys file again, allowing me to exit from the find shell and matt's ssh, and ssh in as nightfall.
