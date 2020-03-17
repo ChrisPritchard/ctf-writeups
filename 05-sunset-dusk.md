@@ -50,4 +50,4 @@ Service Info: Host:  dusk.dusk; OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 80 is just the default debian page again, but 8080 seems to be a php server running off /var/tmp, listing its files and running the index.php file there. Looks pretty juicy. nikto on either failed: nothing interesting on the default page, and 8080 is basically just a ftp listing.
 
-Speaking of, ftp did not allow anonymous access. Neither did the mysql endpoint. That just leaves smtp...
+Speaking of, ftp did not allow anonymous access. Neither did the mysql endpoint. Playing around with SMTP didn't achieve much. Ultimately a scan with legion, and a check for default credentials, revealed mysql used `root:password`. The following command got me in: `mysql -u root -p -h 192.168.53.6` followed by entering the password.
