@@ -71,3 +71,29 @@ MariaDB [(none)]>
 ```
 
 I was able to use the above password to `su sunrise`.
+
+## Wine, CMD.exe, type
+
+`sudo -l` revealed that sunrise could run /usr/bin/wine, a program for running windows executables under windows. Inside the sunrise home directory I had already discovered .wine, containing a windows file system. Using `sudo /usr/bin/wine cmd.exe` I was able to start a windows command prompt, helpfully running as root on the windows system. I had also discovered that the `z:` wine drive was hosting the linux file system, so used window's equivalent of `cat`, `type.exe` to read the root flag (after using `dir` to find it):
+
+```
+Z:\>cd root
+
+Z:\root>type root.txt
+            ^^                   @@@@@@@@@
+       ^^       ^^            @@@@@@@@@@@@@@@
+                            @@@@@@@@@@@@@@@@@@              ^^
+                           @@@@@@@@@@@@@@@@@@@@
+ ~~~~ ~~ ~~~~~ ~~~~~~~~ ~~ &&&&&&&&&&&&&&&&&&&& ~~~~~~~ ~~~~~~~~~~~ ~~~
+ ~         ~~   ~  ~       ~~~~~~~~~~~~~~~~~~~~ ~       ~~     ~~ ~
+   ~      ~~      ~~ ~~ ~~  ~~~~~~~~~~~~~ ~~~~  ~     ~~~    ~ ~~~  ~ ~~
+   ~  ~~     ~         ~      ~~~~~~  ~~ ~~~       ~~ ~ ~~  ~~ ~
+ ~  ~       ~ ~      ~           ~~ ~~~~~~  ~      ~~  ~             ~~
+       ~             ~        ~      ~      ~~   ~             ~
+
+Thanks for playing! - Felipe Winsnes (@whitecr0wz)
+
+24edb59d21c273c033aa6f1689b0b18c
+
+Z:\root>
+```
