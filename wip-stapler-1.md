@@ -40,7 +40,7 @@ segmentation fault
 
 Perhaps an indication of a binary somewhere which an overflow error?
 
-## FTP
+## FTP Anonymous
 
 Connecting shows this banner:
 
@@ -58,3 +58,11 @@ I can log in as anonymous, and find a single file: `note` The contents of `note`
 ```
 Elly, make sure you update the payload information. Leave it in your FTP account once your are done, John.
 ```
+
+## HTTP
+
+The website is blank page showing that `The requested resource <code class="url">/</code> was not found on this server.`. 
+
+A nikto and dirb reveal .profile, and .bashrc are present, showing this is surfacing a home folder. A search for other files, and path traversal, don't find anything, but this might be a candidate for something in future.
+
+I tried posting content into it, but that failed.
