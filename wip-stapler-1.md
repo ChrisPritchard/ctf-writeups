@@ -39,3 +39,22 @@ segmentation fault
 ```
 
 Perhaps an indication of a binary somewhere which an overflow error?
+
+## FTP
+
+Connecting shows this banner:
+
+```
+220-
+220-|-----------------------------------------------------------------------------------------|                                                                                                   
+220-| Harry, make sure to update the banner when you get a chance to show who has access here |                                                                                                   
+220-|-----------------------------------------------------------------------------------------|                                                                                                   
+220-                                                                                                                                                                                              
+220
+```
+
+I can log in as anonymous, and find a single file: `note` The contents of `note` are:
+
+```
+Elly, make sure you update the payload information. Leave it in your FTP account once your are done, John.
+```
