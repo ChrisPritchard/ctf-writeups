@@ -134,4 +134,8 @@ I had taken a look at this earlier with nc, but hadn't gotten far. I *should* ha
 
 A nikto scan suggests the site has a ssl configured, and when I browse to `https://192.168.1.74:12380` I get something different: a blank page with the text `Internal Index Page!`
 
+The robots.txt file contained two entries: `admin112233` and `blogblog`. The first took me to a xss page, that posts a warning message about beef hooks (a way to use xss to exploit user browser sessions via a tool called BEEF) before redirecting to xss-payloads.com. Accessing the site wiothout javascript (or via burp) reveals nothing except a congratulations for not falling to a script attack.
+
+Browsing to /blogblog/ reveals a word press site, with nothing on it.
+
 
