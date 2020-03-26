@@ -69,6 +69,8 @@ I tried posting content into it, but that failed.
 
 ## SMB
 
+This blog was useful for SMB shenanigans: [smb-enumeration-for-penetration-testin](https://medium.com/@arnavtripathy98/smb-enumeration-for-penetration-testing-e782a328bf1b)
+
 I ran the following to get a list of files on the share:
 
 ```
@@ -125,3 +127,11 @@ drwx------  3 root root 4.0K Jun  5 15:32 systemd-private-df2bff9b90164a2eadc490
 ```
 
 Which does look like the possible content of the actual tmp dir on the machine. Importantly, I discover I can actually upload files into this tmp dir. Hmm.
+
+## Port 12380
+
+I had taken a look at this earlier with nc, but hadn't gotten far. I *should* have guessed it was a http/https port - I tested this now, given the wordpress archive. Sure enough, `http://192.168.1.74:12380` shows a holding page, with nothing interesting except an uncommon response header `dave: something doesn't look quite right here`. 
+
+A nikto scan suggests the site has a ssl configured, and when I browse to `https://192.168.1.74:12380` I get something different: a blank page with the text `Internal Index Page!`
+
+
