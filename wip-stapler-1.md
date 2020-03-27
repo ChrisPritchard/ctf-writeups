@@ -136,6 +136,12 @@ A nikto scan suggests the site has a ssl configured, and when I browse to `https
 
 The robots.txt file contained two entries: `admin112233` and `blogblog`. The first took me to a xss page, that posts a warning message about beef hooks (a way to use xss to exploit user browser sessions via a tool called BEEF) before redirecting to xss-payloads.com. Accessing the site wiothout javascript (or via burp) reveals nothing except a congratulations for not falling to a script attack.
 
-Browsing to /blogblog/ reveals a word press site, with nothing on it.
+Browsing to /blogblog/ reveals a word press site, with nothing of obvious on it.
 
+## WordPress and plugins
 
+Browsing through the site I found a post indicating that said `The only thing really which Vicki managed to sort out was to a few WordPress plugins for us. Please be sure to check out their new features!`
+
+I did a wordpress scan against the site, with aggresive searching for plugins, and found several (these were also listed under the listable `wp-content/plugins` directory). The first that I checked, `advanced-video-embed-embed-videos-or-playlists`, had a [public exploit-db entry](https://www.exploit-db.com/exploits/39646) for local file inclusion.
+
+Using this I created a post whose jpeg thumbnail was actually the wp-config.php file, which I grabbed via `wget` and catted to reveal the root credentials of mysql on the box, which I used to log in through phpmyadmin.
