@@ -302,4 +302,20 @@ exit
 exit
 ```
 
-I used the credentials for peter, above, to ssh on the box. A sudo -l for Peter revealed he had complete access, 
+I used the credentials for peter, above, to ssh on the box. A sudo -l for Peter revealed he had complete access, so `sudo -i` followed by `cd /root` got me the flag :)
+
+```
+~~~~~~~~~~<(Congratulations)>~~~~~~~~~~
+                          .-'''''-.
+                          |'-----'|
+                          |-.....-|
+                          |       |
+                          |       |
+         _,._             |       |
+    __.o`   o`"-.         |       |
+ .-O o `"-.o   O )_,._    |       |
+( o   O  o )--.-"`O   o"-.`'-----'`
+ '--------'  (   o  O    o)  
+              `----------`
+b6b545dc11b7a270f4bad23432190c75162c4a2b
+```
