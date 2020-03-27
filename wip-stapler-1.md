@@ -234,8 +234,16 @@ require_once(ABSPATH . 'wp-settings.php');
 define('WP_HTTP_BLOCK_EXTERNAL', true);
 ```
 
-## MySQL
+## MySQL and admin wordpress
 
-I could use the above to log into phpmyadmin, discovered when I did a dirb before. This gave me access to the system where I could, for example, change the password of the wordpress admin user to `hacktheplanet`. 
+I could use the above to log into phpmyadmin, discovered when I did a dirb before.
 
-I could also use the SQL command window to upload a php shell to /tmp: `SELECT "<?php system($_GET['cmd']); ?>" into outfile "/tmp/cmd.php"`, which I then checked via the smbclient from before to confirm that yes, /tmp is being shared. Given I could have also uploaded the shell over smb this doesnt give me much however. I would need to find a location where PHP is being served from...
+In phpmyadmin I could use the SQL command window to upload a php shell to /tmp: `SELECT "<?php system($_GET['cmd']); ?>" into outfile "/tmp/cmd.php"`, which I then checked via the smbclient from before to confirm that yes, /tmp is being shared. Given I could have also uploaded the shell over smb this didn't give me much however.
+
+I went to the wordpress database, the wp_users table and found the admin user, John. Via the phpmyadmin interface I was able to reset John's password to `hacktheplanet` encoded with MD5 (all done through the interface). This allowed me to then log in to wordpress through wp-admin.
+
+As the admin I poked around, and at the suggestion of a hacker friend of mine used the interface to 'add a new plugin'. The plugin process wouldn't work without FTP credentials, however anything I selected as a plugin would get uploaded to `wp-content/uploads`. I uploaded a cmd.php file (containing just `<?php system($_GET['cmd']); ?>` as above) and sure enough, `:12380/blogblog/wp-content/uploads/cmd.php?cmd=whoami` gave me that magic `www-data` in the window.
+
+## Reverse netcat, upgraded client
+
+I used cmd.php to open reverse netcat, giving me a shell on the client from my kali machine. With `python -c 'import pty; pty.spawn("/bin/bash")'` I got something more usable.
