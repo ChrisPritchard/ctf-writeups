@@ -36,3 +36,14 @@ Checking the logs I saw a couple of old errors that looked like this:
 phpconsole sounded interesting...I did a search and its an OctoberCMS plugin. It didn't seem to be installed, however the interface allowed me to search for and install it, easy peasy!
 
 The interface permitted me to execute arbitary php code, including system. `system("whoami");` revealed www-data. I tried a few ways to get a reverse shell, but it appeared that the system could not call out via this interface.
+
+The whitelist from before blocked extensions, but didn't check content of files. Therefore I did the following:
+
+1. uploaded a shell with a .png extension (I used [p0wny-shell](https://github.com/flozz/p0wny-shell))
+2. used the php sandbox to mv and rename the shell into the 'notepad' website (which I already had discovered was at `/var/www/html/notepad`):
+
+    `system('mv themes/vojtasvoboda-newage/assets/shell.php.png /var/www/html/notepad/shell.php');`
+    
+3. browsed to :8080/shell.php
+
+Nice.
