@@ -47,3 +47,11 @@ The whitelist from before blocked extensions, but didn't check content of files.
 3. browsed to :8080/shell.php
 
 Nice.
+
+## Escalation
+
+There was no sudo or nc on the machine, and via the shell I still couldn't connect out. The shell I was using is a little limited its not super interactive, meaning things that prompt for input cannot be used. It does allow command history and autocompletion however, which is nice.
+
+Browsing around I found a /armour user and home folder with nothing in it. Not much else.
+
+I decided to browse the octobercms folders and found a /config/database.php file, which revealed the local mysql instance had a nice root/root password on it. A quick look at the tables revealed little that stood out (since p0wny is not interactive I couldn't open the mysql cli - instead I had to execute on the same line: `mysql -u root -proot -e "select TABLE_SCHEMA, table_name from information_schema.tables"`).
