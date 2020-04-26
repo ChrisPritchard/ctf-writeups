@@ -29,4 +29,6 @@ New priv esc for Ubunut??
 Change MySQL password on main system!
 ```
 
-The assets dir was also listable.
+The assets dir was also listable. It contained images and a few audio files, none of which seemed to contain anything of note.
+
+Clicking through the website to `shop.php` there were three packages you could buy. Clicking through on any of them took me to `item.php` with a query param `id` of 1, 2 or 3. The id seemed injectable; some entries, like `id=*` would return a mysql error. Others, like `id='`, would trigger a denied error page with a jurassic park themed error.
