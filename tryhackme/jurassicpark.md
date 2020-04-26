@@ -81,4 +81,6 @@ dennis had a test.sh file saying **flag5.txt** was under /root. I used `sudo scp
 
 **flag3** was the top entry of dennis' `.bash_history file`: `b4973bbc9053807856ec815db25fb3f1`
 
+The final flag (for me) was **flag 4**. The file .viminfo in dennis' dir said it should be /tmp/flagFour.txt. I looked around but the flag was no where to be seen. Even root searches (see next note) didn't reveal it. I finally looked for help and discovered this is a bug - the flag is supposed to be there in tmp, but isn't. So, using a walkthrough (where the writer said he got it direct from the creator), I 'OSINTed' the flag as `f5339ad0edbd0b0fe1262d91a475c2c4`
+
 At this point, I used https://gtfobins.github.io/gtfobins/scp/#sudo to get a root shell using scp, then changed the root password to `hacktheplanet` for good measure. This wasn't really necessary, but fuckit.
