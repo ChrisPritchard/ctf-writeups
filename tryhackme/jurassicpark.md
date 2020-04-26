@@ -78,3 +78,7 @@ User dennis may run the following commands on ip-10-10-23-246.eu-west-1.compute.
 dennis had a test.sh file saying **flag5.txt** was under /root. I used `sudo scp /root/flag5.txt .` to get flag5 where I could read it.
 
 `find / -name flag* 2>/dev/null` revealed **flag2* at `/boot/grub/fonts/flagTwo.txt`
+
+At this point, I used https://gtfobins.github.io/gtfobins/scp/#sudo to get a root shell using scp, then changed the root password to `hacktheplanet` for good measure.
+
+
