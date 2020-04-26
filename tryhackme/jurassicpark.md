@@ -77,9 +77,9 @@ User dennis may run the following commands on ip-10-10-23-246.eu-west-1.compute.
 
 dennis had a test.sh file saying **flag5.txt** was under /root. I used `sudo scp /root/flag5.txt .` to get flag5 where I could read it: `2a7074e491fcacc7eeba97808dc5e2ec`
 
-`find / -name flag* 2>/dev/null` revealed **flag2** at `/boot/grub/fonts/flagTwo.txt`: `96ccd6b429be8c9a4b501c7a0b117b0a`
+`find / -name flag* 2>/dev/null` revealed **flag2** at `/boot/grub/fonts/flagTwo.txt`: `96ccd6b429be8c9a4b501c7a0b117b0a` (I could also have found this path via checking some of dennis' history files).
 
-**flag3** was the top entry of dennis' `.bash_history file`: `b4973bbc9053807856ec815db25fb3f1`
+**flag3** was the top entry of dennis' `.bash_history` file: `b4973bbc9053807856ec815db25fb3f1`
 
 The final flag (for me) was **flag 4**. The file `.viminfo` in dennis' dir said it should be `/tmp/flagFour.txt`. I looked around but the flag was nowhere to be seen. Even root searches (see next note) didn't reveal it. I finally looked for help and discovered this is a bug - the flag is supposed to be there in `tmp`, but isn't. So, using a walkthrough (where the writer said he got it direct from the creator), I 'OSINTed' the flag as `f5339ad0edbd0b0fe1262d91a475c2c4`
 
