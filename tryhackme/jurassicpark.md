@@ -41,4 +41,6 @@ Dennis, why have you blocked these characters: ' # DROP - username @ ---- Is thi
 
 Trying the query `1 union select null, password, null, null, null from users` results in the password `ih8dinos` being printed on screen. I had confirmed the five column select and positioning already through trial and error.
 
-Select into outfile didn't work. Select `user()` revealed mysql was running as root@localhost. Trying to ssh onto the box with root and `ih8dinos` did not get me access unfortunately.
+Select into outfile didn't work (--secure-file-priv or whatever was not set). Select `user()` revealed mysql was running as root@localhost. Trying to ssh onto the box with root and `ih8dinos` did not get me access unfortunately.
+
+I discovered the sql inject would only return the last row from its query as a result. Therefore, ih8dinos from above was the password of the final row in the users table. Appending `limit 2` got a second and as far as I could see, the only other password: `D0nt3ATM3`. This also didn't work with ssh.
