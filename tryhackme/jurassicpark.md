@@ -33,6 +33,8 @@ The assets dir was also listable. It contained images and a few audio files, non
 
 Clicking through the website to `shop.php` there were three packages you could buy. Clicking through on any of them took me to `item.php` with a query param `id` of 1, 2 or 3. The id seemed injectable; some entries, like `id=*` would return a mysql error. Others, like `id='`, would trigger a denied error page with a jurassic park themed error.
 
+sqlmap didnt work - kept timing out (later when I examined the source of the page, there seems to be some anti-sqlmap code in there).
+
 I tried incrementing id, and on id 5 I got a 'development product' with the description:
 
 ```
@@ -59,9 +61,9 @@ However, focusing on the room questions:
 
 At this point I tried ssh'ing as `dennis` to the machine, and the password worked, getting me a shell as dennis.
 
-## Remaining flags
+## Flags
 
-5. flag1.txt was in dennis's home dir.
+**flag1.txt** was in dennis's home dir.
 
 I ran `sudo -l` immediately, and discovered:
 
@@ -73,4 +75,6 @@ User dennis may run the following commands on ip-10-10-23-246.eu-west-1.compute.
     (ALL) NOPASSWD: /usr/bin/scp
 ```
 
-dennis had a test.sh file saying flag5.txt was under /root. I used `sudo scp /root/flag5.txt .` to get flag5.
+dennis had a test.sh file saying **flag5.txt** was under /root. I used `sudo scp /root/flag5.txt .` to get flag5 where I could read it.
+
+`find / -name flag* 2>/dev/null` revealed **flag2* at `/boot/grub/fonts/flagTwo.txt`
