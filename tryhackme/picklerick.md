@@ -31,4 +31,5 @@ Contains a short bit of text outlining the scenario. The html source contains:
   -->
 ```
 
-Nikto reveals its running apache and that /login.php exists. dirb additionally showed robots.txt and a browsable assets folder. Neither contained anything of note.
+Nikto reveals its running apache and that /login.php exists. dirb additionally showed robots.txt and a browsable assets folder. The latter showed nothing of note, but the former contained the text: `Wubbalubbadubdub`. This worked as a password on the login form, providing access to portal.php
+
