@@ -58,3 +58,11 @@ I tried `cat`, but got `Command disabled to make it hard for future PICKLEEEE RI
 However, the text files in the above listing I could obviously just browse to. Sup3rS3cretPickl3Ingred.txt revealed the first ingredient: `mr. meeseek hair`
 
 clue.txt contained: `Look around the file system for the other ingredient.`
+
+## exploring and using dd
+
+Next step was browsing about, and the first place I looked was the home dirs. There were two, `rick` and `ubuntu`. The former containing an ascii file `second ingredients`, confirmed via the `file` command. I needed to read it.
+
+`cat` was blocked as already discussed. So was `head` and `tail`. However `dd` was not:
+
+`dd count=200 bs=1 if=/home/rick/second\ ingredients` revealed `1 jerry tear`
