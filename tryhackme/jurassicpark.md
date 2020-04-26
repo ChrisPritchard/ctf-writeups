@@ -63,7 +63,7 @@ At this point I tried ssh'ing as `dennis` to the machine, and the password worke
 
 ## Flags
 
-**flag1.txt** was in dennis's home dir.
+**flag1.txt** was in dennis's home dir: `b89f2d69c56b9981ac92dd267f`
 
 I ran `sudo -l` immediately, and discovered:
 
@@ -75,10 +75,10 @@ User dennis may run the following commands on ip-10-10-23-246.eu-west-1.compute.
     (ALL) NOPASSWD: /usr/bin/scp
 ```
 
-dennis had a test.sh file saying **flag5.txt** was under /root. I used `sudo scp /root/flag5.txt .` to get flag5 where I could read it.
+dennis had a test.sh file saying **flag5.txt** was under /root. I used `sudo scp /root/flag5.txt .` to get flag5 where I could read it: `2a7074e491fcacc7eeba97808dc5e2ec`
 
-`find / -name flag* 2>/dev/null` revealed **flag2** at `/boot/grub/fonts/flagTwo.txt`
+`find / -name flag* 2>/dev/null` revealed **flag2** at `/boot/grub/fonts/flagTwo.txt`: `96ccd6b429be8c9a4b501c7a0b117b0a`
 
-At this point, I used https://gtfobins.github.io/gtfobins/scp/#sudo to get a root shell using scp, then changed the root password to `hacktheplanet` for good measure.
+**flag3** was the top entry of dennis' `.bash_history file`: `b4973bbc9053807856ec815db25fb3f1`
 
-
+At this point, I used https://gtfobins.github.io/gtfobins/scp/#sudo to get a root shell using scp, then changed the root password to `hacktheplanet` for good measure. This wasn't really necessary, but fuckit.
