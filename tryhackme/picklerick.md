@@ -55,9 +55,9 @@ I tried `cat`, but got `Command disabled to make it hard for future PICKLEEEE RI
 
 `pwd` revealed the path was `/var/www/html`, `whoami` revealed I was acting as `www-data` and `ls -lA /var/www` revealed the web dir was owned by root, so I could not write any files into it. No simple web shell for me.
 
-However, the text files in the above listing I could obviously just browse to. Sup3rS3cretPickl3Ingred.txt revealed the first ingredient: `mr. meeseek hair`
+However, the text files in the above listing I could obviously just browse to via the webserver. `http://[ip]/Sup3rS3cretPickl3Ingred.txt` revealed the first ingredient: `mr. meeseek hair`
 
-clue.txt contained: `Look around the file system for the other ingredient.`
+`clue.txt` contained: `Look around the file system for the other ingredient.`
 
 ## exploring and using dd
 
