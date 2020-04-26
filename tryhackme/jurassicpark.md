@@ -32,3 +32,13 @@ Change MySQL password on main system!
 The assets dir was also listable. It contained images and a few audio files, none of which seemed to contain anything of note.
 
 Clicking through the website to `shop.php` there were three packages you could buy. Clicking through on any of them took me to `item.php` with a query param `id` of 1, 2 or 3. The id seemed injectable; some entries, like `id=*` would return a mysql error. Others, like `id='`, would trigger a denied error page with a jurassic park themed error.
+
+I tried incrementing id, and on id 5 I got a 'development product' with the description:
+
+```
+Dennis, why have you blocked these characters: ' # DROP - username @ ---- Is this our WAF now?
+```
+
+Trying the query `1 union select null, password, null, null, null from users` results in the password `ih8dinos` being printed on screen. I had confirmed the five column select and positioning already through trial and error.
+
+Select into outfile didn't work. Select `user()` revealed mysql was running as root@localhost. Trying to ssh onto the box with root and `ih8dinos` did not get me access unfortunately.
