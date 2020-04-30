@@ -66,3 +66,22 @@ key-1-of-3.txt
 Giving me an easy first key of `073403c8a58a1f80d943455fb30724b9`
 
 `fsocity.dic` (note the mispelled society) seemed to be a show-focused wordlist. Hmm...
+
+## brute forcing a login
+
+The wordpress login at `/wp-login.php` allowed trivial user enumeration: it would tell you whether the username existed. The first username I tried was successful: `elliot`, after the main character of Mr. Robot. Next step, to me, was brute forcing.
+
+I tried hydra on the wp-login with the `fsocity.dic` file, as that seemed an obvious set of passwords. However after half an hour it still had nothing. I probably could leave it running, but it felt too slow. 
+
+One optimisation was fixing up the source file. I didn't pick this up at first glance, but the fsocity.dic file had a lot of duplicates. Of its 800k entries, only about 11k were unique. Doing a `cat fsocity.dic | sort -u > fsocity.dic.sorted` fixed that up. Hydra was still slow though.
+
+The command I was using, for the record, was: 
+
+`hydra -l Elliot -P fsocity.dic.sorted 10.10.156.16 http-post-form "/wp-login/:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2F10.10.156.16%2Fw
+p-admin%2F&testcookie=1:S=302"`
+
+I had run a wpscan against the wordpress site, but it hadn't returned anything of interest. However, wpscan also includes the ability to do bruteforcing, and even better directly against the xmlrpc rest service that wordpress uses. I ran the following command:
+
+`wpscan --url http://10.10.156.16 -U elliot -P ./fsocity.dic.sorted`
+
+And had a password, `ER28-0652`, in just under two minutes! Note to self, when attacking wp sites, use wpscan for bruteforcing! I had disdained it initially as I'd assumed hydra would be faster.
