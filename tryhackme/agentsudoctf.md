@@ -39,3 +39,22 @@ I wasn't going to write this one up, but I actually used a broad variety of tech
 
 8. Back to the second of the two images retrieved from ftp, `steghide extract -sf cutie.jpg` with Area51 as the passphrase revealed message.txt, containing text to the effect of "hi james your password is `hackerrules!`"
 
+9. ssh'ing onto the machine as james, the user flag `b03d975e8c92a7c04146cfa7a5a313c7` and an image is in the home dir. I pulled down the image via `scp`, then used `python3 -m http.server` to serve the image so I could view it on my host (I was using kali as an attacker machine, but only over ssh). I downloaded the image, and did a google reverse image search to get the 'name' of the image, specifically `roswell alien autopsy`.
+
+10. sudo -l gave me something I haven't seen before: `(ALL, !root) /bin/bash`. I can use bash with sudo, but not as root. E.g. `sudo -u chris /bin/bash`, which switched me to a chris shell.
+
+    I was a bit stuck at this point. The next step required finding a CVE, but that required finding a flaw. Given the sudo -l above, I knew it was something to do with that, especially given the room name. Ultimately the key was to search on the specific string, picking up a particularly nasty vulnerability from last year.
+
+11. `CVE-2019-14287` targets versions of sudo up to 1.8.27. The version on the machine was (via `sudo -V`): `1.8.21p2`. With this, a simple `sudo -u#-1 /bin/bash` got me a root shell.
+
+```
+To Mr.hacker,
+
+Congratulation on rooting this box. This box was designed for TryHackMe. Tips, always update your machine.
+
+Your flag is
+b53a02f55b57d4439e3341834d70c062
+
+By,
+DesKel a.k.a Agent R
+```
