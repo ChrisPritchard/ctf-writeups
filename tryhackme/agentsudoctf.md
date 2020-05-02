@@ -47,6 +47,8 @@ I wasn't going to write this one up, but I actually used a broad variety of tech
 
 11. `CVE-2019-14287` targets versions of sudo up to 1.8.27. The version on the machine was (via `sudo -V`): `1.8.21p2`. With this, a simple `sudo -u#-1 /bin/bash` got me a root shell.
 
+    https://www.exploit-db.com/exploits/47502
+    
 ```
 To Mr.hacker,
 
