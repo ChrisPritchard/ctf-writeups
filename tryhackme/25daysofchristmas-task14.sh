@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Solution to Task 14 (Day 9: Requests) in bash instead of suggested python
 # note requires that 'jq' is installed, a command-line json parser
 
 path=""
