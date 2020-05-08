@@ -21,7 +21,7 @@ A pretty easy one, but learned some new tricks so documenting:
     >
     > The `-X` specifies two extensions (seperated by `,`): nothing, which means folders get picked up (important for enumeration) and .txt, which I guessed would be a relevant file extension. `-w` ensures that when it finds a listable directory it doesnt skip to the next path but keeps trying within. Finally, `| grep "+ "` trims the noise to just the results.
 
-6. Via dirb, I found `/joomla/_test/log.txt`. The contents of which gave me the ssh password for a user named `basterd`
+6. Via dirb, I found `/joomla/_test/log.txt`. The contents of which gave me the ssh password for a user named `basterd`: `superduperp@$$`
 
 7. Once in, basterd's home directory contained `backup.sh`, which contained the other user `stoner`'s password. However, I was having trouble switching to that user. I tried sudo -l on basterd but got nothing.
 
