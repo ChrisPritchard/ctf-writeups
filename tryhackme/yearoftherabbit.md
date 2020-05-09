@@ -153,4 +153,4 @@ Another CTF-like room...
     <]>+. <+++[ ->--- <]>-- ---.- ----. <
     ```
 
-    God dammit - truly a rabit hole, this room.
+    God dammit - truly a rabbit hole, this room.
