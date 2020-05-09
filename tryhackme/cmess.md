@@ -27,7 +27,7 @@ An important instruction was to specify `cmess.thm` as a host entry for the mach
     ...
     ```
 
-3. Setting up an entry (could have also used curl with an explicit header) for `dev.cmess.thm`, going there returned a chat log:
+3. Setting up a host entry (could have also used curl with an explicit header) for `dev.cmess.thm`, going there returned a chat log:
 
     ```
     Development Log
@@ -49,3 +49,60 @@ An important instruction was to specify `cmess.thm` as a host entry for the mach
     ```
 
 4. I was able to log in with `andre@cmess.thm` and `KPFTN_f2yxe%` via `/login` and got access to the admin panel.
+
+5. Using the file manager, I was able to see the content of config.php, which included the db creds:
+
+    ```
+     array (
+        'host' => 'localhost',
+        'user' => 'root',
+        'pass' => 'r0otus3rpassw0rd',
+        'name' => 'gila',
+    ),
+    ```
+
+    (this turned out to be useless as the only user in the db was one I already had and mysql wasn't running with suid or sudo)
+
+6. I was also able to use the file manager to upload a web shell to the `/assets` dir (I used [p0wny shell](https://github.com/flozz/p0wny-shell)). I'm guessing this was the 'misconfigured htaccess' from the dev log, as the other directories have access files that prevent php from running but not assets (its .htaccess is blank). From this I discovered the following:
+
+    - I was operating as `www-data`
+    - There was nothing interesting in the website folders (which were `/var/www/html` and `/var/www/dev`)
+    - The one home folder, `andre`, I couldn't access
+    - `www-data` didn't have `sudo -l` access (at least without a password)
+    - No obvious SUID executables
+    - A *very* suspicious `andre_backup.tar.gz` existed under `/tmp`
+
+7. I used a `nc listener` and `cat | nc` on the backup to get it back to my host for analysis. Probably unnecessary since it was in `tmp` - could have done this in place. After extracting it `gunzip out.tar.gz` followed by `tar -xvf out.tar` it contained `note`, whose content was:
+
+    ```
+    Note to self.
+    Anything in here will be backed up!
+    ```
+
+    Interesting.
+
+8. I catted /etc/crontab and found:
+
+    ```
+    */2 *   * * *   root    cd /home/andre/backup && tar -zcf /tmp/andre_backup.tar.gz *
+    ```
+
+    So this is possibly a path to root once I have control of that backup folder (and looks like an exploit of tar wildcard expansion, which I used in the `skynet` room)
+
+9. I grabbed linpeas and ran it, and it identified under writable files a suspicious-looking file `/opt/.password.bak`. Catting that gave me:
+
+    ```
+    andres backup password
+    UQfsdCB7aAP6
+    ```
+
+10. With this I ssh'ed in (dropping my reverse shells) and got the user flag, yus: `thm{c529b5d5d6ab6b430b7eb1903b2b5e1b}`
+
+11. I went into the backup folder, and used nano to put the same reverse shell line I had used before into a file called `shell.sh`. Then I created two more files with touch:
+
+    ```
+    touch ./--checkpoint=1
+    touch ./--checkpoint-action=exec=sh\ shell.sh
+    ```
+
+12. Exiting ssh and starting a nc reverse listener, I waited. Momentarily I got my shell popped with root :) The final flag, under `/root/root.txt` was `thm{9f85b7fdeb2cf96985bf5761a93546a2}`
