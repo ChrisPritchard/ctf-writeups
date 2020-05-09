@@ -1,10 +1,10 @@
 # Jack of All Trades
 
-Normally I don't like CTF-heavy challenges, i.e. where the box feels more like a puzzle than a real machine, but this one was kind of fun.
+Normally I don't like CTF-heavy challenges (where the box feels more like a puzzle than a real machine) but this one was kind of fun.
 
 1. Recon revealed 22 and 80. However, I couldn't browse to 80? It said something like Format exception in firefox, and so I did a double take: the listeners were swapped! A webserver was listening on 22, while a ssh server was listening on 80 :D Firefox wouldn't let me browse to :22 for security reasons, which is fine: I proceeded with curl and wget.
 
-2. Dirb on the webserver 22 revealed a /assets sub dir that was listable. It contained three images and a css file. I downloaded the images, then checked out the source of the root page with curl.
+2. Dirb on the webserver 22 revealed a `/assets` sub dir that was listable. It contained three images and a css file. I downloaded the images, then checked out the source of the root page with curl.
 
     > curl is fine, but when using it to navigate pages, I like to install `html2text` and pipe the html through it. Particularly for listed directories, this makes a nice readable output.
 
@@ -40,13 +40,13 @@ Normally I don't like CTF-heavy challenges, i.e. where the box feels more like a
 
 9. I logged in with the recovered credentials above and got a page that said `GET me a 'cmd' and I'll run it for you Future-Jack.`
 
-    > to log in, I decided to force firefox to let me access :22 as a webserver. The steps to do this were simple:
-    > 1. go to about:config
+    > To log in, I decided to force firefox to let me access :22 as a webserver. The steps to do this were simple:
+    > 1. go to `about:config`
     > 2. search for the key `network.security.ports.banned.override`
-    > 3a. If it had existed, I would add `,22` on the end of its value
-    > 3b. It didn't so I added it and set its value to `22`
+    > 3. If it had existed, I would add `,22` on the end of its value
+    > 4. It didn't so I added it and set its value to `22`
 
-10. Appending ?cmd=ls to the url returned ls results, so this page is basically a webshell. `whoami` returned `www-data`
+10. Appending `?cmd=ls` to the url returned `ls` results, so this page is basically a webshell. `whoami` returned `www-data`
 
 11. Surprise surprise, `whereis nc` returned `nc.traditional` which meant I could use `nc -e`. With this I quickly got a reverse shell on the system.
 
@@ -77,4 +77,24 @@ Normally I don't like CTF-heavy challenges, i.e. where the box feels more like a
     8lN{)g32PG,1?[pM
     z@e1PmlmQ%k5sDz@
     ow5APF>6r,y4krSo
+    ```
+
+13. The above looks encoded, but I couldn't guess how. I thought I might as well try them as presented: as possible passwords for the user `jack`. I thought about writing a script to do it, but interacting with password prompts is difficult (could have done it with `expect` probably) and there were not so many. So I just manually tried `su jack` with each, going down the list. Fortunately, the fifth entry `ITMJpGGIqg1jn?>@` worked and I became `jack`.
+
+    > At this point I quickly disconnected and reconnected over `ssh -p 80 jack@10.10.206.89`, to get a friendlier shell.
+
+14. In jacks root directory was `user.jpg`. I used scp to get this back to my attacker machine, then spinned up a server to serve it so I could view from my host machine with firefox. The image was a recipe for penguin soup, with one of the ingredients being the user flag: `securi-tay2020_{p3ngu1n-hunt3r-3xtr40rd1n41r3`
+
+15. jack had no sudo privliges. A `find / -user root -perm -u=s 2>/dev/null` revealed `/usr/bin/strings` as the odd executable out.
+
+16. With a wild guess, victory: `/usr/bin/strings /root/root.txt` revealed:
+
+    ```
+    ToDo:
+    1.Get new penguin skin rug -- surely they won't miss one or two of those blasted creatures?
+    2.Make T-Rex model!
+    3.Meet up with Johny for a pint or two
+    4.Move the body from the garage, maybe my old buddy Bill from the force can help me hide her?
+    5.Remember to finish that contract for Lisa.
+    6.Delete this: securi-tay2020_{6f125d32f38fb8ff9e720d2dbce2210a}
     ```
