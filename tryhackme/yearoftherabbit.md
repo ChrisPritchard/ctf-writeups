@@ -154,3 +154,23 @@ Another CTF-like room...
     ```
 
     God dammit - truly a rabbit hole, this room.
+
+14. I *know* I've seen the above before, but I spent a lot of time looking for ciphers that matched. Eventually I remembered: its the programming language [brainfuck](https://en.wikipedia.org/wiki/Brainfuck)! I ran the above through an [online brainfuck interpreter](https://www.tutorialspoint.com/execute_brainfk_online.php), and got:
+
+    ```
+    User: eli
+    Password: DSpDiM1wAEwid
+    ```
+
+15. I was able to ssh on to the machine using the above, and was greeted with the message:
+
+    ```
+    1 new message
+    Message from Root to Gwendoline:
+
+    "Gwendoline, I am not happy with you. Check our leet s3cr3t hiding place. I've left you a hidden message there"
+
+    END MESSAGE
+    ```
+
+16. No `sudo -l`, nothing interesting in find -perm. Another home dir for `gwendoline` containing `user.txt`, but I couldn't read it. However, in eli's folder, there is a file called `core` that is quite interesting.
