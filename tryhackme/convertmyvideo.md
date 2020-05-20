@@ -35,7 +35,7 @@
 
 10. Flag two, the admin flag, was much trickier. Recon showed no SUID, sudo -l wouldn't work, no cronjobs, linpeas came up with almost nothing, except a file I myself had found initially: `clean.sh` in the `/tmp` folder. There was nothing in the home directories: I half-heartedly started a hydra brute force against ssh with the home folder name I found, `dmv`, but it wasn't going anywhere.
 
-Ultimately I should have pickup up that `clean.sh` was the key. Even if I couldn't see how the file was called, there would have been no cost in shoving a `echo test > test.txt` into it and seeing if the file showed up.
+Ultimately I should have picked up up that `clean.sh` was the key. Even if I couldn't see how the file was called, there would have been no cost in shoving a `echo test > test.txt` into it and seeing if the file showed up.
 
 But I didn't do that. Frustrated, I went for help, and found out about an excellent tool called [pspy](https://github.com/DominicBreuker/pspy). I will have to remember to use this: its an event tracker binary that you get onto the machine, and it will show events by user. Kind of like `ps aux`, but as a continuous log.
 
