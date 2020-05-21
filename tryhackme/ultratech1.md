@@ -58,6 +58,16 @@ A fun room. Had some difficulty enumerating, but ultimately solved it without an
 
 7. Once on the box I was able to inspect the `utech.db.sqlite` file from before (a simple `cat` worked, given its tiny) revealed two users with password hashes in md5. `r00t` had a home folder, so I took his/her hash and cracked it with hashcat, then dropped my reverse shell and ssh'd in normally.
 
+    > I also used the credentials from one of the users in the file to login in via the earlier found login pages at this point. This was the message I was greeted with:
+    >
+    > Restricted area
+    >
+    > Hey r00t, can you please have a look at the server's configuration?
+    > The intern did it and I don't really trust him.
+    > Thanks!
+    >
+    > lp1
+
 8. Enumeration revealed nothing obvious. However docker was installed. Given the page had said (and the auth / login page had said the same when I logged in with one of the cracked hashes) that `the intern had misconfigured something`, I guessed that something was probably running as root when it shouldn't have been. `id -Gn` revealed `r00t` was part of the docker group.
 
 9. I scp'd an alpine docker image onto the machine, then ran it with `docker run -v /:/mnt --rm -it alpine chroot /mnt sh` and BOOM! root shell :)
