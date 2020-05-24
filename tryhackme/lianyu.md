@@ -9,6 +9,8 @@ A simple box, but I learned something from it so worth writing down.
 2. The website at 80 was a static page. The first question of the room said find the hidden directory in numbers, with a pattern of `****`. The room also had a gobuster tag, so I used gobuster. However, I could only find one directory, `/island`, no matter what word list I used! On /island was the hidden phrase `vigilante` in white text on a white background.
 
     > This is the thing I learned in this room, which I guess I didn't know (or had forgotten): **gobuster is NOT recursive**. I Usually use dirb, which IS recursive; with gobuster, if you find a dir, to enumerate it you need to run gobuster again.
+    >
+    > Also note I used `directory-list-2.3-medium.txt` for all uses of gobuster (including the ticket search in 4.). Probably not necessary, but it sufficed.
 
 3. Running gobuster on `/island` I found the directory `/island/2100`, which fit the first question of the room. On that page was a video, and in the source of the page the comment: `you can avail your .ticket here but how?`.
 
