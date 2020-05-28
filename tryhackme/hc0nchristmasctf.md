@@ -36,6 +36,8 @@ The robots.txt file mentioned 'group 3301', Cicada 3301, which amongst other thi
     TH  E   I  V(U) F   O   R   NG(ING) EO  AE  Y
     2   18  10 1    0   3   4   21      12  25  26
 
+THis also pointed me to http://opensource.exposed, which seems to be a port of CyberChef? It contains a Liber Primus category anyway.
+
 Back to the website, dirb also revealed a `/admin` directory that was listable. inside was an `app-release.apk` file. Digging through that with [apktool](https://ibotpeaches.github.io/Apktool/) and grep revealed:
 
     .line 119
