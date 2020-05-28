@@ -8,6 +8,8 @@ While the first stage - getting a shell on the box, was very exploratory and fun
 
 Ah well, learned a bit, and all the time wasted enumerating certainly taught me a lot about enumerating :D However, I would hope OSCP is a little more real-world than this.
 
+That being said, a *different* lesson might be that, when attacking a crafted environment, anything out of the ordinary is worth deep investigation. Here I had looked at the APK and discarded it, and the ovpn file but thought it was nothing since it was empty (I looked at it for creds). A deeper, or different look, would have carried me through.
+
 ## Process
 
 First, only 22 and 80 are open. 80 reveals a 'TexMaker' website, where you can enter LaTeX script and have it compiled into a PDF for you.
