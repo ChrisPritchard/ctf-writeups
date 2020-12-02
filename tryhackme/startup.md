@@ -12,6 +12,6 @@ A pretty simple one, no hints required but for the first 'recipe' question, whic
 6. Copying the pcap file into the website so I could easily download it, I went through with wireshark until found a possible password for the lennie user. Ironically I got a little confused as the actions in the pcap file were very similar to what I was doing, for example /files/ftp/shell.php. thought it might be a live recording until i checked the dates
 7. using the password i was able to ssh onto the box as lennie
 8. under lennie's home dir was a scripts folder containing a script owned and only editable by root called planner.sh, but which invoked a /etc/print.sh owned by lennie to echo done
-9 I set up a listener on my host, appended a reverse shell connect to the print.sh file, and waited. in about a minute I got a root shell (possible invoked by a docker host, as it wasn't in cron)
+9. I set up a listener on my host, appended a reverse shell connect to the print.sh file, and waited. in about a minute I got a root shell (possible invoked by a docker host, as it wasn't in cron)
 
 Easy, nothing special. I used linpeas to find the odd root dirs, which was possibly overkill. As mentioned, the room asked for user/root flags, but also the secret ingredient in the recipe, and this last was in /recipe.txt
