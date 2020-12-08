@@ -17,7 +17,7 @@ func main() {
 	println("connected to proxy")
 
 	conn, err := dialer.Dial("tcp", "172.15.21.133:5555")
-	//conn, err := net.Dial("tcp", "172.15.21.133:5555")
+	//conn, err := net.Dial("tcp", "172.15.21.133:5555") // no SOCKS proxy
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -25,11 +25,10 @@ func main() {
 
 	reader := bufio.NewReader(conn)
 
-	quit := false
 	p := make([]byte, 2048)
 	pos := 2
 
-	for !quit {
+	for true {
 		n, err := reader.Read(p)
 
 		if err != nil {
