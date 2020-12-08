@@ -14,9 +14,10 @@ The gist of the competition was that you were given a jump host and from there c
 Tools used:
 
 - Windows Terminal, to use Powershell and create a local socks proxy through the jump host via `ssh -D 8888 -i .\metasploit_ctf_kali_ssh_key.pem kali@ip`. As I was on windows this was very useful.
-- Kali on WSL2
+- Kali on WSL2 - I also used Kali on the jump host when I needed more speed, e.g. for ffuf or running the exploit for 5555. But mostly I just used my main machines WSL2 instance.
+- Hashcat on Windows - nothing like a 2080 for password cracking (except, er, a 3080/90, which I don't have).
 - Burp Suite on Windows - the proxy from above was punched into burp's project config so I could use its inbuilt browser and brute forcing without messing about. The speed was quite good.
-- [Cyberchef](https://gchq.github.io/CyberChef/). Mainly for encoding challenges, but primarily for converting base64 back into card images, or if I needed to exfil a binary or something. Cyberchef is just a more stable way to do this than to use windows terminal, which can be slightly flaky when you paste a hundred pages of base64 into it.
+- [Cyberchef](https://gchq.github.io/CyberChef/). Occasionally for specific challenges, but primarily for converting base64 back into card images, or if I needed to exfil a binary or something. Cyberchef is just a more stable way to do this than to use windows terminal, which can be slightly flaky when you paste a hundred pages of base64 into it.
 
 I have listed my very brief solutions for each challenge below, with the occasional note, in the order of the port number (not the order I solved them). The headings are taken right from the results of an initial `nmap -sS -sV`.
 
