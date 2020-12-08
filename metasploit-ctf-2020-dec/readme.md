@@ -3,6 +3,8 @@
 - Player Name:  **aquinas_nz**
 - Team Name:    **() { :;}; echo vulnerable**
 
+Wrap-up blog post: https://blog.rapid7.com/2020/12/07/congrats-to-the-winners-of-the-2020-december-metasploit-community-ctf/
+
 This is the first CTF for me where I have finished all the challenges and, as I came 9th out of ~1000, the first where I have won something. I also did this as a solo player rather than as a team, in contrast to all but two of the other top ten.
 
 <img src="./final-top-10.png" />
