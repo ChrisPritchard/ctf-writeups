@@ -1,0 +1,39 @@
+# The module is copied to `modules/exploits/`, so don't change this
+use exploit/module
+
+# Do your datastore initialization here
+# e.g.:
+#  set USERNAME foo
+#  set payload ...
+
+set RPORT 21
+
+# Make sure everything is alright
+show options
+
+# this will execute the module and put any session in background
+run -z
+
+# This block of ruby code is useful to make sure a session is setup before
+# interacting with it. Feel free to update this code.
+<ruby>
+  print_status('Waiting a bit to make sure the session is completely setup...')
+  timeout = 10
+  loop do
+    break if (timeout == 0) || (framework.sessions.any? && framework.sessions.first[1].sys)
+    print_status('no session yet')
+    sleep 1
+    timeout -= 1
+  end
+  if framework.sessions.any? && framework.sessions.first[1].sys
+
+    print_status('found session')
+
+    run_single("sessions -i 1 -C 'ls'")
+    run_single("sessions -i 1 -C 'cat /etc/passwd'")
+
+
+
+
+  end
+</ruby>
