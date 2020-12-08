@@ -56,14 +56,3 @@ func main() {
 		}
 	}
 }
-
-func evade(pos int, nextLine string, conn net.Conn) int {
-	if pos > 1 {
-		conn.Write([]byte{0x1b, 0x5b, 0x44}) // left
-		pos--
-	} else if pos < len(nextLine)-1 {
-		conn.Write([]byte{0x1b, 0x5b, 0x43}) // right
-		pos++
-	}
-	return pos
-}
