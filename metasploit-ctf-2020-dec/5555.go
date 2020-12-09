@@ -28,7 +28,7 @@ func main() {
 	p := make([]byte, 2048)
 	pos := 2
 
-	for true {
+	for {
 		n, err := reader.Read(p)
 
 		if err != nil {
