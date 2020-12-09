@@ -51,13 +51,13 @@ A file server showing a binary (`.elf`) and an encoded file (`.enc`). I used [gh
 
 A game, where over the terminal (`nc` again) you had to press left and right to dodge falling obstacles. Pretty neat! The game would get faster and faster, and I for one found it near impossible.
 
-Instead I wrote [this in Golang](./5555.go), which played it for me. I had to run this on the jump host so the lag wouldn't break it, but fairly quickly I hit the max scare and the game told me to look under another, just opened port, where I found the flag :)
+Instead I wrote [this in Golang](./5555.go), which played it for me. I had to run this on the jump host so the lag wouldn't break it, but fairly quickly I hit the max score and the game told me to look under another, just opened port, where I found the flag :)
 
 ## 6868/tcp open  http        syn-ack ttl 63 WSGIServer 0.2 (Python 3.8.5)
 
 A photography site where you could sign up to get 'notes', with a strict system: first name, optional middle name, and last name, resulting in a custom url like (for me) CP or CJP, depending on whether I used my middle name.
 
-With burp I brute forced other users, then brute forced their notes (just 0 - 10 after the initials, for a url like `/notes/CP/0`). From that I found mentions of some sysadmin who had pushed to have the middle name bit reduced to one letter, and across several notes I found her name was `Beth Yager` with a long middle name, `UDD`. `BUDDY`. Grabbing her notes, there was a mention of files, and at a guess, `/files/BUDDY/2` got me the flag.
+With Burp I brute forced other users, then brute forced their notes (just 0 - 10 after the initials, for a url like `/notes/CP/0`). From that I found mentions of some sysadmin who had pushed to have the middle name bit reduced to one letter, and across several notes I found her name was `Beth Yager` with a long middle name, `UDD`: `BUDDY`, when put together. Grabbing her notes, there was a mention of files, and at a guess, `/files/BUDDY/2` got me the flag.
 
 ## 8080/tcp open  http        syn-ack ttl 63 Apache httpd 2.4.38 ((Debian))
 
@@ -91,6 +91,8 @@ I bruteforced the final password via hashcat with `./hashcat.exe -a 3 -m 0 ..\ji
 
 I think the third challenge I beat, a simple php upload vuln. To bypass the filter I just needed the extension to be .jpg.json, and for the web shell to have the magic bytes of an image, which was easy enough to source. With the shell I found a hidden subdirectory containing the flag.
 
+The web shell I used was this one (I think): https://github.com/jgor/php-jpeg-shell, with the extension changed as above.
+
 ## 8201/tcp open  http        syn-ack ttl 63 nginx 1.19.5
 
 This one took a while, because I was dumb. Navigating it redirected to an explicit host which broke the browsing, but I was able to inspect the proper response in burp by overriding the target and host header. The inner host was intranet.metasploit.ctf, and that there was something on 'other subdomains'.
@@ -99,7 +101,7 @@ A spent a lot of time bruteforcing basically `FUZZ.metasploit.ctf`, giving up. W
 
 ## 8202/tcp open  http        syn-ack ttl 63 nginx 1.19.5
 
-A SPA site which had some funny api queryies going on as you browsed it. Eventually recognised it as a graphQL api, and used introspection to find a posts table. Querying that using the api got me the flag.
+A SPA site which had some funny api queryies going on as you browsed it. Eventually recognised it as a GraphQL api, and used introspection (using a sample from [SecLists](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/GraphQL%20Injection#enumerate-database-schema-via-introspection) and [GraphQL Voyager](https://apis.guru/graphql-voyager/)) to find a posts table. Querying that using the api got me the flag.
 
 ## 8888/tcp open  http        syn-ack ttl 63 Werkzeug httpd 1.0.1 (Python 3.8.5)
 
@@ -119,11 +121,13 @@ So I used [8888-exploit.py](./8888-exploit.py) to create a base64 payload that w
 
 ## 9000/tcp open  http        syn-ack ttl 63 WEBrick httpd 1.6.0 (Ruby 2.7.0 (2019-12-25))
 
-This one took a long time. A simple search box that exposed a file listing. I figured os command injection, but nothing I could do would trigger it. I eventually passed the form paramter as an array (i.e. search[]= rather than search=) which triggered a full exception with stack traces. Via that I found the command being run was `find ./Games -iname "*#{param}*"`.
+This one took a long time. A simple search box that exposed a file listing. I figured os command injection, but nothing I could do would trigger it. I eventually passed the form paramter as an array (i.e. `search[]=` rather than `search=`) which triggered a full exception with stack traces. Via that I found the command being run was `find ./Games -iname "*#{param}*"`.
 
 Again, this looked like os command injection, but nothing I did could break out of those quotes. Finally, almost by luck, I discovered in the docs for find that \`\` should still work - I can't escape, but I can evaluate commands directly in place. Testing this with `echo -e \x41` and getting the results for a regular search for `A` verified this.
 
-Via this I found the flag and emitted its contents into the form template the page was derived from, so I could extract the image. I could have just done an md5 in place, but I like the images :) (also I only remembered this later).
+Seeing the results back was a bit tricky - I tried using `| xargs touch` to emit content as file names in the result of the search command. Messing around with that for a bit I eventually realised in a facepalm moment that the stack traces from earlier had revealed where the html template for the page I was viewing was. So, I could actually just append the results of commands to that and see them in source, so much easier.
+
+Via this I found the flag using a find of my own, and emitted its contents into the form template the page was derived from, so I could extract the image. I could have just done an md5 in place, but I like the images :) (also I only realised this later).
 
 ## 9001/tcp open  http        syn-ack ttl 63 Thin httpd
 
