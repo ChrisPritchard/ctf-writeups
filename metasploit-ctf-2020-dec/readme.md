@@ -132,6 +132,10 @@ Pretty obvious sql injection. Used union selects from the sqlite master tables t
 ## 9007/tcp open  http        syn-ack ttl 63 Apache httpd 2.4.46 ((Unix))
 
 A zip file. I didn't even bother trying to extract it normally, but just ran `binwalk -e` over it which pulled the flag out.
+ 
+## 9008/tcp open  java-object syn-ack ttl 63 Java Object Serialization
+
+This port was ultimately only used in the context of the 9010 challenge, and didn't have a flag of its own.
 
 ## 9009/tcp open  ssh         syn-ack ttl 63 OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
 
@@ -142,10 +146,6 @@ There was one SUID executable, `vpn_connect`, that took a username, password and
 Eventually I worked out that if you used a very long password it would loop onto a newline, essentially allowing you to write lines you controlled with a bit of garbage in front of them. Not too much text - I tried and failed to use this to append to `root/.ssh/authorized_keys` - but enough for say... a line in `passwd` with a silly password.
 
 While this made me nervous, it did indeed work when I appended a new user with id and group 0 (and so basically another root user) and a md5 hashed password. `su mynewuser` got me root and the flag.
- 
-## 9008/tcp open  java-object syn-ack ttl 63 Java Object Serialization
-
-This port was ultimately only used in the context of the next challenge, and didn't have a flag of its own.
 
 ## 9010/tcp open  http        syn-ack ttl 63 Apache httpd 2.4.38
 
