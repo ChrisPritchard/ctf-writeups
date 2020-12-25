@@ -95,6 +95,16 @@ making a bad reverse shell better:
 
 `python -c 'import pty; pty.spawn("/bin/bash")'`
 
+if the shell is doing that weird echoing thing, then after running the above, the following can fix this:
+
+```
+export TERM=xterm
+Ctrl + Z
+stty raw -echo; fg
+```
+
+the above also prevents Ctrl + C killing the reverse shell
+
 bypassing url encoding if doing something sneaky like get[cmd]:
 
 `echo urlencoded | base64 -d > shell.php`
