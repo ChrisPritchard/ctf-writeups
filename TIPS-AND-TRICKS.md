@@ -103,7 +103,11 @@ Ctrl + Z
 stty raw -echo; fg
 ```
 
-the above also prevents Ctrl + C killing the reverse shell
+the above also prevents Ctrl + C killing the reverse shell. if the shell dies, your shell will be boned as no commands sent will be returned. to fix this: type reset and press enter (Thanks TryHackMe)
+
+catching better shells by default (needs rlwrap to be installed):
+
+`rlwrap nc -lvnp <port>`
 
 bypassing url encoding if doing something sneaky like get[cmd]:
 
