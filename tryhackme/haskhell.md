@@ -2,7 +2,7 @@
 
 https://tryhackme.com/room/haskhell
 
-A simple room, with a few new techs
+A simple room, with a few new techs. Fun since I write in F#, a language in the same vein as Haskell, sometimes.
 
 1. A port scan revealed 22 and 5001. On 5001 was a website asking users to submit their haskell assignments.
 2. The link to send haskell files on the homework page didn't work, but a dirb on the ip revealed /submit which did
