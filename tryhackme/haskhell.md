@@ -1,5 +1,7 @@
 # HaskHell
 
+https://tryhackme.com/room/haskhell
+
 A simple room, with a few new techs
 
 1. A port scan revealed 22 and 5001. On 5001 was a website asking users to submit their haskell assignments.
