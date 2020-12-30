@@ -14,7 +14,7 @@ import System.Cmd
 main = system "ls"
 ```
 
-4. The following connected a reverse shell (as 'flask'):
+4. The following connected a reverse shell (as the user 'flask'):
 
 ```haskell
 import System.Cmd
