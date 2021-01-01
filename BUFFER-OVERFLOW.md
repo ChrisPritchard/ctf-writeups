@@ -2,7 +2,7 @@
 
 Based on experiences from TryHackMe room https://tryhackme.com/room/binex, I need to get better at this, so here is a mini writeup for that portion of the room.
 
-Instructions below are based on a executable that reads a string then overflows, named `bof`. The methodology here is largely extracted from one of the writeups for Binex: https://github.com/Syp1ng/Writeups/blob/master/THM/Binex.pdf
+Instructions below are based on a executable that reads a string then overflows, named `bof`. The methodology here is largely extracted from one of the writeups for Binex: https://github.com/Syp1ng/Writeups/blob/master/THM/Binex.pdf. The author in turn sourced some knowledge from here: https://medium.com/@buff3r/basic-buffer-overflow-on-64-bit-architecture-3fb74bab3558
 
 1. First, generate a test string using metasploit's pattern_create.rb: 
   
