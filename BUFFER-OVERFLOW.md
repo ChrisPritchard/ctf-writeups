@@ -164,7 +164,7 @@ The process is similar, but with one change that might actually work for linux t
 
 6. Finally create the exploit python generator. Something like the below:
 
-    ```
+    ```python
     from struct import pack
 
     nop = '\x90'
