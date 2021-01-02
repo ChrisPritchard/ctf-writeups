@@ -145,6 +145,11 @@ Instructions below are based on a executable that reads a string then overflows,
 
 The process is similar, but with one change that might actually work for linux too. With windows, I need to get a copy on my host machine so I can exploit it locally to test it.
 
+The instructions here are cobbled together from two sources:
+
+- https://johntroony.medium.com/a-practical-overview-of-stack-based-buffer-overflow-7572eaaa4982
+- The gatekeeper writeup: https://medium.com/@j.w.helle/official-gatekeeper-writeup-my-first-machine-at-tryhackme-928f320211a
+
 1. First, just as with Linux, you need a pattern. metasploit is available for windows, but I just use WSL/Kali: `/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 1000`  
 
 2. Install immunity if you dont have it, and mona.py. Mona can be obtained raw here: https://github.com/corelan/mona. Just save the py file under the 'PyCommands' folder in the immunity install directory (which for me was `C:\Program Files (x86)\Immunity Inc\Immunity Debugger`)
