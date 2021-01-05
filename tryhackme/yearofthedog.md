@@ -1,5 +1,7 @@
 # Year of the Dog
 
+https://tryhackme.com/room/yearofthedog
+
 A hard room that required *a lot* of enumeration before I figured it out, including a few dead ends.
 
 ## Getting a shell
