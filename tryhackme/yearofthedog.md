@@ -17,7 +17,7 @@ A hard room that required *a lot* of enumeration before I figured it out, includ
 
 ## Getting user
 
-- on the box as `www-data`, I discovered `dylan` was running an instance of gitea (a self contained git server, like gitlab or github) on port `3000`. not accessible from the outside, however, via  `ssh -N -R 3000:localhost:3000 root@10.10.154.104` I could get access to it on my attack machine.
+- on the box as `www-data`, I discovered `dylan` was running an instance of gitea (a self contained git server, like gitlab or github) on port `3000`. not accessible from the outside, however, via  `ssh -N -R 3000:localhost:3000 root@10.10.154.104` I could get access to it on my attack machine (Note, while fine here, running a root ssh session on a target machine is NOT a good idea - creds could be nicked, session hijacked anything).
 - enumerating this for *hours* got me nowhere. eventually, i went back over the machine with `linpeas.sh` and checked over a file I had seen earlier: `work_analysis`, plain ascii, in dylan's home dir. I had checked this before, seen it as a list of sshd failures with nothing of note. on the second check, huge facepalm, I found it had an entry for a failed login that was obviously the user dylan typing his password as his username. trying this I was able to `su` as dylan.
 
 ## Getting root
