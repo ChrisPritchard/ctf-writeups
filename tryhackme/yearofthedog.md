@@ -1,6 +1,6 @@
 # Year of the Dog
 
-A hard room! Having fun!
+A hard room that required *a lot* of enumeration before I figured it out, including a few dead ends.
 
 ## Getting a shell
 
