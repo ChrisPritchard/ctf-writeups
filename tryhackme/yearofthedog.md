@@ -30,6 +30,6 @@ This was complex. Dylan owned all the files in /gitea, so I figured it was somet
 - git had rights to sudo as everything, so I elevated to root and done... right?
 - quickly realised I was in a docker container on the main machine, and so no. also, it wasn't a privileged container.
 - HOWEVER, the /data/gitea folder inside the container was mapped to /gitea/gitea on the host and they hadn't enabled user remapping in docker! documented here, https://docs.docker.com/engine/security/userns-remap/, in brief, it stops root inside the container from ALSO being effectively root on the host.
-- so the final exploit was to copy bash into that mapped folder, use the container root to invoke `chown root bash` and `chmod u+s bash` then invoke it from outside as dylan via `./bash -p`. Boom, root
+- so the final exploit was to `cp /bin/bash /gitea/gitea` from the outside (probably also could have done this inside), use the container root to invoke `chown root bash` and `chmod u+s bash` then invoke it from outside as dylan via `./bash -p`. Boom, root
 
 Very fun, very long. Spent around four hours on this - mostly trying to get various gitea exploits to run. That reverse port forward was ultimately unnecessary, but worth learning for the future.
