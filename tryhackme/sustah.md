@@ -30,6 +30,7 @@ An easy-ish room (solved it in under an hour, which is good for me), with some n
     > - tried adding these headers with random ips - failed. tried altering user-agent, cookie, even host etc, none worked
     > - finally added these headers with a fixed ip, 127.0.0.1, which worked
     >
+    >
     > took me about half an hour, and was fairly systematic. basically experiementation and research, and not over thinking it (its a medium level room, not one of the giant mind  fucks you might get in harder rooms)
   
 4. Now I was able to brute force the number, using Intruder to attack with 500 threads and all numbers from 10000 to 99999 (as the answer field showed five digits). Getting the right number revealed a hidden path under the 80 site.
