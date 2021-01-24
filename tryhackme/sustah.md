@@ -10,17 +10,27 @@ An easy-ish room (solved it in under an hour, which is good for me), with some n
 2. 8085 hosted a 'Spinner' site, where you had to guess a number. Throwing this into burp intruder quickly ran into a strict ratelimit. The hint for this was 'what headers can you add?'
 3. Researching bypassing ratelimiting, I tried a bunch of things. Eventually adding the following headers and header values got me through:
 
-  ```
-  X-Originating-IP: 127.0.0.1
-  X-Forwarded-For: 127.0.0.1
-  X-Remote-IP: 127.0.0.1
-  X-Remote-Addr: 127.0.0.1
-  X-Client-IP: 127.0.0.1
-  X-Host: 127.0.0.1
-  X-Forwared-Host: 127.0.0.1
-  ```
-  
-  This was from https://book.hacktricks.xyz/pentesting-web/rate-limit-bypass. Later, looking at the spinner code, it was specifically set to bypass limiting for `X-Remote-Addr` with that localhost value.
+    ```
+    X-Originating-IP: 127.0.0.1
+    X-Forwarded-For: 127.0.0.1
+    X-Remote-IP: 127.0.0.1
+    X-Remote-Addr: 127.0.0.1
+    X-Client-IP: 127.0.0.1
+    X-Host: 127.0.0.1
+    X-Forwared-Host: 127.0.0.1
+    ```
+
+    This was from https://book.hacktricks.xyz/pentesting-web/rate-limit-bypass. Later, looking at the spinner code, it was specifically set to bypass limiting for `X-Remote-Addr` with that localhost value.
+    
+    > For those having difficulty with this bit and who have stumbled across this writeup, know that I had to do research to figure this out. The research was basically:
+    > - try passing the rate headers with the request - failed
+    > - try using x-forwarded-for and burp to simulate coming from somewhere else - failed
+    > - googled the rate limit headers, found they are common for rate limiting and wafs.
+    > - googled rate limit bypass and found various medium articles, and a burp extension 'Bypass WAF' (which I didn't use) but which all gave more headers
+    > - tried adding these headers with random ips - failed. tried altering user-agent, cookie, even host etc, none worked
+    > - finally added these headers with a fixed ip, 127.0.0.1, which worked
+    >
+    > took me about half an hour, and was fairly systematic. basically experiementation and research, and not over thinking it (its a medium level room, not one of the giant mind  fucks you might get in harder rooms)
   
 4. Now I was able to brute force the number, using Intruder to attack with 500 threads and all numbers from 10000 to 99999 (as the answer field showed five digits). Getting the right number revealed a hidden path under the 80 site.
 
