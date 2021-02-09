@@ -15,7 +15,7 @@ Interesting room! Sort of an education in a specific vulnerability.
 7. Under the user's folder was a 'root_access' folder containing a suid binary called `readcreds` and its C code (`readcreds.c`), along with a root-only file called `root_password_backup`. The suid binary would, however, only read files the user had access to, suid be damned - running it against the root_password_backup failed.
 8. The room talks about a linux file access race condition, where in the code if it uses the path to check access and then the path again to read, if you rename the file the path is pointing to between these checks you can bypass such access control. The video linked to is this one by the excellent LiveOverflow: https://www.youtube.com/watch?v=5g137gsB9Wk. In the video he uses a linux syscall to rapidly rename the files, but the C code here actually waits deliberately for a full second, so this was not necessary:
 
-    ```
+    ```c
     ...
     if (!access(argv[1],R_OK)) {
                 sleep(1);
