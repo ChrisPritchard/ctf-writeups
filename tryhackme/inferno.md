@@ -75,7 +75,7 @@ Accept-Encoding: gzip, deflate
 Accept: */*
 Connection: close
 Content-Type: application/x-www-form-urlencoded; charset=UTF-8
-Authorization: Basic YWRtaW46ZGFudGUx
+Authorization: Basic {username:password in base64}
 Cookie: 99300f2078c94e495d72b82a732ea6db=gu0fv4ear8rsifistrnrcnes1o
 Content-Length: 140
 
