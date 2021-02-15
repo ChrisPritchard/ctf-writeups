@@ -43,7 +43,7 @@ In the home directory was dante's folder, with the local.txt file being unreadab
 
 At this point I dropped the exploit shell and just ssh'd in, getting the first flag.
 
-Getting to root was easy: `sudo -l` revealed the user could run `/usr/bin/tee` as root without a password (even though I had the password). Tee sends its input to two outputs, and can both write and append. Being able to use it as root means I could use it to append to the `passwd` file, and I used a handy entry I keep around for just such an occasion which i put into a file called pass: `cat pass | sudo /usr/bin/tee -a /etc/passwd` with pass containing: `user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash` (which has password `pass123`).
+Getting to root was easy: `sudo -l` revealed the user could run `/usr/bin/tee` as root without a password (even though I had the password). Tee sends its input to two outputs, and can both write and append. Being able to use it as root means I could use it to append to the `passwd` file, and I used a handy entry I keep around for just such an occasion which I put into a file called pass: `cat pass | sudo /usr/bin/tee -a /etc/passwd` with pass containing: `user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash` (which has password `pass123`).
 
 Once done, I just `su user3` with `pass123` to escalate to root. The final proof.txt was in /root. Easy.
 
