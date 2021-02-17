@@ -65,11 +65,17 @@ Aside from this, the shell was actually pretty robust. `ls -laR /root` for examp
   
 8. the other thing that jumped out from `/root` was the presence of a `.git` folder. 'deleted' and git was pretty obvious :)
 
-> here i did something a bit silly, but interesting enough to document. i figured i needed to pull the .git folder back to my host so I could explore it, but how?
+> Here I did something a bit silly, but interesting enough to document. 
+> 
+> I figured i needed to pull the .git folder back to my host so I could explore it, but how?
+> 
 > `tar -cf gitar /root/.git` would create a file, and then I tried using `base64 /root/gitar` but it was too large, and timed out the request
-> instead I repeated these steps, but focused on the objects subdirectory of .git, which actually contains the commits
-> this worked and I got the tar back to my machine as base64. to hydrate it, I created a new git repo via git init, copied objects inside, and then could use git log / git checkout as normal (albeit with some warnings about dangling commits0.
-> ultimately silly though, it was far easier just to do this on the remote machine
+> 
+> Instead I repeated these steps, but focused on the objects subdirectory of .git, which actually contains the commits
+> 
+> This worked and I got the tar back to my machine as base64. to hydrate it, I created a new git repo via git init, copied objects inside, and then could use git log / git checkout as normal (albeit with some warnings about dangling commits).
+> 
+> Ultimately silly though, it was far easier just to do this on the remote machine
 
 9. git can be targetted to a given folder via `--git-dir`. so, with this, i used url to get the git history: `http://api-dev-backup:8080/exif?url=;git+--git-dir+/root/.git+log`
 10. from that I saw a commit where the 'insecure' files were added, and I checked out that commit: `http://api-dev-backup:8080/exif?url=;git+--git-dir+/root/.git+checkout+[redacted]`
