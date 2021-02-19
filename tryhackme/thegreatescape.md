@@ -8,7 +8,7 @@ Really fun room, though it took me a while. Purposefully designed to render some
 
 ## First steps with Recon
 
-1. enumeration revealed 22 and 80. version scanning took a *while*, which later was discovered because that 22 port is running endlessh, a ssh tarpit.
+1. enumeration revealed 22 and 80. version scanning took a *while*, which later I discovered was because that 22 port is running endlessh, a ssh tarpit.
 2. on 80 was a photo website, abd basic enumeration revealed:
   - it had two links, courses and admin, both of which redirected to a login page. there was a signup link that was disabled. 
   - requests to login went via a /api/login method. /api/ had nothing to see here.
@@ -30,13 +30,16 @@ so, robots. its content was:
   
 1. on exif-util i found a page that allowed uploading images or fetching them from a url. a proper image would render the exif data for that image. i went down a rabbit hole with this, trying a XXE exploit by putting valid XMP-xml in the XMP tags of a jpg. to do this i used a tool like https://github.com/BuffaloWill/oxml_xxe, but I was unsuccessful.
 2. when fetching from a url, I found I could fetch from the site itself. importantly, if the url was NOT an image, it returned the content verbatim. So... SSRF. However I couldn't use it to fetch anything but a url.
-3. This was where I got to after the first hour. Many hours later (took me a while to discover ffuf was ruined by 503s), and obsessed with that .bak.txt rule plus the statement that devs leave their backups around (which was the hint), I eventually tried /exif-util.bak.txt
+3. This was where I got to after the first hour. Many hours later (took me a while to discover ffuf was ruined by 503s), and obsessed with that .bak.txt rule plus the statement that devs leave their backups around (which was the hint), I eventually tried `/exif-util.bak.txt`...
 
 Damnit. Soo easy it was hard to find :D
 
-4. The result was what was probably the vue template for an older version of the tool. In there was one important line: the url it used: `const response = await this.$axios.$get('http://api-dev-backup:8080/exif' ... etc ...`
+4. The backup looked like the vue template for an older version of the tool. In there was one important line: the url it used: `const response = await this.$axios.$get('http://api-dev-backup:8080/exif' ... etc ...`
 5. 8080 is not exposed on the machine, but i didn't try that anyway. Instead I used this with the SSRF from before, and sure enough I got a response! Here is the request (using the API that the exif-util used: `GET /api/exif?url=http://api-dev-backup:8080/exif`.
-6. playing around with this I eventually discovered that passing a malformed or blank url gave a very important message: this `GET /api/exif?url=http://api-dev-backup:8080/exif?url=` returned an error saying something like 'curl needs a url passed to it'. This immediately said 'os injection' and sure enough, I eventually got the golden text proving this when I used the url: `GET /api/exif?url=http://api-dev-backup:8080/exif?url=;id`. This would error curl as before and then print the id result out.
+
+> NOTE: at the time I did this, I discovered the above step doesn't work if you are not a tryhackme subscriber - discovered when a friend tried the room with a free account. Hopefully this is/has been fixed because this is an awesome room.
+
+7. Playing around with this I eventually discovered that passing a malformed or blank url gave a very important message: this `GET /api/exif?url=http://api-dev-backup:8080/exif?url=` returned an error saying something like 'curl needs a url passed to it'. This immediately said 'os injection' and sure enough, I eventually got the golden text proving this when I used the url: `GET /api/exif?url=http://api-dev-backup:8080/exif?url=;id`. This would error curl as before and then print the id result out.
 
 Exploring with the RCE I found out several things:
 
