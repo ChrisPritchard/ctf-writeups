@@ -83,7 +83,7 @@ Once an idea is gained, generate the trace string: find pattern_create.rb from t
 
 When this fails, in immunity, run `!mona findmsp -distance 2400` matching the length there. This will return the offset in the log ("EIP contains normal pattern : blah (offset <here>)")
 
-2. Work out bad characters. Run `!mona bytearray -b "\x00"` to generate a big character string. This will create a bin file and a txt file, the text file containing a set of char options. Send this payload (resetting the exe in immunity). 
+2. Work out bad characters. Run `!mona bytearray -b "\x00"` to generate a big character string. This will create a bin file and a txt file, the text file containing a set of char options. Send this payload (resetting the exe in immunity), prefixed by the offset. E.g. if the payload is named buf, and the offset is 534, then send `"A" * 534 + buf`. 
 
 Take the value out of the ESP register when it crashes, and then add to a mona command like so: `!mona compare -f c:\moda\oscp\bytearray.bin -a 0186FA30`, with the path to generated bin and the provided address in there. This will run and either return 'unmodified' in red, or a set of 'possibly bad characters'.
 
