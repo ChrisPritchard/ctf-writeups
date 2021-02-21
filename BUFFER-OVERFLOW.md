@@ -161,7 +161,7 @@ The instructions here are cobbled together from two sources:
     - Press the 'play' button or F9 to run the program. The 'rewind' icon or Shift+F2 is restart (it will restart paused).
     - the main windows used are 'CPU' which has four panes, and 'Log data'. There is also the command bar at the bottom, where you can invoke mona for example, and the results will show in log data. Otherwise CPU is what I keep up and maximised
 
-3. Proceed to fail the program with your test string. Immunity will flash and pause when the program has crashed. On the CPU pain you are looking for the EIP value. This should contain a number of overritted characters - copy this and calculate the offset with `pattern_offset.rb` as under Linux. Note that grabbing the EIP rather than the RBP - we are not overriting the return address here, rather we are forcing given command to be executed.
+3. Proceed to fail the program with your test string. Immunity will flash and pause when the program has crashed. On the CPU pain you are looking for the EIP value. This should contain a number of overwritten characters - copy this and calculate the offset with `pattern_offset.rb` as under Linux. Note that grabbing the EIP rather than the RBP - we are not overwriting the return address here, rather we are forcing a given command to be executed.
 
 4. Next, use mona to find the command we want to execute, specifically a `JMP ESP` call. From the command bar, run `!mona jmp -r esp`. The output will be in the log data window. For my test I had two entries - either could be used. Take the memory address (e.g. 0x080414c3) and reverse it into a string (e.g. `"\xc3\x14\x04\x08"`).
 
