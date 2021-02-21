@@ -1,4 +1,4 @@
-# Buffer Overflow theory
+# Buffer Overflow theory - 1
 
 Based on experiences from TryHackMe room https://tryhackme.com/room/binex, I need to get better at this, so here is a mini writeup for that portion of the room.
 
