@@ -109,7 +109,7 @@ This was probably the hardest, and almost caused me to give up. I spent hours on
 
 1. the site showed a massive list of metasploit modules, and initially had no obvious forms of attack
 2. eventually, while trying to trigger an error, I mangled its session cookie. this triggered an error that said 'pickle.loads' failed
-3. pickle is a python object serialiser/deserialisation technique, and I had actually encountered it in a [recent attack room on tryhackme](tryhackme.com/room/peakhill)
+3. pickle is a python object serialiser/deserialisation technique, and I had actually encountered it in a [recent attack room on tryhackme](https://tryhackme.com/room/peakhill)
 4. soon enough I had RCE on the server via this technique (you can execute a command when it deserialises and object), but where was the flag?
 5. it didn't take me long to find it - [8888-app.py file here](./8888-app.py) shows what they did. The flag's contents were loaded into memory and the flag itself deleted.
 
