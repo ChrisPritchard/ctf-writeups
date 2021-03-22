@@ -32,9 +32,9 @@ I used `ldapdomaindump 10.10.12.162 -u "LAB.ENTERPRISE.THM\nik" -p "<redacted>" 
 
 Neither nik nor corporate-temp could log in over RDP, so moving on.
 
-## SPN
+## SPN / Kerberoasting
 
-This was the thing I required a tip for: I had never heard of SPNs before.
+This was the thing I required a tip for: I had never heard of SPNs before / andor conducted kerberoasting remotely.
 
 With these two users, nik and corporate-temp, I used the command `python2 ./GetUserSPNs.py LAB.ENTERPRISE.THM/contractor-temp:redacted` to list service principle names. It revealed one for a user name 'bitbucket'. Using the same command with `-request` got me a hash, which I then cracked with hashcat via `hashcat -m 13100 hash rockyou.txt` to get the bitbucket user's password.
 
