@@ -2,7 +2,7 @@
 
 # THM attack box setup
 # intended to be copy pasted into the shell, or run in one command via:
-#   curl url | bash
+#   curl https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm-setup.sh | bash
 
 echo link wordlists local
 ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
