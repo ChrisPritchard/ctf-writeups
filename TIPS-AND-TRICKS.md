@@ -10,6 +10,7 @@ Just various bits of script and techniques I've found useful.
 - Linpeas: https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh
 - Static binaries: https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64
 - passwd user to add (pass123): `user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash`
+- ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 
 ## Chisel reverse socks proxy
 
