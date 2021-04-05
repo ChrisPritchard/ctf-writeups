@@ -14,8 +14,6 @@ wget https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-
 # quick commands
 echo "docker run -it --rm --name rustscan rustscan/rustscan:latest -a \$1 -- -sV" > rustscan.sh
 chmod +x rustscan.sh
-echo "python3 -m http.server 1234" > webserver.sh
-chmod +x webserver.sh
 
 # tool download scripts
 echo "echo getting ffuf... && go get -u github.com/ffuf/ffuf" > get-ffuf.sh
