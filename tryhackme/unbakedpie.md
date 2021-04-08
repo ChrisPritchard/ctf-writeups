@@ -56,5 +56,3 @@ sudo -l as oliver revealed `(root) SETENV: NOPASSWD: /usr/bin/python /opt/docker
 The setenv flag is a giveaway here: it allows me to set PYTHONPATH when running sudo, which meant if `dockerScript.py` contained any import statements, I could easily escalate to root. Sure enough, `import docker` meant I just put `import pty; pty.spawn('/bin/bash')` into docker.py, and then ran `sudo PYTHONENV=/home/oliver/ /usr/bin/python /opt/dockerScript.py` to get an instant root shell.
 
 The final flag was in /root as normal :)
-
-Th
