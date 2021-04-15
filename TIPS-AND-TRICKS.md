@@ -11,10 +11,10 @@ My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm
 
 ## Creating authorized keys
 
-1. create the .ssh folder using mkdir
-2. echo your public key into .ssh/authorized_keys
-3. chmod 700 ~/.ssh
-4. chmod 600 ~/.ssh/authorized_keys
+1. create the `.ssh` folder using mkdir
+2. echo your public key into `.ssh/authorized_keys`
+3. `chmod 700 ~/.ssh`
+4. `chmod 600 ~/.ssh/authorized_keys`
 
 ## Chisel reverse socks proxy
 
