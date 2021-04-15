@@ -9,6 +9,13 @@ My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm
 - ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 - listen for pings: `tcpdump -i eth0 icmp`
 
+## Creating authorized keys
+
+1. create the .ssh folder using mkdir
+2. echo your public key into .ssh/authorized_keys
+3. chmod 700 ~/.ssh
+4. chmod 600 ~/.ssh/authorized_keys
+
 ## Chisel reverse socks proxy
 
 Useful for pivoting, opens a socks proxy from the target to your attack box, basically so the attack box has a proxy to the target's network.
