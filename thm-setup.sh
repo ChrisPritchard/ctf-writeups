@@ -8,6 +8,9 @@ echo "linking wordlists locally"
 ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
 ln -s /usr/share/wordlists/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt directory-list-2.3-medium.txt
 
+echo .git > dirwordlist.txt
+cat directory-list-2.3-medium.txt >> dirwordlist.txt
+
 echo "linpeas local copy"
 wget -q https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh
 
