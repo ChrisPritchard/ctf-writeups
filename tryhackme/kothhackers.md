@@ -33,3 +33,7 @@ gcrawford:Gerard B. Crawford:Exposing crypto keys, weak password
 Exposing the company's cryptographic keys is a disciplinary offense.
 Eugene Belford, CSO
 ```
+
+## Flag 2: CSS flag
+
+On the website, in the css file, is the second flag: `thm{b63670f7192689782a45d8044c63197f}`
