@@ -2,7 +2,7 @@
 
 Just various bits of script and techniques I've found useful.
 
-My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm-setup.sh) for THM Attack Boxes: `curl https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm-setup.sh | bash`
+My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm-setup.sh) for THM Attack Boxes: `curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm-setup.sh | bash`
 
 - Static binaries: https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64
 - passwd user to add (pass123): `user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash`
