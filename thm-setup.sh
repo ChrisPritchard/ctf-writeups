@@ -1,7 +1,6 @@
 #! /bin/bash
 
 echo "-- THM attack box setup --" 
-echo ""
 # intended to be copy pasted into the shell, or run in one command via:
 #   curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm-setup.sh | bash
 
