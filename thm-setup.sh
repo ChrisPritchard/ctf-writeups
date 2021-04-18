@@ -21,13 +21,13 @@ chmod +x rustscan.sh
 echo "tool download scripts"
 echo "echo getting ffuf... && go get -u github.com/ffuf/ffuf" > get-ffuf.sh
 chmod +x get-ffuf.sh
-echo "wget https://github.com/jpillora/chisel/releases/download/v1.7.6/chisel_1.7.6_linux_amd64.gz && gunzip chisel_1.7.6_linux_amd64.gz && mv chisel_1.7.6_linux_amd64 chisel && chmod +x chisel" > get-chisel-linux.sh
+echo "wget -q https://github.com/jpillora/chisel/releases/download/v1.7.6/chisel_1.7.6_linux_amd64.gz && gunzip chisel_1.7.6_linux_amd64.gz && mv chisel_1.7.6_linux_amd64 chisel && chmod +x chisel" > get-chisel-linux.sh
 chmod +x get-chisel-linux.sh
-echo "wget https://github.com/jpillora/chisel/releases/download/v1.7.6/chisel_1.7.6_windows_amd64.gz && gunzip chisel_1.7.6_windows_amd64.gz && mv chisel_1.7.6_windows_amd64 chisel.exe" > get-chisel-windows.sh
+echo "wget -q https://github.com/jpillora/chisel/releases/download/v1.7.6/chisel_1.7.6_windows_amd64.gz && gunzip chisel_1.7.6_windows_amd64.gz && mv chisel_1.7.6_windows_amd64 chisel.exe" > get-chisel-windows.sh
 chmod +x get-chisel-windows.sh
 
 echo "static binary download scripts"
-echo "wget https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/nmap && wget https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/ncat && wget https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat" > get-static-binaries.sh
+echo "wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/nmap && wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/ncat && wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat" > get-static-binaries.sh
 chmod +x get-static-binaries.sh
 
 echo "simple php webshell.php"
