@@ -4,11 +4,11 @@ https://tryhackme.com/room/vulnnetdotjar
 
 Oof, this room took a lot longer than it should have, I think. I really struggled with the initial foothold (not helped by the room saying it should have been easy, haha).
 
-Recon showed two ports, 8009 and 8080. On 8080 was a tomcat instance, so I immediately though of the war deploy hack, but the manager interface was protected by basic auth. I ran through a bunch of default creds for this, tried hitting it with hydra and even metasploit's enum function (I usually avoid metasploit just because its too magic), but no dice.
+Recon showed two ports, `8009` and `8080`. On `8080` was a tomcat instance, so I immediately though of the war deploy hack, but the manager interface was protected by basic auth. I ran through a bunch of default creds for this, tried hitting it with hydra and even metasploit's enum function (I usually avoid metasploit just because its too magic), but no dice.
 
-8009 is the 'ajp' port, sort of a different protocol way to access the admin interface. A few resources I'd read only mentioned it insofar as you can use it to access tomcat if 8080 is blocked, which wasn't much use. Hmm. I figured it being exposed though, as one of only *two* ports, must be important.
+`8009` is the 'ajp' port, sort of a different protocol way to access the admin interface. A few resources I'd read only mentioned it insofar as you can use it to access tomcat if `8080` is blocked, which wasn't much use. Hmm. I figured it being exposed though, as one of only *two* ports, must be important.
 
-An hour or so of banging myhead, and I did a bit more research before stumbling onto [Ghostcat](https://www.securityweek.com/apache-tomcat-affected-serious-ghostcat-vulnerability) - a vulnerability in ajp that provides somewhat restricted but still potentially devastating local file inclusion. To test this, I hit up exploit db and found this python 2 script: https://www.exploit-db.com/exploits/48143
+An hour or so of banging my head, and I did a bit more research before stumbling onto [Ghostcat](https://www.securityweek.com/apache-tomcat-affected-serious-ghostcat-vulnerability) - a vulnerability in ajp that provides somewhat restricted but still potentially devastating local file inclusion. To test this, I hit up exploit db and found this python 2 script: https://www.exploit-db.com/exploits/48143
 
 Grabbing this and running it as is (`python2 ghostcat.py 10.10.104.169`) pulled out the `WEB-INF/web.xml` file, which contained the following text:
 
