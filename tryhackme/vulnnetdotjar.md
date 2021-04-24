@@ -33,7 +33,7 @@ GUI access is disabled for security reasons.
 
 Great! I had creds... but these didn't work for the manager interface. They did work for the host-manager though, and thus went the next hour as I went down a dead end. Specifically, I tried following this guide: https://www.certilience.fr/2019/03/tomcat-exploit-variant-host-manager/, but couldn't get it to work. Turns out, it only works if a number of configurations have been made to, for example, allow tomcat to host from remote servers which didn't appear to be the case.
 
-So I was stuck again... until I read the above more slowly. The GUI is disabled... but in my wanderings and enumeration of tomcats docs I found it had a ... text interface? basically a simplistic api. That is, /manager/html is the standard manager url, but */manager/text* performs basically the same purpose without a gui! Sure enough, by accessing /manager/text/list I got a list of deployed applications.
+So I was stuck again... until I read the above more slowly. The GUI is disabled... but in my wanderings and enumeration of tomcats docs I found it had a ... text interface? basically a simplistic api. That is, `/manager/html` is the standard manager url, but */manager/text* performs basically the same purpose *without a gui*! Sure enough, by accessing `/manager/text/list` I got a list of deployed applications.
 
 Ok, so back to using the standard war exploit, finally :)
 
