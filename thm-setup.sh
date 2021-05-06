@@ -6,7 +6,7 @@ echo "-- THM attack box setup --"
 
 echo "linking wordlists locally"
 ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
-(echo ".git"; cat /usr/share/wordlists/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt) > dirwordlist.txt
+(echo ".git"; grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt) > dirwordlist.txt
 
 echo "linpeas & les local copies"
 wget -q https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh
