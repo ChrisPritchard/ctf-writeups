@@ -35,7 +35,7 @@ A fun room, as are all the rooms in the vulnnet series! This one covered a bunch
 
 7. Using `rsync -av rsync://rsync-connect@ip/files .` I was able to download what was apparently the 'sys-internal' user's home folder, which gave me the user flag. I generated a ssh key, then used rsync to send it via `rsync -v ~/.ssh/id_rsa.pub rsync://rsync-connect@ip/files/sys-internal/.ssh/authorized_keys`, which allowed me to ssh in as sys-internal.
 
-8. On the box, the one thing that stood out was a `/TeamCity` installation. In there, under /logs, was a catalina.out log file I could read. At the end of this was a super user authentication token.
+8. On the box, the one thing that stood out was a `/TeamCity` installation, running as root. In there, under /logs, was a catalina.out log file I could read. At the end of this was a super user authentication token.
 
 9. To access the TeamCity interface I used chisel, forwarding port 8111 to my attack box so I could access the TeamCity admin page. I logged in using the super user token as the password with a blank username.
 
