@@ -100,7 +100,7 @@ L165:   goto L169
 (original string specification)
 
 ```
-invokestatic Method '1' a (II)Ljava/lang/String; 
+L169:   invokestatic Method '1' a (II)Ljava/lang/String; 
 L172:   goto L176 
 ```
 
