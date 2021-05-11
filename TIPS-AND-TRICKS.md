@@ -9,6 +9,11 @@ My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm
 - ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 - listen for pings: `tcpdump -i eth0 icmp`
 
+## Top external resources
+
+- [HackTricks by Carlos Polop](https://book.hacktricks.xyz/)
+- [Binary Exploitation notes](https://ir0nstone.gitbook.io/notes/)
+
 ## Creating authorized keys
 
 1. create the `.ssh` folder using mkdir
