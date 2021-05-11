@@ -72,11 +72,11 @@ that `DAT_004cad0b` above, when followed, led to the password in a sequence of p
 
 ## Part 2: Pwning 'pwn_me'
 
-On the box was the user flag, and a suid binary running as the user `binexgod`, called `pwn_me`. When run, this would tell you the `system` location then wait for input. The system location changed each time - ASLR (address space layout randomisation) eas enabled on the box.
+On the box was the user flag, and a suid binary running as the user `binexgod`, called `pwn_me`. When run, this would tell you the `system` location then wait for input. The system location changed each time - ASLR (address space layout randomisation) was enabled on the box.
 
 This stumped me for a bit - as I said, I am not experienced at binex. I worked out the buffer size was roughly 28 characters and tried, like a blind caveman, shoving the system address into the overwrite position without luck. I went off to do some research, specifically around 'system' and binex.
 
-This led me to ret2system, or more generally **ret2libc**, and I found a tutorial that proved excellent: https://ir0nstone.gitbook.io/notes/types/stack/return-oriented-programming/ret2libc. This was exactly what I needed - in fact, pwn tools was already on the box! Except... ASLR was already enabled? Meaning that I couldn't just hardcode the location of libc then add offsets...
+This led me to ret2system, or more generally **ret2libc**, and I found a tutorial that proved excellent: https://ir0nstone.gitbook.io/notes/types/stack/return-oriented-programming/ret2libc. This was exactly what I needed - in fact, pwn tools was already on the box! Except... ASLR was enabled? Meaning that I couldn't just hardcode the location of libc then add offsets...
 
 In the end, perhaps more complicated than I needed to be, I worked out the difference in offset between system and '/bin/sh' in libc, then read the location of system from the program's out and added the offset as needed. The difference between the two was different on my test machine compared to the box, so after proving the method I had to tweak it before final exploitation. To calculate the differences I used `strings -a -t x /lib32/libc.so.6 | grep /bin/sh` to get the strings location, subbed from that `readelf -s /lib32/libc.so.6 | grep system` using a hex calculator, then added that into the script to add to the read system value. The final script (with my host machine's offset, not the targets) was:
 
