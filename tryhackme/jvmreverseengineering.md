@@ -97,6 +97,8 @@ L163:   bipush 77
 L165:   goto L169 
 ```
 
+(original string specification)
+
 ```
 invokestatic Method '1' a (II)Ljava/lang/String; 
 L172:   goto L176 
@@ -111,6 +113,8 @@ L182:   ldc 730770734
 L184:   goto L189 
 ```
 
+(nonsense code)
+
 ```
 L189:   ldc -1822908253 
 L191:   ixor 
@@ -119,6 +123,8 @@ L192:   lookupswitch
             -225155977 : L220 
             default : L426 
 ```
+
+(more nonsense code - the other two branches aside from L220 were dead ends)
 
 ```
 L220:   goto L224
@@ -129,7 +135,7 @@ L224:   invokestatic Method '0' c (Ljava/lang/String;)Ljava/lang/String;
 L227:   goto L231 
 ```
 
-finally. The above `invokestatic` was what I needed. Returning to the final bipush I had changed:
+Finally. The above `invokestatic` was what I needed. Returning to the final bipush I had changed:
 
 ```
 L353:   iconst_1 
