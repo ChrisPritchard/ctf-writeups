@@ -70,7 +70,7 @@ In the end, the solution was simple: I reopened Ghidra, and re-examined the bina
 
 that `DAT_004cad0b` above, when followed, led to the password in a sequence of plain ascii bytes. Good job Ghidra, got there in the end :)
 
-## pwn_me
+## Part 2: Pwning `pwn_me`
 
 On the box was the user flag, and a suid binary running as the user `binexgod`, called `pwn_me`. When run, this would tell you the `system` location then wait for input. The system location changed each time - ASLR (address space layout randomisation) eas enabled on the box.
 
@@ -102,7 +102,7 @@ p.interactive()
 
 This worked and I had privesc and got binexgod's flag :)
 
-## root
+## Part 3: Privesc to Root
 
 The final privesc was a bit of a throwaway: there was another suid binary called `vuln`, which had the source file besides it:
 
