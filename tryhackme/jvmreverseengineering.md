@@ -15,7 +15,7 @@ I tried a few de-obfuscation tools, without luck, so knuckled down. What I saw w
 - `4, 87` the default 'please supply a param' and 
 - `0, 100` the password I was looking for, but it was wrapped by a method called `c`. 
 
-However, I couldn't reverse engineer the scrambling - tbh, I suspect jd-gui had managed the function code, so the task was impossible this way.
+However, I couldn't reverse engineer the scrambling - tbh, I suspect jd-gui had mangled the function code, so the task was impossible this way.
 
 Looking around, I found a decompiler that went straight from jar or class to bytecode, rather than attempting to form valid java: [Krakatau](https://github.com/Storyyeller/Krakatau). This was great: I ran this as `python Krakatau/disassemble.py -out disassembled.zip -roundtrip BasicStringObfuscation.jar` and I got three `.j` files, 0, 1 and 2, which contained pure bytecode (basically java assembly). Furthermore, I could take these and then run `python Krakatau/assemble.py -out result.jar -r disassembled/` to get a working jar file.
 
