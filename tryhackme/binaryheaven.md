@@ -50,7 +50,7 @@ Following that username pointer back showed a block of bytes a bit like this:
            ... etc
 ```
 
-If you look closely, you can see every fourth byte looks a bit like its in the ascii range, which kind of matches with this code from the check: `username + (long)local_c * 4`, e.g. take the index we are up to, multiply it by four, and check against that byte. Furthermore, there was a `^ 4` permutation too. I took the bytes from the above block, put them in cyberchef, then messed with XORing until I got the username (it was obvious when the string was unmangled enough to resemble and english word).
+If you look closely, you can see every fourth byte looks a bit like its in the ascii range, which kind of matches with this code from the check: `username + (long)local_c * 4`, e.g. take the index we are up to, multiply it by four, and check against that byte. Furthermore, there was a `^ 4` permutation too. I took the bytes from the above block, put them in cyberchef, then messed with XORing until I got the username (it was obvious when the string was unmangled enough to resemble an english word).
 
 ### Go Binary 'angel_B'
 
