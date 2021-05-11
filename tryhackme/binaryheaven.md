@@ -10,7 +10,7 @@ A scan of the box revealed just a single port, 22. The room started with giving 
 
 These two binaries, A and B, contained the ssh username and password respectively. They were in C and Go, i.e. angel_A was 17kb and angel_B was ~2mb :D
 
-### angel_A
+### C Binary 'angel_A'
 
 Opening this in ghidra showed code similar to the following:
 
@@ -52,7 +52,7 @@ Following that username pointer back showed a block of bytes a bit like this:
 
 If you look closely, you can see every fourth byte looks a bit like its in the ascii range, which kind of matches with this code from the check: `username + (long)local_c * 4`, e.g. take the index we are up to, multiply it by four, and check against that byte. Furthermore, there was a `^ 4` permutation too. I took the bytes from the above block, put them in cyberchef, then messed with XORing until I got the username (it was obvious when the string was unmangled enough to resemble and english word).
 
-### angel_B
+### Go Binary 'angel_B'
 
 This challenge was a lot harder. Being Go, opening it in ghidra showed a huge mess, and even though I found where the input is checked, it used some sort of memory check rather than string compare to do it. Furthermore, in a go binary, strings are not stored just as null terminated byte sets: instead they're all in one huge blog which, since a given go binary includes a lot of its standard library, has a huge mass of other strings in there too.
 
@@ -70,7 +70,7 @@ In the end, the solution was simple: I reopened Ghidra, and re-examined the bina
 
 that `DAT_004cad0b` above, when followed, led to the password in a sequence of plain ascii bytes. Good job Ghidra, got there in the end :)
 
-## Part 2: Pwning `pwn_me`
+## Part 2: Pwning 'pwn_me'
 
 On the box was the user flag, and a suid binary running as the user `binexgod`, called `pwn_me`. When run, this would tell you the `system` location then wait for input. The system location changed each time - ASLR (address space layout randomisation) eas enabled on the box.
 
