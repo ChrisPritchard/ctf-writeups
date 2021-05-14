@@ -2,7 +2,7 @@
 
 https://tryhackme.com/room/kothhackers
 
-Box is themed after the Hackers movie, nice. This room has nine flags, but the THM page won't accept them so I'm just tracking them and how they were found here.
+Box is themed after the Hackers movie, nice. This room has nine flags, but the THM page won't accept them so I'm just tracking them and how they were found here. Normally I would not put any flags in my writeups.
 
 Port scan:
 
