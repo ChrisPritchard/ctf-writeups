@@ -35,6 +35,8 @@ Local proxy through remote host: You want to route network traffic through a rem
 
 `ssh -C2qTnN -D 1080 user@target.host`
 
+(args above are compression level, quiet, run in background and no command should be run)
+
 ## Chisel reverse socks proxy
 
 Useful for pivoting, opens a socks proxy from the target to your attack box, basically so the attack box has a proxy to the target's network.
