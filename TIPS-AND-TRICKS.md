@@ -23,19 +23,23 @@ My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm
 
 ## SSH Proxies
 
-local port forwarding: the target host 192.168.0.100 is running a service on port 8888, and you want that service available on the localhost port 7777
+**local port forwarding**: the target host 192.168.0.100 is running a service on port 8888, and you want that service available on the localhost port 7777
 
 `ssh -L 7777:localhost:8888 user@192.168.0.100`
 
-remote port forwarding: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
+**remote port forwarding**: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
 
 `ssh -R 12340:localhost:9999 user@192.168.0.100`
 
-Local proxy through remote host: You want to route network traffic through a remote host target.host, so you create a local socks proxy on port 12001 and configure the SOCKS5 settings to localhost:1080
+**Local proxy** through remote host: You want to route network traffic through a remote host target.host, so you create a local socks proxy on port 12001 and configure the SOCKS5 settings to localhost:1080
 
 `ssh -C2qTnN -D 1080 user@target.host`
 
 (args above are compression level, quiet, run in background and no command should be run)
+
+**Double pivoting**, opening a socks proxy on a remote machine and forwarding that proxy so its accessible locally:
+
+`ssh -tt -L8080:localhost:8157 sean@10.11.1.251 ssh -t -D 8157 mario@10.1.1.1 -p 222`
 
 ## Chisel reverse socks proxy
 
