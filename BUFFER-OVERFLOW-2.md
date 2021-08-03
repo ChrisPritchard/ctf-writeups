@@ -89,6 +89,8 @@ Take the value out of the ESP register when it crashes, and then add to a mona c
 
 Repeat step 2, adding those bad characters to \x00 above, and do so until unmodified is returned.
 
+> Bad characters affect the following bytes too. E.g., if you had a line like `Possibly bad chars: 01 02 03 04 07 08 2e 2f a0 a1`, its possible the bad characters are \x00, \x07, \x2e and \xa0, e.g. each character at the start of a run of sequential 'bad characters'.
+
 3. Find a jump esp command. This can be done in mona passing in the found bad characters, e.g. `!mona jmp -r esp -cpb "\x00\x07\x08\x2e\x2f\xa0\xa1"` Pick an address from the list.
 
 Once you have an address, reverse and hexify it. For example, 625011AF becomes \xAF\x11\x50\x62
