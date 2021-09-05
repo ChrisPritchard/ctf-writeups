@@ -71,3 +71,40 @@ To reveal the username and password I used `python2 -c "from Crypto.Util.number 
 
 I used the discovered creds on the 5752 service and was reward with a special string (presumably from secret.txt), though I was not sure of its use yet.
 
+Examing the source, the name of the variable the special string is stored in is 'directory', so I tried using it on the otherwise blank (Apache default pages) on the webport, but this failed. However, if I used it as a filename with the php extension (e.g. http://fortress:7331/<string>.php) I got access to the chapter 2 site, which contained the following source:
+    
+```html
+
+<html>
+<head>
+	<title>Chapter 2</title>
+	<link rel='stylesheet' href='assets/style.css' type='text/css'>
+</head>
+<body>
+	<div id="container">
+        <video width=100% height=100% autoplay>
+            <source src="./assets/flag_hint.mp4" type=video/mp4>
+        </video>
+
+
+<!-- Hmm are we there yet?? May be we just need to connect the dots -->
+
+<!--    <center>
+			<form id="login" method="GET">
+				<input type="text" required name="user" placeholder="Username"/><br/>
+				<input type="text" required name="pass" placeholder="Password" /><br/>
+				<input type="submit"/>
+			</form>
+		</center>
+-->
+
+    </div>
+
+</body>
+</html>    
+```
+    
+The mp4 file was a rick roll. In assets/style.css however was a base64 string that contained:
+    
+```This is journey of the great monks, making this fortress a sacred world, defending the very own of their kinds, from what it is to be unleashed... The only one who could solve their riddle will be granted a KEY to enter the fortress world. Retrieve the key by COLLIDING those guards against each other.```
+    
