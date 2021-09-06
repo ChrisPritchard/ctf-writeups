@@ -16,9 +16,9 @@ PORT     STATE SERVICE REASON  VERSION
 7331/tcp open  http    syn-ack Apache httpd 2.4.18 ((Ubuntu))
 ```
 
-By accessing 5752 with `nc <ip> 5752` it presented a console based login form, but I didn't have creds.
+By accessing 5752 with `nc IP 5752` it presented a console based login form, but I didn't have creds.
 
-Accessing the ftp site with `ftp <ip> 5581` I was able to auth with anonymous access. Inside was a text file `marked.txt`:
+Accessing the ftp site with `ftp IP 5581` I was able to auth with anonymous access. Inside was a text file `marked.txt`:
 
 ```
 If youre reading this, then know you too have been marked by the overlords... Help memkdir /home/veekay/ftp I have been stuck inside this prison for days no light, no escape... Just darkness... Find the backdoor and retrieve the key to the map... Arghhh, theyre coming... HELLLPPPPPmkdir /home/veekay/ftp
@@ -77,7 +77,7 @@ I used the discovered creds on the 5752 service and was reward with a special st
 
 ## Web enum and SHA1 collisions
 
-Examing the source, the name of the variable the special string is stored in is 'directory', so I tried using it on the otherwise blank (Apache default pages) on the webport, but this failed. However, if I used it as a filename with the php extension (e.g. http://fortress:7331/<string>.php) I got access to the chapter 2 site, which contained the following source:
+Examing the source, the name of the variable the special string is stored in is 'directory', so I tried using it on the otherwise blank (Apache default pages) on the webport, but this failed. However, if I used it as a filename with the php extension (e.g. http://fortress:7331/SPECIALSTRING.php) I got access to the chapter 2 site, which contained the following source:
     
 ```html
 
@@ -114,7 +114,7 @@ The mp4 file was a rick roll. In assets/style.css however was a base64 string th
     
 ```This is journey of the great monks, making this fortress a sacred world, defending the very own of their kinds, from what it is to be unleashed... The only one who could solve their riddle will be granted a KEY to enter the fortress world. Retrieve the key by COLLIDING those guards against each other.```
     
-Additional enumeration revealed a second page, as above but with the html extension (e.g. http://fortress:7331/<string>.html). This appeared to contain source code for the PHP check:
+Additional enumeration revealed a second page, as above but with the html extension (e.g. http://fortress:7331/SPECIALSTRING.html). This appeared to contain source code for the PHP check:
 	
 ```html
 
@@ -190,7 +190,7 @@ Ultimately I used the two files from https://sha-mbles.github.io/, messageA and 
 	
 ## SSH Shenanigans & User flag
 	
-I was able to ssh in with this key, but ended up in a restricted, rbash shell. By exiting and reconnecting using `ssh -i h4rdy.key h4rdy@<ip> bash` I had a more functional shell.
+I was able to ssh in with this key, but ended up in a restricted, rbash shell. By exiting and reconnecting using `ssh -i h4rdy.key h4rdy@IP bash` I had a more functional shell.
 	
 `sudo -l` revealed h4rdy could run `cat` as the user `j4x0n`. This allowed me to read the latter users private ssh key, so I could then ssh in as j4x0n without any restrictions. j4x0n's home folder contained the **user.txt** flag.
 	
