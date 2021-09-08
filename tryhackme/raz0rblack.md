@@ -37,7 +37,7 @@ uments -include:c:\windows\ntds\`. This will put the backup in the user's docume
 
 With admin some flags are readable, and the system can be enumerated completely. However, there are flags in the lvetrova and xyan1d3 user folders which are encoded as powershell/.net secure strings: these can only be decoded as the user in question. lvetrova can be logged on via her hash just as admin. Then, running a command like the following will read the flag: `(Import-Clixml -Path ".\lvetrova.xml").GetNetworkCredential().Password`.
 
-Other flags are hex encoded, inside a dummy exe file, and in secret folders, `Program Files/Top Secret` and `Windows/trash`. The trash folder is intended to be accessed over smb, it looks, but can be opened directly via admin.
+Other flags are hex encoded, inside a dummy exe file, and in secret folders, `Program Files/Top Secret` and `Windows/trash`. The trash folder is intended to be accessed over smb, it looks, but can be opened directly via admin. Notably, the zip inside the trash folder may well contain the ntds.dit and system file required to dumb hashes without all the wbadmin malarkey above, haha.
 
 ## Getting files back to the kali box
 
