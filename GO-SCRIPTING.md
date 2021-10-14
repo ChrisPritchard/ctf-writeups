@@ -79,7 +79,7 @@ sending a file in a multipart form:
 ```golang
 body := &bytes.Buffer{}
 writer := multipart.NewWriter(body)
-part, _ := writer.CreateFormFile("application/x-php", filename)
+part, _ := writer.CreateFormFile("file", filename)
 part.Write([]byte(content))
 writer.Close()
 req, _ := http.NewRequest(http.MethodPost, host+"/import", body)
