@@ -74,6 +74,26 @@ req.Header.Add("Cookie", cookie)
 _, err = client.Do(req)
 ```
 
+sending a file in a multipart form:
+
+```golang
+body := &bytes.Buffer{}
+writer := multipart.NewWriter(body)
+part, _ := writer.CreateFormFile("application/x-php", filename)
+part.Write([]byte(content))
+writer.Close()
+req, _ := http.NewRequest(http.MethodPost, host+"/import", body)
+req.Header.Add("Content-Type", writer.FormDataContentType())
+req.Header.Add("Cookie", "PHPSESSID="+cookie)
+resp, _ := client.Do(req)
+
+if resp.StatusCode != 200 {
+	body, _ := ioutil.ReadAll(resp.Body)
+	html := string(body)
+	log.Fatal(html)
+}
+```
+
 reading response headers:
 
 ```go
