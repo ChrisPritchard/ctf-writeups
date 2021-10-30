@@ -1,5 +1,7 @@
 # Vulnnet: Active
 
+https://tryhackme.com/room/vulnnetactive
+
 I found this room very hard, with a bunch of new techniques I haven't seen before. So worth writing up.
 
 1. Enumeration reveals a bunch of ports, though notably no web port, ssh or rdp. Even though its a windows machine, the only interaction seems to be via SMB and an exposed Redis instance on 6379.
