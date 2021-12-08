@@ -1,0 +1,312 @@
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-12-03 18:16 UTC
+Nmap scan report for 172.17.23.149
+Host is up (0.0026s latency).
+Not shown: 65517 closed ports
+PORT      STATE SERVICE    VERSION
+80/tcp    open  http       Werkzeug httpd 2.0.1 (Python 3.9.7)
+|_http-server-header: Werkzeug/2.0.1 Python/3.9.7
+|_http-title: Metasploit CTF
+443/tcp   open  ssl/https  Apache/2.4.51 (Debian)
+| http-git:
+|   172.17.23.149:443/.git/
+|     Git repository found!
+|     Repository description: Unnamed repository; edit this file 'description' to name the...
+|_    Last commit message: More enthusiasm
+|_http-server-header: Apache/2.4.51 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+8080/tcp  open  http       WSGIServer 0.2 (Python 3.8.10)
+|_http-server-header: WSGIServer/0.2 CPython/3.8.10
+|_http-title: Cookies Galore
+10010/tcp open  rxapi?
+| fingerprint-strings:
+|   GenericLines:
+|     HTTP/1.1 400 Bad Request
+|   GetRequest:
+|     HTTP/1.0 200 OK
+|     X-Frame-Options: SAMEORIGIN
+|     X-XSS-Protection: 1; mode=block
+|     X-Content-Type-Options: nosniff
+|     X-Download-Options: noopen
+|     X-Permitted-Cross-Domain-Policies: none
+|     Referrer-Policy: strict-origin-when-cross-origin
+|     Link: </assets/application-b8c697e38f5ecf278f5ea80d758553eae08a5635194a002f5b5dc51db0ef1145.css>; rel=preload; as=style; nopush,</packs/js/application-e39138e5c24b0104f8e3.js>; rel=preload; as=script; nopush
+|     Content-Type: text/html; charset=utf-8
+|     ETag: W/"360d8508248069ab6b970ce62f75d80e"
+|     Cache-Control: max-age=0, private, must-revalidate
+|     Set-Cookie: ecd27562707897d59933ea23bf9520989ec9946493f6abf04c69ea0bfbefe41403c309e0c5f1a132176f5d66c5276551cdd28eeb1ae59d826272d2ef81aad07b0d0dfbb42abfc7dd8fb07b17f5094c46b88ccc799afa663b4880bb1fb8ee8d7cabe1837052f0e45fa7752a596e78617d6569fb1779ca90ea2fa9ac515075606d=yvWzNr6LBt4scPZoIdwBHeC4tpYbB7XyB3UKGEgugv8Ng841b4%2FBR
+|   HTTPOptions:
+|     HTTP/1.0 404 Not Found
+|     Content-Type: text/html; charset=UTF-8
+|     X-Request-Id: b7a55375-d518-480b-8cee-c87b4ea95458
+|     X-Runtime: 0.005494
+|     Content-Length: 1722
+|     <!DOCTYPE html>
+|     <html>
+|     <head>
+|     <title>The page you were looking for doesn't exist (404)</title>
+|     <meta name="viewport" content="width=device-width,initial-scale=1">
+|     <style>
+|     .rails-default-error-page {
+|     background-color: #EFEFEF;
+|     color: #2E2F30;
+|     text-align: center;
+|     font-family: arial, sans-serif;
+|     margin: 0;
+|     .rails-default-error-page div.dialog {
+|     width: 95%;
+|     max-width: 33em;
+|     margin: 4em auto 0;
+|     .rails-default-error-page div.dialog > div {
+|     border: 1px solid #CCC;
+|     border-right-color: #999;
+|     border-left-color: #999;
+|     border-bottom-color: #BBB;
+|     border-top: #B00100 solid 4px;
+|     border-top-left-radius: 9px;
+|     border-top-right-radius: 9px;
+|_    background-color: white
+11111/tcp open  http       Thin httpd
+|_http-server-header: thin
+| http-title: Web App
+|_Requested resource was http://172.17.23.149:11111/index
+12380/tcp open  http       Apache httpd 2.4.49 ((Debian))
+|_http-server-header: Apache/2.4.49 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+15000/tcp open  hydap?
+| fingerprint-strings:
+|   GenericLines:
+|     Welcome to the Student Database Management System!
+|     Time is 2021-12-03 18:16:40 +0000.
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|     Input:
+|     Error. Unrecognised choice: 0
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|     Input:
+|     Error. Unrecognised choice: 0
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|     Input:
+|   GetRequest:
+|     Welcome to the Student Database Management System!
+|     Time is 2021-12-03 18:16:51 +0000.
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|     Input:
+|     Error. Unrecognised choice: 0
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|     Input:
+|     Error. Unrecognised choice: 0
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|     Input:
+|   NULL:
+|     Welcome to the Student Database Management System!
+|     Time is 2021-12-03 18:16:40 +0000.
+|     Pick one of the following options:
+|     Create new student record
+|     Show student records
+|     Update an existing record
+|     Delete student record
+|     Exit
+|_    Input:
+15010/tcp open  http       Thin httpd
+|_http-server-header: thin
+| http-title: Site doesn't have a title (text/html;charset=utf-8).
+|_Requested resource was http://172.17.23.149:15010/index
+15122/tcp open  ssh        OpenSSH 8.6 (protocol 2.0)
+| ssh-hostkey:
+|   3072 30:06:8b:5a:9b:7c:1c:1c:93:7a:bb:57:0a:1a:e4:e0 (RSA)
+|   256 49:c0:84:75:38:b1:6b:50:4c:bd:37:77:c5:64:78:67 (ECDSA)
+|_  256 f6:07:cf:3a:4a:49:db:2e:3b:a8:84:4e:c4:19:12:0a (ED25519)
+20000/tcp open  http       SimpleHTTPServer 0.6 (Python 3.7.3)
+|_http-server-header: SimpleHTTP/0.6 Python/3.7.3
+|_http-title: Site doesn't have a title (text/html).
+20001/tcp open  microsan?
+| fingerprint-strings:
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, RPCCheck, RTSPRequest, SSLSessionReq, TLSSessionReq, TerminalServerCookie, X11Probe:
+|_    PyMissing game mode
+20022/tcp open  http       Apache httpd 2.4.51 ((Debian))
+|_http-server-header: Apache/2.4.51 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+20055/tcp open  http       Apache httpd 2.4.51 ((Debian))
+|_http-server-header: Apache/2.4.51 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+20123/tcp open  ssh        OpenSSH 8.6 (protocol 2.0)
+| ssh-hostkey:
+|   3072 83:a3:ad:9e:e5:d3:4c:c3:27:4f:22:47:3e:d4:4b:07 (RSA)
+|   256 83:33:6e:4a:04:b1:58:39:0f:fd:e4:1d:5e:53:46:2c (ECDSA)
+|_  256 2a:a5:66:1a:af:d6:e5:78:8a:51:91:17:e3:57:91:9a (ED25519)
+30033/tcp open  unknown
+| fingerprint-strings:
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, JavaRMI, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NCP, NotesRPC, RPCCheck, RTSPRequest, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, TerminalServerCookie, WMSRequest, X11Probe, afp, giop, ms-sql-s, oracle-tns:
+|_    [error] invalid input key
+30034/tcp open  http       SimpleHTTPServer 0.6 (Python 3.8.10)
+|_http-server-header: SimpleHTTP/0.6 Python/3.8.10
+|_http-title: Directory listing for /
+33337/tcp open  http-proxy Apache Traffic Server 7.1.1
+|_http-server-header: ATS/7.1.1
+|_http-title: Did not follow redirect to http://threeofhearts.ctf.net/
+35000/tcp open  http       Apache httpd 2.4.38 ((Debian))
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Ace of Diamonds
+4 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port10010-TCP:V=7.91%I=7%D=12/3%Time=61AA5F0E%P=x86_64-pc-linux-gnu%r(G
+SF:enericLines,1C,"HTTP/1\.1\x20400\x20Bad\x20Request\r\n\r\n")%r(GetReque
+SF:st,AF3,"HTTP/1\.0\x20200\x20OK\r\nX-Frame-Options:\x20SAMEORIGIN\r\nX-X
+SF:SS-Protection:\x201;\x20mode=block\r\nX-Content-Type-Options:\x20nosnif
+SF:f\r\nX-Download-Options:\x20noopen\r\nX-Permitted-Cross-Domain-Policies
+SF::\x20none\r\nReferrer-Policy:\x20strict-origin-when-cross-origin\r\nLin
+SF:k:\x20</assets/application-b8c697e38f5ecf278f5ea80d758553eae08a5635194a
+SF:002f5b5dc51db0ef1145\.css>;\x20rel=preload;\x20as=style;\x20nopush,</pa
+SF:cks/js/application-e39138e5c24b0104f8e3\.js>;\x20rel=preload;\x20as=scr
+SF:ipt;\x20nopush\r\nContent-Type:\x20text/html;\x20charset=utf-8\r\nETag:
+SF:\x20W/\"360d8508248069ab6b970ce62f75d80e\"\r\nCache-Control:\x20max-age
+SF:=0,\x20private,\x20must-revalidate\r\nSet-Cookie:\x20ecd27562707897d599
+SF:33ea23bf9520989ec9946493f6abf04c69ea0bfbefe41403c309e0c5f1a132176f5d66c
+SF:5276551cdd28eeb1ae59d826272d2ef81aad07b0d0dfbb42abfc7dd8fb07b17f5094c46
+SF:b88ccc799afa663b4880bb1fb8ee8d7cabe1837052f0e45fa7752a596e78617d6569fb1
+SF:779ca90ea2fa9ac515075606d=yvWzNr6LBt4scPZoIdwBHeC4tpYbB7XyB3UKGEgugv8Ng
+SF:841b4%2FBR")%r(HTTPOptions,75B,"HTTP/1\.0\x20404\x20Not\x20Found\r\nCon
+SF:tent-Type:\x20text/html;\x20charset=UTF-8\r\nX-Request-Id:\x20b7a55375-
+SF:d518-480b-8cee-c87b4ea95458\r\nX-Runtime:\x200\.005494\r\nContent-Lengt
+SF:h:\x201722\r\n\r\n<!DOCTYPE\x20html>\n<html>\n<head>\n\x20\x20<title>Th
+SF:e\x20page\x20you\x20were\x20looking\x20for\x20doesn't\x20exist\x20\(404
+SF:\)</title>\n\x20\x20<meta\x20name=\"viewport\"\x20content=\"width=devic
+SF:e-width,initial-scale=1\">\n\x20\x20<style>\n\x20\x20\.rails-default-er
+SF:ror-page\x20{\n\x20\x20\x20\x20background-color:\x20#EFEFEF;\n\x20\x20\
+SF:x20\x20color:\x20#2E2F30;\n\x20\x20\x20\x20text-align:\x20center;\n\x20
+SF:\x20\x20\x20font-family:\x20arial,\x20sans-serif;\n\x20\x20\x20\x20marg
+SF:in:\x200;\n\x20\x20}\n\n\x20\x20\.rails-default-error-page\x20div\.dial
+SF:og\x20{\n\x20\x20\x20\x20width:\x2095%;\n\x20\x20\x20\x20max-width:\x20
+SF:33em;\n\x20\x20\x20\x20margin:\x204em\x20auto\x200;\n\x20\x20}\n\n\x20\
+SF:x20\.rails-default-error-page\x20div\.dialog\x20>\x20div\x20{\n\x20\x20
+SF:\x20\x20border:\x201px\x20solid\x20#CCC;\n\x20\x20\x20\x20border-right-
+SF:color:\x20#999;\n\x20\x20\x20\x20border-left-color:\x20#999;\n\x20\x20\
+SF:x20\x20border-bottom-color:\x20#BBB;\n\x20\x20\x20\x20border-top:\x20#B
+SF:00100\x20solid\x204px;\n\x20\x20\x20\x20border-top-left-radius:\x209px;
+SF:\n\x20\x20\x20\x20border-top-right-radius:\x209px;\n\x20\x20\x20\x20bac
+SF:kground-color:\x20white");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port15000-TCP:V=7.91%I=7%D=12/3%Time=61AA5F0E%P=x86_64-pc-linux-gnu%r(N
+SF:ULL,F6,"\nWelcome\x20to\x20the\x20Student\x20Database\x20Management\x20
+SF:System!\nTime\x20is\x202021-12-03\x2018:16:40\x20\+0000\.\n\nPick\x20on
+SF:e\x20of\x20the\x20following\x20options:\n1\.\x20Create\x20new\x20studen
+SF:t\x20record\n2\.\x20Show\x20student\x20records\n3\.\x20Update\x20an\x20
+SF:existing\x20record\n4\.\x20Delete\x20student\x20record\n5\.\x20Exit\n\n
+SF:Input:\x20")%r(GenericLines,272,"\nWelcome\x20to\x20the\x20Student\x20D
+SF:atabase\x20Management\x20System!\nTime\x20is\x202021-12-03\x2018:16:40\
+SF:x20\+0000\.\n\nPick\x20one\x20of\x20the\x20following\x20options:\n1\.\x
+SF:20Create\x20new\x20student\x20record\n2\.\x20Show\x20student\x20records
+SF:\n3\.\x20Update\x20an\x20existing\x20record\n4\.\x20Delete\x20student\x
+SF:20record\n5\.\x20Exit\n\nInput:\x20\nError\.\x20Unrecognised\x20choice:
+SF:\x200\n\nPick\x20one\x20of\x20the\x20following\x20options:\n1\.\x20Crea
+SF:te\x20new\x20student\x20record\n2\.\x20Show\x20student\x20records\n3\.\
+SF:x20Update\x20an\x20existing\x20record\n4\.\x20Delete\x20student\x20reco
+SF:rd\n5\.\x20Exit\n\nInput:\x20\nError\.\x20Unrecognised\x20choice:\x200\
+SF:n\nPick\x20one\x20of\x20the\x20following\x20options:\n1\.\x20Create\x20
+SF:new\x20student\x20record\n2\.\x20Show\x20student\x20records\n3\.\x20Upd
+SF:ate\x20an\x20existing\x20record\n4\.\x20Delete\x20student\x20record\n5\
+SF:.\x20Exit\n\nInput:\x20")%r(GetRequest,272,"\nWelcome\x20to\x20the\x20S
+SF:tudent\x20Database\x20Management\x20System!\nTime\x20is\x202021-12-03\x
+SF:2018:16:51\x20\+0000\.\n\nPick\x20one\x20of\x20the\x20following\x20opti
+SF:ons:\n1\.\x20Create\x20new\x20student\x20record\n2\.\x20Show\x20student
+SF:\x20records\n3\.\x20Update\x20an\x20existing\x20record\n4\.\x20Delete\x
+SF:20student\x20record\n5\.\x20Exit\n\nInput:\x20\nError\.\x20Unrecognised
+SF:\x20choice:\x200\n\nPick\x20one\x20of\x20the\x20following\x20options:\n
+SF:1\.\x20Create\x20new\x20student\x20record\n2\.\x20Show\x20student\x20re
+SF:cords\n3\.\x20Update\x20an\x20existing\x20record\n4\.\x20Delete\x20stud
+SF:ent\x20record\n5\.\x20Exit\n\nInput:\x20\nError\.\x20Unrecognised\x20ch
+SF:oice:\x200\n\nPick\x20one\x20of\x20the\x20following\x20options:\n1\.\x2
+SF:0Create\x20new\x20student\x20record\n2\.\x20Show\x20student\x20records\
+SF:n3\.\x20Update\x20an\x20existing\x20record\n4\.\x20Delete\x20student\x2
+SF:0record\n5\.\x20Exit\n\nInput:\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port20001-TCP:V=7.91%I=7%D=12/3%Time=61AA5F0E%P=x86_64-pc-linux-gnu%r(G
+SF:enericLines,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x
+SF:0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20game\x20mode\0\0\0\0\x0c
+SF:\0\x02Pz\0\0\0\x04")%r(GetRequest,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0
+SF:\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20ga
+SF:me\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(HTTPOptions,46,"\0\0\0F\0\
+SF:0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x
+SF:1a\0\x01PyMissing\x20game\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(RTS
+SF:PRequest,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x0c\
+SF:0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20game\x20mode\0\0\0\0\x0c\0\
+SF:x02Pz\0\0\0\x04")%r(RPCCheck,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\
+SF:0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20game\x2
+SF:0mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(DNSVersionBindReqTCP,46,"\0\0\0
+SF:F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0
+SF:\0\x1a\0\x01PyMissing\x20game\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r
+SF:(DNSStatusRequestTCP,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x0
+SF:6\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20game\x20mode\0\
+SF:0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(Help,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x0
+SF:2\0\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x2
+SF:0game\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(SSLSessionReq,46,"\0\0\
+SF:0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\
+SF:0\0\x1a\0\x01PyMissing\x20game\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%
+SF:r(TerminalServerCookie,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\
+SF:x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20game\x20mode\
+SF:0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(TLSSessionReq,46,"\0\0\0F\0\0\0\0\0\0
+SF:\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01P
+SF:yMissing\x20game\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\x04")%r(X11Probe,46,
+SF:"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0\0\x06\0\0\0\x0c\0\x02Px\0\0\
+SF:0\0\0\0\0\x1a\0\x01PyMissing\x20game\x20mode\0\0\0\0\x0c\0\x02Pz\0\0\0\
+SF:x04")%r(FourOhFourRequest,46,"\0\0\0F\0\0\0\0\0\0\0\x0c\0\x02\0\x01\0\0
+SF:\0\x06\0\0\0\x0c\0\x02Px\0\0\0\0\0\0\0\x1a\0\x01PyMissing\x20game\x20mo
+SF:de\0\0\0\0\x0c\0\x02Pz\0\0\0\x04");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port30033-TCP:V=7.91%I=7%D=12/3%Time=61AA5F0E%P=x86_64-pc-linux-gnu%r(G
+SF:enericLines,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(GetRequest,1
+SF:A,"\[error\]\x20invalid\x20input\x20key\n")%r(HTTPOptions,1A,"\[error\]
+SF:\x20invalid\x20input\x20key\n")%r(RTSPRequest,1A,"\[error\]\x20invalid\
+SF:x20input\x20key\n")%r(RPCCheck,1A,"\[error\]\x20invalid\x20input\x20key
+SF:\n")%r(DNSVersionBindReqTCP,1A,"\[error\]\x20invalid\x20input\x20key\n"
+SF:)%r(DNSStatusRequestTCP,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(
+SF:Help,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(SSLSessionReq,1A,"\
+SF:[error\]\x20invalid\x20input\x20key\n")%r(TerminalServerCookie,1A,"\[er
+SF:ror\]\x20invalid\x20input\x20key\n")%r(TLSSessionReq,1A,"\[error\]\x20i
+SF:nvalid\x20input\x20key\n")%r(Kerberos,1A,"\[error\]\x20invalid\x20input
+SF:\x20key\n")%r(SMBProgNeg,1A,"\[error\]\x20invalid\x20input\x20key\n")%r
+SF:(X11Probe,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(FourOhFourRequ
+SF:est,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(LPDString,1A,"\[erro
+SF:r\]\x20invalid\x20input\x20key\n")%r(LDAPSearchReq,1A,"\[error\]\x20inv
+SF:alid\x20input\x20key\n")%r(LDAPBindReq,1A,"\[error\]\x20invalid\x20inpu
+SF:t\x20key\n")%r(SIPOptions,1A,"\[error\]\x20invalid\x20input\x20key\n")%
+SF:r(LANDesk-RC,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(TerminalSer
+SF:ver,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(NCP,1A,"\[error\]\x2
+SF:0invalid\x20input\x20key\n")%r(NotesRPC,1A,"\[error\]\x20invalid\x20inp
+SF:ut\x20key\n")%r(JavaRMI,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(
+SF:WMSRequest,1A,"\[error\]\x20invalid\x20input\x20key\n")%r(oracle-tns,1A
+SF:,"\[error\]\x20invalid\x20input\x20key\n")%r(ms-sql-s,1A,"\[error\]\x20
+SF:invalid\x20input\x20key\n")%r(afp,1A,"\[error\]\x20invalid\x20input\x20
+SF:key\n")%r(giop,1A,"\[error\]\x20invalid\x20input\x20key\n");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 165.96 seconds
