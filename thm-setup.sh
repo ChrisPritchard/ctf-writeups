@@ -9,7 +9,7 @@ ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
 (echo ".git"; grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt) > dirwordlist.txt
 
 echo "linpeas & les local copies"
-wget -q https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh
+wget -q https://github.com/carlospolop/PEASS-ng/releases/download/refs%2Fpull%2F253%2Fmerge/linpeas.sh
 wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -O les.sh
 
 echo "quick commands"
