@@ -13,7 +13,7 @@ wget -q https://github.com/carlospolop/PEASS-ng/releases/download/refs%2Fpull%2F
 wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -O les.sh
 
 echo "quick commands"
-echo "docker run -it --rm --name rustscan rustscan/rustscan:latest -a \$1 -- -sV" > rustscan.sh
+echo "docker run -it --rm --name rustscan rustscan/rustscan:latest -a \$1 -- -A" > rustscan.sh
 chmod +x rustscan.sh
 
 echo "tool download scripts"
