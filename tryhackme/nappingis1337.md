@@ -102,7 +102,7 @@ import random
 mydb = mysql.connector.connect(
         host="localhost",
         user="adrian",
-        password="Stop@Napping3!",
+        password="[redacted]",
         database="website"
         )
 
@@ -114,7 +114,7 @@ myresult = mycursor.fetchall()
 
 data = {
         "username":"daniel",
-        "password":"C@ughtm3napping123"
+        "password":"[redacted]"
         }
 
 N = 26
