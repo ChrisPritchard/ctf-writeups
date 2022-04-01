@@ -42,7 +42,8 @@ echo "update-go.sh script"
 echo "wget -q https://go.dev/dl/go1.18.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz && rm go1.18.linux-amd64.tar.gz" > update-go.sh
 chmod +x update-go.sh
 
-echo "reverse_ssh setup"
-echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && ./server 0.0.0.0:3232"
+echo "reverse_ssh.sh scruot"
+echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && ./server 0.0.0.0:3232" > reverse_ssh.sh
+chmod +x reverse_ssh.sh
 
 echo "ready!"
