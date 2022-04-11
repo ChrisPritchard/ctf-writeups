@@ -46,4 +46,7 @@ echo "reverse_ssh.sh scruot"
 echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && ./server 0.0.0.0:3232 &" > reverse_ssh.sh
 chmod +x reverse_ssh.sh
 
+echo "grabbing pspy64"
+wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.0/pspy64
+
 echo "ready!"
