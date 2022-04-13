@@ -43,7 +43,7 @@ echo "wget -q https://go.dev/dl/go1.18.linux-amd64.tar.gz && rm -rf /usr/local/g
 chmod +x update-go.sh
 
 echo "reverse_ssh.sh scruot"
-echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && checkout unstable && RSSH_HOMESERVER=$(hostname -i):3232 make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && ./server --homeserver_address 192.168.122.1:1234 --enable-webserver $(hostname -i):3232 & && python3 -m http.server 1234 &" > reverse_ssh.sh
+echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && git checkout unstable && RSSH_HOMESERVER=$(hostname -i):3232 make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && ./server --homeserver_address 192.168.122.1:1234 --enable-webserver $(hostname -i):3232 & && python3 -m http.server 1234 &" > reverse_ssh.sh
 chmod +x reverse_ssh.sh
 
 echo "grabbing pspy64"
