@@ -46,8 +46,4 @@ chmod +x reverse_ssh.sh
 echo "grabbing pspy64"
 wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.0/pspy64
 
-echo "export LHOST=$1" > lhost.sh
-echo "export RHOST=$1" > rhost.sh
-chmod +x rhost.sh && chmod +x lhost.sh
-
 echo "ready!"
