@@ -28,7 +28,7 @@ Note, the king.txt file has the append only flag set, and there is no chattr on 
 
 ## flags
 
-- /home/bobba/flag1.txt (vigenere key n)
+- /home/bobba/flag1.txt (rot13)
 - /home/yoda/flag2.txt (hex)
 - /home/duku/flag3.txt
 - /root/flag4.txt
