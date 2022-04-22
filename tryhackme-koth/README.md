@@ -1,6 +1,6 @@
 # THM King of the Hill Guides
 
-These are cheat sheets I put together during my sting playing TryHackMe's King of the Hill mode. It can be quite fun, though if the other players know the machine and you don't, then how well you do entirely depends on how much they let you do. Nevertheless I found *most* players were accommodating enough that I was able to fully enumerate every machine, and these kill sheets are derived from that alone (except for H1: Hard, which is er, really hard - needed a walkthrough for that one).
+These are cheat sheets I put together during my stint playing TryHackMe's King of the Hill mode. It can be quite fun, though if the other players know the machine and you don't, then how well you do entirely depends on how much they let you do. Nevertheless I found *most* players were accommodating enough that I was able to fully enumerate every machine, and these kill sheets are derived from that alone (except for H1: Hard, which is er, really hard - needed a walkthrough for that one).
 
 My recommendation to you if you are new? Try and enumerate yourself. Once root on a machine, use that access to run linpeas, check sudoers etc and find the other ways in. A lot of fun I had was just from find the nooks and crannies on each machine, rather than any competitive aspect.
 
