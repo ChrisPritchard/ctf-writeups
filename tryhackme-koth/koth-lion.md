@@ -26,7 +26,7 @@ path to root:
 
 - `/home/marty/user.txt` - reversed
 - `/home/gloria/user.txt` - as is
-- `/home/alex/user.txt` - vigenere with `n`
+- `/home/alex/user.txt` - rot13
 - `/root/.flag` - as is
 - random high port: thm
 
