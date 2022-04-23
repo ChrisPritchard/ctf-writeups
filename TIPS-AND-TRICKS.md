@@ -15,9 +15,11 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 
 ## Top external resources
 
-- [HackTricks by Carlos Polop](https://book.hacktricks.xyz/)
+- [HackTricks by Carlos Polop (same guy behind linpeas)](https://book.hacktricks.xyz/)
 - [Binary Exploitation notes](https://ir0nstone.gitbook.io/notes/)
 - [Payload All The Things](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources)
+- [Revshells - a rev shell generator](https://www.revshells.com/)
+- [GTFObins - linux privesc via living off the land](https://gtfobins.github.io/)
 
 ## Reverse shells
 
