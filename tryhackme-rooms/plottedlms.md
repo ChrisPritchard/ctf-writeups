@@ -54,4 +54,4 @@ A fairly hard room, largely due to the breadth of the enumeration and its numero
     
 10. To exploit this, as we have write into `/var/www/uploadedfiles/filedir/`, we can create a file in there like `$(chmod -R 777 ~)`. This can be done with `touch \$\(chmod\ -R\ 777\ \~\)` in that folder. Within a minute, all files in plot_admin's home directory will be universally writable.
 11. Next, adding `os.system("/path/to/revshell")` into backup.py (after removing the chmod file above, as it breaks the script) will get a reverse shell as plot_admin.
-12. 
+12. https://github.com/whotwagner/logrotten
