@@ -25,6 +25,7 @@ Paths to root:
 - /home/tdurden/user.txt
 - /srv/public/flag.txt
 - /centos_chroot/root/flag.txt
+- /var/www/html/betatest/checkuser.php (thanks to mug3njutsu on discord for this)
 
 ## Keys
 
