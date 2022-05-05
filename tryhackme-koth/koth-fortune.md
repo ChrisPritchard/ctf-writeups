@@ -65,6 +65,7 @@ www-data 2:
 - /usr/games/flag
 - /usr/local/games/flag
 - /geama/flag
+- /home/fortuna/Desktop/chess (thanks to mug3njutsu on discord for this)
   
 ## hermes key, cuteko pass:
 
