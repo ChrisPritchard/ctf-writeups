@@ -33,6 +33,7 @@ other things:
 - /home/donkey/flag.txt
 - /home/puss/flag.txt
 - /srv/web/flag.txt
+- mysql, 'flag' table in cms database (thanks to mug3njutsu on discord for this)
 
 ## ssh keys
 
