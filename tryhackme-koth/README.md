@@ -49,6 +49,6 @@ There is dickery beyond this thats possible, i.e. doing something violent with L
 Defense tips:
 
 - despite the sleep wall thing I mentioned, [pspy64](https://github.com/DominicBreuker/pspy) is a good tool to see whats happening, it will often find sneaky binaries that are being run etc
-- chattr gets deleted all the time; some people then pull on a copy of it from busybox; I've seen obfuscation of this by naming it all sorts of things. Remember it will usually have the same *size*, something like `find / -size 36464c 2>/dev/null` willt rack it down.
-- in the same vein, why not be extra sneaky and just create your own! I wrote [mf.c](tools/mf.c), which performs the same function as chattr and is trivial to compile and copy across. You can even use it in a loop to keep king mutable: `while true; do (/mf /root/king.txt 0); sleep 0.1; done &` (or immutable, if you wish, via subbing `16` for `0`).
+- chattr gets deleted all the time; some people then pull on a copy of it from busybox; I've seen obfuscation of this by naming it all sorts of things. Remember it will usually have the same *size*, something like `find / -size 36464c 2>/dev/null` will track it down.
+- in the same vein, why not be extra sneaky and just create your own! I wrote [mf.c](tools/mf.c), which performs the same function as chattr and is trivial to compile and copy across. You can even use it in a loop to keep king mutable: `while true; do (/mf /root/king.txt 0); sleep 0.1; done &` (or immutable, if you wish, via subbing `16` for `0`). note, kingmaker does the same thing, embedding the ioctl system call inside itself so chattr is not required.
 
