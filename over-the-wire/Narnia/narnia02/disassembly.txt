@@ -1,0 +1,29 @@
+0x0804844b <+0>:     push   %ebp
+0x0804844c <+1>:     mov    %esp,%ebp
+0x0804844e <+3>:     add    $0xffffff80,%esp        ; clear space for local var
+0x08048451 <+6>:     cmpl   $0x1,0x8(%ebp)          ; check arg 1 is set
+0x08048455 <+10>:    jne    0x8048471 <main+38>     ; if so go to 471
+0x08048457 <+12>:    mov    0xc(%ebp),%eax
+0x0804845a <+15>:    mov    (%eax),%eax
+0x0804845c <+17>:    push   %eax
+0x0804845d <+18>:    push   $0x8048520
+0x08048462 <+23>:    call   0x8048300 <printf@plt>
+0x08048467 <+28>:    add    $0x8,%esp
+0x0804846a <+31>:    push   $0x1
+0x0804846c <+33>:    call   0x8048320 <exit@plt>
+0x08048471 <+38>:    mov    0xc(%ebp),%eax          ; first arg into eax
+0x08048474 <+41>:    add    $0x4,%eax               ; add 4 to first arg pos into eax
+0x08048477 <+44>:    mov    (%eax),%eax             ; address of eax into eax
+0x08048479 <+46>:    push   %eax                    ; add eax to stack
+0x0804847a <+47>:    lea    -0x80(%ebp),%eax        ; load the address of buffer into eax
+0x0804847d <+50>:    push   %eax                    ; add this onto the stack
+0x0804847e <+51>:    call   0x8048310 <strcpy@plt>  ; call strcpy, passing arg 1 and buffer address
+0x08048483 <+56>:    add    $0x8,%esp               
+0x08048486 <+59>:    lea    -0x80(%ebp),%eax        ; load the address of buffer into eax
+0x08048489 <+62>:    push   %eax                    ; push buffer on stack
+0x0804848a <+63>:    push   $0x8048534              ; format string for push on stack
+0x0804848f <+68>:    call   0x8048300 <printf@plt>  ; call put s
+0x08048494 <+73>:    add    $0x8,%esp
+0x08048497 <+76>:    mov    $0x0,%eax
+0x0804849c <+81>:    leave
+0x0804849d <+82>:    ret
