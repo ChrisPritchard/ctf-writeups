@@ -1,4 +1,3 @@
-# must be run from the machine - over ssh mangles the payload somehow
 from pwn import *
 
 leaked = 0xffffd6c0

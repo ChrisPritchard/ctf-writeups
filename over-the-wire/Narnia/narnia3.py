@@ -1,4 +1,3 @@
-# run on target system
 import os
 
 tempdir = b"/tmp/tmp.rtM3SjDWF9"
