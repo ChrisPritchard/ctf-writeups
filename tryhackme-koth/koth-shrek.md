@@ -34,6 +34,7 @@ other things:
 - /home/puss/flag.txt
 - /srv/web/flag.txt
 - mysql, 'flag' table in cms database (thanks to mug3njutsu on discord for this)
+- /var/lib/docker/overlay2/8039e912cd29e964102163c37a1f05795ea99e7da6c1a800dd9749417d88c680/diff/root/flag.txt
 
 ## ssh keys
 
