@@ -29,6 +29,7 @@ path to root:
 - `/home/alex/user.txt` - rot13
 - `/root/.flag` - as is
 - random high port: thm
+- user table in the blog database
 
 ## glorias id_rsa (password `dance`)
 
