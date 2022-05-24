@@ -45,4 +45,4 @@ Paths to root:
   - /home/draco/achievements.txt
   - /var/www/mymainsite/conn.php
   - mysql db (root:neville_was_chosen), basement db, monsters table
-  - /left_corridor/seventh_floor/.entrance (thanks to mug3njutsu on discord for this)
+  - /etc/left_corridor/seventh_floor/.entrance (thanks to mug3njutsu on discord for this)
