@@ -63,6 +63,7 @@ www-data 2:
 - /srv/blackjack
 - /lib/checkers
 - /usr/games/flag
+- /usr/games/fortune
 - /usr/local/games/flag
 - /geama/flag
 - /home/fortuna/Desktop/chess (thanks to mug3njutsu on discord for this)
