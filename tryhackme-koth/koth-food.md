@@ -28,7 +28,6 @@ Bread has write over `/etc/systemd/system/pings.service`, which runs their 15065
 - /home/tryhackme/flag7
 - /var/flag.txt
 - /var/log/auth.log
-- /var/lib/rary
 
 ## Pasta's SSH key
 
