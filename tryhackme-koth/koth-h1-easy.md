@@ -35,3 +35,4 @@ Path to root:
 - /root/root.txt
 - /var/www/serv4/index.php
 - /var/lib/rary
+- /usr/games/fortune
