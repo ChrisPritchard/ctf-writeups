@@ -32,7 +32,7 @@ This is the first room I have had published on TryHackMe, ranked easy. The key t
 
 5. Bruteforcing command parameters, we find `cmd` as in `?cmd=id` works, and we have command execution as the user `www-data`.
 
-6. With this we can enumerate the machine. There is one user, `lachlan`, whose home directory contains the user flag. Additionally there is a .bash_history file.
+6. With this we can enumerate the machine (either through the command arg, or via establishing a reverse shell for example). There is one user, `lachlan`, whose home directory contains the user flag. Additionally there is a .bash_history file.
 
 7. Reading the bash history file, it shows the attacker changed lachlan's password, created a cron job, and then attempted to nullify the bash history but typed `ls` instead of `ln` in `ln -sf /dev/null`. Accordingly we have recovered lachlan's password.
 
