@@ -48,8 +48,10 @@ This is the first room I have had published on TryHackMe, ranked easy. The key t
     * * * * * root /bin/sleep 41 && for f in `/bin/ls /dev/pts`; do /usr/bin/echo nope > /dev/pts/$f && pkill -9 -t pts/$f; done
     * * * * * root /bin/sleep 51 && for f in `/bin/ls /dev/pts`; do /usr/bin/echo nope > /dev/pts/$f && pkill -9 -t pts/$f; done
     ```
+    
+    As this is killing our session via pts, we could if we wish avoid the problem by SSH'ing in with `-T`, which doesn't create a PTY and so won't be killable this way.
 
-9. Analysing this, two facts are presented:
+9. Analysing the cronjobs further, two facts are presented:
     - the path is set to include /home/lachlan/bin, which we control
     - all executables are fully qualified except one, `pkill`
 
