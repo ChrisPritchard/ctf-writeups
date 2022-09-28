@@ -56,7 +56,7 @@ With RCE, the box was enumerated slowly. Its a tied down docker container, with 
 
 This is a modification of the exploit-db script. It should just require an admin email address (admin@rocket.thm) and a target (http://chat.rocket.thm)
 
-```
+```python
 #!/usr/bin/python
 
 import requests
