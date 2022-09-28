@@ -12,6 +12,7 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 - passwd user to add (pass123): `echo 'user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash' >> /etc/passwd` (note the single quotes so $ is ignored)
 - ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 - listen for pings: `tcpdump -i eth0 icmp`
+- scp over a jump host for the attack box (which has older scp): `scp -o 'ProxyJump your.jump.host' myfile.txt remote.internal.host:/my/dir`
 
 ## Top external resources
 
