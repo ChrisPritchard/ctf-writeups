@@ -372,7 +372,7 @@ note the port of **6443**. has also been found as **16433**
 
 for commands, finding out what your privs are would be `auth can-i --list`. Others, like `get secrets -n [namespace]` etc.
 
-Hints from (along with more) this page https://book.hacktricks.xyz/cloud-security/pentesting-kubernetes/kubernetes-enumeration
+Hints from (along with more) this page [https://book.hacktricks.xyz/cloud-security/pentesting-kubernetes/kubernetes-enumeration](https://cloud.hacktricks.xyz/pentesting-cloud/kubernetes-pentesting)
 
 ### Simple escape with full rights:
 
