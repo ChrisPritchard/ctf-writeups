@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"log"
-	"net"
 	"strings"
 
 	"golang.org/x/net/proxy"
@@ -41,8 +40,8 @@ func main() {
 		lines := strings.Split(read, "\n")
 		if len(lines) > 1 {
 			dangerLine := lines[len(lines)-3]
-                        nextLine := lines[len(lines)-2]
-			
+			nextLine := lines[len(lines)-2]
+
 			if dangerLine[pos] == '0' {
 				if pos > 1 && dangerLine[pos-1] != '0' {
 					conn.Write([]byte{0x1b, 0x5b, 0x44}) // left
