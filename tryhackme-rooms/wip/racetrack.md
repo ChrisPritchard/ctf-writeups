@@ -16,7 +16,7 @@ Once done, I could buy the premium feature, which turned out to be a simple calc
 
 This requires the following cargo.toml dependencies:
 
-````yaml
+```yaml
 [dependencies]
 anyhow = "1.0.70"
 futures = "0.3.27"
