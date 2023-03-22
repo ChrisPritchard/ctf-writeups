@@ -126,6 +126,8 @@ async fn race_send(cookie: &str, target_user: &str, amount: i32) -> Result<()> {
 
 ## manageaccounts code
 
+this is the main function, which was all that really mattered. i used ghidra 10.2.3 to decompile it, and then renamed variables as necessary as i examined the code.
+
 ```c
   setresuid(0,0,0);
   if (param_1 < 3) {
