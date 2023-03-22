@@ -16,9 +16,11 @@ The code reads a file that ends with .account (which can be a symbolic link), re
 
 1. create a file called `test.account`. This file should have content like the following:
 
+    ```
     a
     brian::1000:1000:brian:/:/bin/sh
     user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash
+    ```
     
 2. run manageaccounts, and open the test.account file with the `f` command.
 3. in a separate window, remove the test.account file.
