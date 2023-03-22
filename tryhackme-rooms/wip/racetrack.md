@@ -38,7 +38,6 @@ const SITE_URL: &str = "http://10.10.57.199";
 
 async fn client() -> Result<Client> {
     Ok(reqwest::Client::builder()
-        .proxy(Proxy::http("http://127.0.0.1:8080")?)
         .redirect(Policy::none())
         .build()?)
 }
