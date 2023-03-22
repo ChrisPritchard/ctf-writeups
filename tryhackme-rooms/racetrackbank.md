@@ -27,7 +27,9 @@ The code reads a file that ends with .account (which can be a symbolic link), re
 4. create a new symbolic link with `ln -s /etc/password test.account`
 5. back in the manageaccounts interface, use `w` to write the output, then `q` to exit the app.
 
-At this point `su user3` and the password `pass123` will switch to the root account.
+At this point `su user3` and the password `pass123` will switch to the root account. The reason why this works is that you can fairly horrifically mangle the passwd file and as long as there are readable lines that follow the right format, it will still work. Note I ensured that the brian user was present - removing your current user can have some significant issues, like making `su` no longer work. Also note that even though on modern linux passwords are stored hashed in the /etc/shadow file, you can still add them to the passwd file (as it originally worked in the bad old days). user3 has the same uid and gid as the root account so signing in as user3 is the same as signing in as root.
+
+A good room! Had a lot of fun - nice learning some utility rust coding.
 
 ## Rust race condition exploiter.
 
