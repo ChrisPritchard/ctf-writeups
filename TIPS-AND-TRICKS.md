@@ -21,6 +21,7 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 - [Payload All The Things](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources)
 - [Revshells - a rev shell generator](https://www.revshells.com/)
 - [GTFObins - linux privesc via living off the land](https://gtfobins.github.io/)
+- [StegOnline - beyond simple steghide](https://stegonline.georgeom.net/image)
 
 ## Reverse shells
 
