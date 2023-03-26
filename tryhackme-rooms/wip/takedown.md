@@ -9,5 +9,6 @@ Rated "INSANE"
 
 Which binary you reverse doesn't matter so much, as much as what it does. Opening them with Ghidra shows they are nim binaries, which is a bit tricky to reverse but still possible.
 
-- the entry point is the function `NimMainInner` (NimMainModule contains the same code, not sure what the relationship is; possibly a decompilation artefact)
-- 
+- the entry point is the function `NimMainModule`
+- it checks two flags, -v and -h. -h prints a short help message, while -v is presumably 'verbose', as it prints status messages
+- first thing it does is run whoami, checking the response against a hardcoded username 'c.oberst', as the 'keyed username'.
