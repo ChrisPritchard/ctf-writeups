@@ -12,3 +12,4 @@ Which binary you reverse doesn't matter so much, as much as what it does. Openin
 - the entry point is the function `NimMainModule`
 - it checks two flags, -v and -h. -h prints a short help message, while -v is presumably 'verbose', as it prints status messages
 - first thing it does is run whoami, checking the response against a hardcoded username 'c.oberst', as the 'keyed username'.
+- after that, in initial_check_in__main, it makes an api request with the hostname given. this is to `http://takedown.thm.local/api/agents/register`, with the user-agent `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0 z.5.x.2.l.8.y.5` and content type `application/json`. the content sent is `{"uid":"","hostname":""}` with the uid and hostname from the app
