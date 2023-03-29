@@ -1,6 +1,6 @@
 # Work In Progress
 
-~Eight~ ~Seven~ ~Six~ Five rooms remain on TryHackMe (eight major rooms - easy/medium/info come and go):
+~Eight~ ~Seven~ ~Six~ ~Five~ Four rooms remain on TryHackMe (eight major rooms - easy/medium/info come and go):
 
 ## Hard
 
@@ -14,5 +14,5 @@
 
 - ~Takedown: reversing nim binaries~
 - ~CCT2019~
-- Crocc Crew
+- ~Crocc Crew~
 - Osiris
