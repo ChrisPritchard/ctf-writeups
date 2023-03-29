@@ -15,4 +15,4 @@
 - ~Takedown: reversing nim binaries~
 - ~CCT2019~
 - ~Crocc Crew~
-- Osiris
+- Osiris: foothold is via dropping a rubber ducky script, that you need to write
