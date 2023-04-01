@@ -24,6 +24,6 @@ Because you can't run a shell, or execute those tmp lock files, the path is a bi
 
 This is complicated initially by the fact that the setuid capability or how apparmor works makes this fail using anything but a *proper* proper shell. To get one, I added my public key into a .ssh/authorized_keys file for alvin, then ssh'd in formally. This seems to resolve EPERM issues running `Process::Sys.setuid(0)`.
 
-Finally, after copying `/bin/bash` to `/tmp/.X1-lock`, I copied it with `ruby2.5 -e 'Process::Sys.setuid(0); exec "cp --preserve=mode /tmp/.X1-lock /tmp/.X2-lock"'`. I could then run `/tmp/.X2-lock -p` to get a full root shell and the final flag.
+Finally, after copying `/bin/bash` to `/tmp/.X1-lock`, making it suid with `chmod u+s /tmp/.X1-lock`, I copied it with `ruby2.5 -e 'Process::Sys.setuid(0); exec "cp --preserve=mode /tmp/.X1-lock /tmp/.X2-lock"'`. I could then run `/tmp/.X2-lock -p` to get a full root shell and the final flag.
 
 A complex room! Took me a loooooong time over many attempts, the occasional hints from walkthroughs to get here.
