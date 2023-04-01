@@ -62,4 +62,23 @@ on 172.17.0.4 is a web interface for mongo, using mongo-express (identified by p
 
 once having a shell as root, you can find a backup folder at /backup/db_backup/meteor. in here is bson.hash which contains a simple user/password for the user Terrance, the password in bcrypt.
 
-this can be cracked with hashcat and rockyou, though takes ages
+this can be cracked with hashcat and rockyou - make sure to include the username before the hash and pass --username to hashcat, so it can be used as part of the decryption.
+
+the initial brochureware site is made using bolt cms, which can be logged in to with the creds, use the email terrance@rocket.thm for the user.
+
+once in, there are a number of ways to proceed. i just altered main configuration so under accepted_media_types it included php files, then uploaded a webshell using the file management tool.
+
+this gets you access as alvin, and finally the first flag under their home dir.
+
+local enum will reveal that ruby2.5 has the setuid capability. this however is harder to exploit for two reasons:
+- apparmour is enabled on the machine, which limits what files you can read/write/execute with the binary, e.g. you can't run a shell
+  - only allows you to write files with the pattern /tmp/.X[number]-lock, and only a few others can be read
+- under a reverse shell, even one created with reverse_ssh, the cap_setuid doesnt work with the root id, 0
+
+to fix this, first I add my public ssh key to alvin by creating a .ssh directory and an authorized keys file, then I ssh'd in properly
+
+- the idea was to create a suid bash binary owned as root. to do this I created a copy of the bash binary with the name /tmp/.X1-lock. 
+- I then made that binary suid via chmod u+s /tmp/.X1-lock
+- finally, I ran the following: `ruby2.5 -e 'Process::Sys.setuid(0); exec "cp --preserve=mode /tmp/.X1-lock /tmp/.X2-lock"'`
+
+to reiterate, this only works from a non-reverse shell, but the result should be a binary called .X2-lock, owned by root with the suid bit set. running that -p gets a root shell.
