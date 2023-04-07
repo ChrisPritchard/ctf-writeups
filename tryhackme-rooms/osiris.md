@@ -1,4 +1,4 @@
-# Osiris - WIP
+# Osiris
 
 https://tryhackme.com/room/osiris
 
