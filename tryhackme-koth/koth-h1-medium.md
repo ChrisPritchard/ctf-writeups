@@ -10,6 +10,17 @@ As seen, a password recovered is `winniethepooh`. This has been consistent acros
 
 `king.txt` is at `c:\king.txt`
 
+For a chattr loop like thing, use:
+
+```
+:loop
+attrib -r -a -h -s c:\king.txt
+echo Aquinas > c:\king.txt
+goto loop
+```
+
+in a batch file, and run with `START /b sys.bat` (or whatever you name it) 
+
 ## Tools
 
 ```
