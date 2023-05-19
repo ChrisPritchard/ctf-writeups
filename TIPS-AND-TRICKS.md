@@ -13,6 +13,7 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 - ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 - listen for pings: `tcpdump -i eth0 icmp`
 - scp over a jump host for the attack box (which has older scp): `scp -o 'ProxyJump your.jump.host' myfile.txt remote.internal.host:/my/dir`
+- disable defender from powershell as an admin on windows: `Set-MpPreference -DisableRealtimeMonitoring $true`
 
 ## Top external resources
 
