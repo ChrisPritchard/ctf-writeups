@@ -124,7 +124,7 @@ The landing page for the website asks for a username and password. As the consul
 
 ### WEB overview
 
-The website on .13 would redirect to `/October/Index.php`, revealing a customised demo instance of the [October CMS](https://octobercms.com/). The version installed appeared to be 1.6, and there were no known exploits (at least unauthenticated) for this version that the consultant could find. The content of the site was largely innocuous, accept a 'meet the team' page which included numerous named employees from The Reserve. These employees were presented with photos, and the photos were named in the format 'firstname.lastname'. Assuming this might be their genuine usernames, these image names were copied into a wordlist.
+The website on .13 would redirect to `/October/Index.php`, revealing a customised demo instance of the [October CMS](https://octobercms.com/). The version installed appeared to be 1.6, and there were no known exploits (at least unauthenticated) for this version that the consultant could find. The content of the site was largely innocuous, accept a 'meet the team' page which included numerous named employees from The Reserve. These employees were presented with photos, and the photos were named in the format 'firstname.lastname'. Assuming this might be their genuine usernames, these image names were copied into a wordlist. Later, `@corp.thereserve.loc` was appended to each username to make them a valid domain username.
 
 ### Combining the pieces to gain a foothold.
 
