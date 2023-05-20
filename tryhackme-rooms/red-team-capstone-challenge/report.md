@@ -1,6 +1,6 @@
 # TryHackMe - Red Team Capstone Challenge
 
-This a report covering the complete compromise of the Reserve Bank of Trimento's network, as part of a red team engagement. 
+This report covers the complete compromise of the Reserve Bank of Trimento's network, as part of a red team engagement. 
 
 ![](./full-compromise.png)
 
@@ -70,6 +70,23 @@ In this fashion, reverse_ssh served as a sort of micro C2 framework.
 
 ## Stage 1: OSINT of the external interfaces, and getting a foothold
 
+### Initial scanning & fingerprinting
+
+Enumerating the subnet of 10.200.116.0/24 using NMap (nmap -sn 10.200.116.0/24) discovered four live machines:
+
+- 10.200.116.250, the e-citizen portal which was out of scope for the engagement
+- 10.200.116.11 which appeared to be a windows machine, labeled WebMail in the initial network map provided
+- 10.200.116.12, a linux machine labeled VPN
+- 10.200.116.13, another linux machine labeled WEB
+
+For .11, .12 and .13, a Rustscan was performed. This was done using a dockerised version of rustscan: `docker run -it --rm --name rustscan rustscan/rustscan:latest -a [IP] -- -A`. In brief, this command will perform a rustscan to find open ports which is quick, then perform a `nmap -A -p [ports] [IP]` for each target. `-A` performs a large set of checks.
+
+This identified that the WEB and VPN machines had both ports 22 and 80 open, with the VPN additionally having 1194 (the commonly used OpenVPN port). For the WebMail machine, the standard windows ports were open (SMB, RPC etc) but in addition there was a web interface on 80 and SMTP specific ports like 25.
+
+### WebMail overview
+
+The web interface on this box showed the IIS default page. However, the nmap -A had revealed this machine referred to itself as `mail.thereserve.loc`; by setting that as the hostname, a 404 not found was reported instead once navigating to port 80. Doing a ffuf scan with `ffuf -u http://10.200.116.11/FUZZ -H "Host: mail.thereserve.loc" -w dirwordlist.txt -x .php` where dirwordlist is basically [directory-list-2.3-medium.txt from SecLists](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/directory-list-2.3-medium.txt) revealed some subdirectories, but most importantly Index.php which when browsed to found an instance of [RoundCube WebMail](https://roundcube.net/) running. This was used to communicate further with The Reserve's security team later in the exercise.
+
 ## Stage 2: Compromising the CORP Domain
 
 ## Stage 3: Compromising the Forest via the Root DC
@@ -79,6 +96,8 @@ In this fashion, reverse_ssh served as a sort of micro C2 framework.
 ## Summary & Recommendations
 
 Overall, the network's largest failing were weak password policies. Via a small list of about 720 options, it was possible to brute force two initial points of access. Then via bruteforcing another weak password in a service principle, admin access to the non-dc machines in the CORP network was obtained. Everything that followed in the compromise stemmed from this original path of attack.
+
+A second, arguably as serious issue were multiple weaknesses on the perimeter systems, including the ability to brute force user account passwords via the SMTP server without any lockout or degraded performance protection.
 
 In addition to fully segregating the banking network from the internet, by removing it from the forest that contains the corporate network, the consultant recommends that passwords be fully random and not based on a small set of word options and rules. Users should all have passwords at least 14 characters long (with or without complexity), randomly generated using a secure random algorithm, and stored in each user's password manager.
 
