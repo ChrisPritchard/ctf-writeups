@@ -2,6 +2,8 @@
 
 This a report covering the complete compromise of the Reserve Bank of Trimento's network, as part of a red team engagement. 
 
+![](./full-compromise.png)
+
 The system was compromised and proof submitted via this interface, on Try Hack Me's platform: https://tryhackme.com/room/redteamcapstonechallenge
 
 Note, that this portal will only remain accessible during the period the network is made available for non-business users on the Try Hack Me platform.
