@@ -68,7 +68,7 @@ In this fashion, reverse_ssh served as a sort of micro C2 framework.
 
 ## Stage 1: OSINT of the external interfaces, and getting a foothold
 
-## Stage 2: Compromising the Corporate DC
+## Stage 2: Compromising the CORP Domain
 
 ## Stage 3: Compromising the Forest via the Root DC
 
