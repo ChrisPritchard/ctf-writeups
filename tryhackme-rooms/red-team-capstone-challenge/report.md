@@ -35,23 +35,23 @@ It is known there are other ways into and around the network, but as this is a r
 
 A collection of common tools was used during this engagement.
 
-- Nmap and Rustscan were used for initial perimeter machine recon, finding the common web ports and SSH as well as the common windows ports and smtp ports of the mail server
-- FFuF was used to enumerate the web interfaces, finding subdirectories like the images directory on one of the sites that had files with apparent usernames, and the location of the ovpn file
-- Burp Suite Professional was used to access the mail server interface, which was running roundmail and could be accessed from the hostname mail.thereserve.loc
-- Mentalist was used to generate a password list using the password policy revealed to the consultant
-- THC-Hydra was used to brute force the usernames with the password list against SMTP, to get two valid credentials from the Help Desk group
-- OpenVPN was used with the discovered ovpn file to gain access to the workstations
-- Remmina was used to remote onto these workstations
-- The Impacket toolset was used to get the service account SPNs, to perform dc syncs and to dump credentials from registry hives
-- Hashcat was used to crack hashes as needed
-- A tool called reverse_ssh (more notes on this below) was used to create secure reverse shells, and to facilitate port forwarding and proxies
-- proxychains was used to run commands over established socks proxies
-- evil-winrm was used in some cases to establish temporary shells on machines via user hashes, and to upload/download files
-- mimikatz was used to craft a golden ticket for access to the RootDC
-- PsExec was used to gain access to the RootDC with the golden ticket
+- [Nmap](https://nmap.org/) and [Rustscan](https://github.com/RustScan/RustScan) were used for initial perimeter machine recon, finding the common web ports and SSH as well as the common windows ports and smtp ports of the mail server
+- [FFuF](https://github.com/ffuf/ffuf) was used to enumerate the web interfaces, finding subdirectories like the images directory on one of the sites that had files with apparent usernames, and the location of the ovpn file
+- [Burp Suite Professional](https://portswigger.net/burp) was used to access the mail server interface, which was running roundmail and could be accessed from the hostname mail.thereserve.loc
+- [Mentalist](https://github.com/sc0tfree/mentalist) was used to generate a password list using the password policy revealed to the consultant
+- [THC-Hydra](https://github.com/vanhauser-thc/thc-hydra) was used to brute force the usernames with the password list against SMTP, to get two valid credentials from the Help Desk group
+- [OpenVPN](https://openvpn.net/) was used with the discovered ovpn file to gain access to the workstations
+- [Remmina](https://remmina.org/) was used to remote onto these workstations
+- The [Impacket](https://github.com/fortra/impacket) toolset was used to get the service account SPNs, to perform dc syncs and to dump credentials from registry hives
+- [Hashcat](https://hashcat.net/hashcat/) was used to crack hashes as needed
+- A tool called **reverse_ssh** (more notes on this below) was used to create secure reverse shells, and to facilitate port forwarding and proxies
+- [proxychains](https://github.com/haad/proxychains) was used to run commands over established socks proxies
+- [evil-winrm](https://github.com/Hackplayers/evil-winrm) was used in some cases to establish temporary shells on machines via user hashes, and to upload/download files
+- [mimikatz](https://github.com/ParrotSec/mimikatz) was used to craft a golden ticket for access to the RootDC
+- [PsExec](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) was used to gain access to the RootDC with the golden ticket
 
 
-On top of these custom tools, from the windows machines themselves reg was used to save registry hives, powershell was used to do some AD enumeration and to generally run commands, and chrome was used later in the engagement to access the Swift interface - notably Chrome had saved credentials for several Approver users which provided access as that role.
+On top of these custom tools, from the windows machines themselves `reg` was used to save registry hives, **PowerShell** was used to do some AD enumeration and to generally run commands, and **Google Chrome** was used later in the engagement to access the Swift interface - notably Chrome had saved credentials for several Approver users which provided access as that role.
 
 ### Reverse_SSH
 
