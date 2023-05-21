@@ -10,10 +10,10 @@ Note, that this portal will only remain accessible during the period the network
 
 ## Consultant Details
 
-Name: Christopher Pritchard
-THM Username: Aquinas
-Contact: chris@grislygrotto.nz
-Bio: A professional working as the lead security engineer at a company in Aotearoa/New Zealand, Chris has been in the Infosec industry for about four years. They credit TryHackMe for much of their expertise and job opportunities, including providing sufficient training for Chris to obtain an OSCE3. They primary enjoy CTFs like this one, gaming, writing and software development. More details can be found on their linkedin bio: https://www.linkedin.com/in/christopher-pritchard-a669b6a
+- **Name:** Christopher Pritchard
+- **THM Username:** Aquinas
+- **Contact:** chris@grislygrotto.nz
+- **Bio:** A professional working as the lead security engineer at a company in Aotearoa/New Zealand, Chris has been in the Infosec industry for about four years. They credit TryHackMe for much of their expertise and job opportunities, including providing sufficient training for Chris to obtain an OSCE3. They primary enjoy CTFs like this one, gaming, writing and software development. More details can be found on their linkedin bio: https://www.linkedin.com/in/christopher-pritchard-a669b6a
 
 ## Objectives
 
