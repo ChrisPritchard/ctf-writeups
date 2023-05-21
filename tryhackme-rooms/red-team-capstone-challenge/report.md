@@ -10,6 +10,8 @@ Note, that this portal will only remain accessible during the period the network
 
 ## Consultant Details
 
+![](./happy_chris.png)
+
 - **Name:** Christopher Pritchard
 - **THM Username:** Aquinas
 - **Contact:** chris@grislygrotto.nz
@@ -132,15 +134,41 @@ This identified that the WEB and VPN machines had both ports 22 and 80 open, wit
 
 ### WebMail overview
 
-The web interface on this box showed the IIS default page. However, the nmap -A had revealed this machine referred to itself as `mail.thereserve.loc`; by setting that as the hostname, a 404 not found was reported instead once navigating to port 80. Doing a ffuf scan with `ffuf -u http://10.200.116.11/FUZZ -H "Host: mail.thereserve.loc" -w dirwordlist.txt -x .php` where dirwordlist is basically [directory-list-2.3-medium.txt from SecLists](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/directory-list-2.3-medium.txt) revealed some subdirectories, but most importantly Index.php which when browsed to found an instance of [RoundCube WebMail](https://roundcube.net/) running. This was used to communicate further with The Reserve's security team later in the exercise.
+The web interface on this box showed the IIS default page:
+
+![](./iis.png)
+
+However, the nmap -A had revealed this machine referred to itself as `mail.thereserve.loc`; by setting that as the hostname, a 404 not found was reported instead once navigating to port 80. Doing a ffuf scan with `ffuf -u http://10.200.116.11/FUZZ -H "Host: mail.thereserve.loc" -w dirwordlist.txt -x .php` where dirwordlist is basically [directory-list-2.3-medium.txt from SecLists](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/directory-list-2.3-medium.txt) revealed some subdirectories, but most importantly Index.php which when browsed to found an instance of [RoundCube WebMail](https://roundcube.net/) running:
+
+![](./mail-server.png)
+
+This was used to communicate further with The Reserve's security team later in the exercise.
 
 ### VPN overview
 
-The landing page for the website asks for a username and password. As the consultant had neither, they performed a ffuf scan with  `ffuf -u http://10.200.116.12/FUZZ -w dirwordlist.txt`. This revealed `/vpn` and `/vpns` folders. Under the former was a file listing, containing the single file `corpUsername.ovpn` which when downloaded, seemed largely valid except for some invalid IP addresses. No further enumeration was performed on this server.
+The landing page for the website asks for a username and password:
+
+![](./vpn-web.png)
+
+As the consultant had neither, they performed a ffuf scan with  `ffuf -u http://10.200.116.12/FUZZ -w dirwordlist.txt`. This revealed `/vpn` and `/vpns` folders. Under the former was a file listing, containing the single file `corpUsername.ovpn` which when downloaded, seemed largely valid except for some invalid IP addresses:
+
+![](./corp-vpn.png)
+
+No further enumeration was performed on this server.
 
 ### WEB overview
 
-The website on .13 would redirect to `/October/Index.php`, revealing a customised demo instance of the [October CMS](https://octobercms.com/). The version installed appeared to be 1.6, and there were no known exploits (at least unauthenticated) for this version that the consultant could find. The content of the site was largely innocuous, accept a 'meet the team' page which included numerous named employees from The Reserve. These employees were presented with photos, and the photos were named in the format 'firstname.lastname'. Assuming this might be their genuine usernames, these image names were copied into a wordlist. Later, `@corp.thereserve.loc` was appended to each username to make them a valid domain username.
+The website on .13 would redirect to `/October/Index.php`, revealing a customised demo instance of the [October CMS](https://octobercms.com/):
+
+![](./cms.png)
+
+ The version installed appeared to be 1.6, and there were no known exploits (at least unauthenticated) for this version that the consultant could find. The content of the site was largely innocuous, accept a 'meet the team' page which included numerous named employees from The Reserve:
+ 
+ ![](./meet-the-team.png)
+ 
+ These employees were presented with photos, and the photos were named in the format 'firstname.lastname'. Assuming this might be their genuine usernames, these image names were copied into a wordlist. Later, `@corp.thereserve.loc` was appended to each username to make them a valid domain username:
+
+ ![](./user-names.png)
 
 ### Combining the pieces to gain a foothold.
 
@@ -153,13 +181,15 @@ The only web interface that would be easy to brute force was the VPN portal, but
 [25][smtp] host: 10.200.116.11   login: mohammad.ahmed@corp.thereserve.loc   password: [REDACTED]
 ```
 
-These could be used to log in as these users in WebMail, but they had no emails or contacts to further exploit.
+These could be used to log in as these users in WebMail, but they had no emails or contacts to further exploit. 
 
 Next, the corpUsername.ovpn file was downloaded from the VPN server. Opening this file, the one line that needs to be changed is `remote 10.200.X.X 1194`, which was updated to read `remote 10.200.116.12 1194`. When run with `openvpn corpUsername.ovpn &` a connection was made, informing the consultant that a link had been made to machines .21 and .22 inside the perimeter. To access these machines more easily, routing rules were added with `ip route add 10.200.116.21 dev tun0` and `ip route add 10.200.116.22 dev tun0`.
 
 These new machines did not respond to pings, but a quick scan with `nmap -Pn 10.200.116.21-22` revealed they had a very limited number of windows ports available, including `3389` for the remote desktop protocol.
 
 Using Remmina, the consultant connected to the first machine, passing `mohammad.ahmed@corp.thereserve.loc` and that employee's password as the credentials. This, after a short pause, opened up a remote desktop session on the WRK1 system, proving a compromise beyond the perimeter.
+
+![](./remmina1.png)
 
 ## Stage 2: Compromising the CORP Domain
 
@@ -196,11 +226,15 @@ By examing the rights of svcBackup with `net user svcBackup /domain` and `net gr
 
 Using one of these DAs, T0_josh.sutton, the consultant gained access to the CORPDC server: `proxychains evil-winrm -u t0_josh.sutton -H [REDACTED] -i 10.200.116.102`. As a DA, and with full access to every machine in CORP, the CORP domain was at this point completely compromised.
 
+![](./corpdc.png)
+
 ## Stage 3: Compromising the Forest via the Root DC
 
 To gain direct access to the DC, a new user was created: `net user aquinas [redacted] /add` plus `net group "Domain Admins" aquinas /add`. This allowed the consultant to remote on to the domain with `proxychains remmina` or by opening a remote desktop session from the existing session on WRK1.
 
 Running the powershell command `Get-ADTrust` from the CORPDC revealed that CORP.THERESERVE.LOC was in a BiDirectional trust with THERESERVE.LOC, the Root domain of the forest (which also included BANK.THERESERVE.LOC, unreachable from CORP). As the consultant had domain admin rights, it should be possible to forge a golden ticket with the extra SID of the enterprise admin's group from THERESERVE, granting access to the root domain.
+
+![](./trust.png)
 
 To do this required the use of mimikatz, which by default is blocked by most competent antivirus solutions and definitely by Microsoft Defender. However, as admin on the CORPDC, the consultant was able to disable AV with the following command: `Set-MpPreference -DisableRealtimeMonitoring $true`.
 
@@ -208,19 +242,50 @@ Uploading mimikatz, in order to get a golden ticket granting access to the root 
 
 - first, the SID of the CORP domain and root were gathered, via `Get-ADDomain` and `Get-ADDomain -server 10.200.116.100`
 - next, the NTLM hash of the krgtgt user for CORP was gathered, via in mimikatz: `lsadump::dcsync /domain:corp.thereserve.loc /user:corp\krbtgt`
+
+![](./mimikatz1.png)
+
 - finally, a golden ticket was forged with `kerberos::golden /user:aquinas /domain:corp.thereserve.loc /sid:[CORP_SID] /krbtgt:[KRBTGT_HASH] /sids:[ROOT_SID]-519 /ptt`
+
+![](./mimikatz2.png)
 
 Note the use of -519 at the end of the ROOT_SID - this is the SID of the enterprise admins group. By executing the above command a golden ticket was created for the user aquinas granting access to the Root domain; this could be verified by running outside of mimikatz: `dir \\rootdc.thereserve.loc\c$` and seeing the file listing.
 
-To gain remote command execution, [PsExec from Systools](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) was used: `.\PsExec.exe -accepteula \\rootdc.thereserve.loc cmd`, which opened a command shell. To complete the compromise, a user was created (`net user aquinas [REDACTED] /add` again), and added to the enterprise admins group directly with `net group "Enterprise Admins" aquinas /add`. The consultant could then remote desktop direct to the root domain controller, proving compromise of the entire forest.
+![](./mimikatz3.png)
+
+To gain remote command execution, [PsExec from Systools](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) was used: `.\PsExec.exe -accepteula \\rootdc.thereserve.loc cmd`, which opened a command shell:
+
+![](./root-access.png)
+
+To complete the compromise, a user was created (`net user aquinas [REDACTED] /add` again), and added to the enterprise admins group directly with `net group "Enterprise Admins" aquinas /add`. The consultant could then remote desktop direct to the root domain controller, proving compromise of the entire forest.
+
+![](./rootdc.png)
 
 ## Stage 4: Access to the Swift system and demonstrating impact
 
 With an enterprise admin user it was possible to remote directly to the BANKDC domain controller in the bank domain. After gaining access, another user was added as before and explicitly added to the domain admins group for the bank domain. With this new user all machines were accesable, and it was also possible to perform a DC sync: `proxychains python3.9 /opt/impacket/examples/secretsdump.py -just-dc aquinas:[REDACTED]@10.200.116.101`. Note that in order to do this, a reverse_ssh client connection was propagated through to the bank domain using remote port forwarding as described above. This gave all hashes for the bank domain.
 
-The server `jmp.bank.thereserve.loc` was the only machine capable of accessing the http://swift.bank.thereserve.loc website, and this machine had two users under its user folder: a.holt and a.turner. The password hash for a.turner could be cracked with `hashcat -m 1000 hash rockyou.txt`, though as domain admin their passwords could also simply be changed. Logging on as these users and opening up the website in the Chrome browswer revealed both users had saved their credentials for the system in Chrome's password manager - these passwords could be recovered via the Password Manager interface. Both a.holt and a.turner had the 'approval' role within Swift.
+![](./bankdc.png)
 
-To perform a transaction and demonstrate impact, in addition to the accounts provided by The Reserve bank's security team, the consultant needed access to both capturers and approvers. To find a capturer account, other machines in the bank domain were connected to and enumerated. On WORK2 the user c.young had a note in their document's folder saying they were a capturer, and that their password in Swift was the same as their AD password. Their hash was the same as a.turner's indicating they shared the same AD password and so the consultant was able to log in as c.young.
+The server `jmp.bank.thereserve.loc` was the only machine capable of accessing the http://swift.bank.thereserve.loc website:
+
+![](./jmp-box.png)
+
+This machine had two users under its user folder: a.holt and a.turner. The password hash for a.turner could be cracked with `hashcat -m 1000 hash rockyou.txt`, though as domain admin their passwords could also simply be changed. Logging on as these users and opening up the website in the Chrome browser revealed both users had saved their credentials for the system in Chrome's password manager - these passwords could be recovered via the Password Manager interface. 
+
+![](./saved-creds.png)
+
+Both a.holt and a.turner had the 'approval' role within Swift.
+
+![](./approver-view.png)
+
+To perform a transaction and demonstrate impact, in addition to the accounts provided by The Reserve bank's security team, the consultant needed access to both capturers and approvers. To find a capturer account, other machines in the bank domain were connected to and enumerated. On WORK2 the user c.young had a note in their document's folder saying they were a capturer, and that their password in Swift was the same as their AD password:
+
+![](./note.png)
+
+Their hash was the same as a.turner's indicating they shared the same AD password and so the consultant was able to log in as c.young:
+
+![](./capturer-view.png)
 
 In summary, to perform a swift transaction from the JMP server, the consultant gathered:
 
