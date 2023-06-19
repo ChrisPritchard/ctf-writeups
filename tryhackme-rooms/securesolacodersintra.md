@@ -57,7 +57,7 @@ A fun room, with *seven* flags, each representing a different stage of the compr
   app.secret_key = str(key).encode()
   ```
   
-  And a quick look at the key revealed its format was:
+  And a quick look at the key (base64 decode it) revealed its format was:
 
   ```
   {'logged_in': True, 'username': 'anders'}
