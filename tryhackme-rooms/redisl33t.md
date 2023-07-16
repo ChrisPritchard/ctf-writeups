@@ -32,7 +32,7 @@ A pretty fun room! Few twists and turns, nothing too complicated, and similar to
 
 3. This shows two protections: `preg_match("/^[a-z]/", $page)` ensures that the first character of the page must be an alphabetic character, and the `sanitize_input` function prevents any path traversal. As shown by using the php filter, this is an easy way to bypass this (as the first character is `p` in `php://`) - in fact it can be simplified, and you can read the passwd file with `?page=php://filter/resource=/etc/passwd`: no path traversal, as we are using an absolute path. This reveals there are two users of note (aside from root): `red` and `blue`.
 
-4. We can only read files - the `readfile` function will prevent loading PHP code (it will be read as text). Interestingly, we can read from remote addresses like the attack box, but without PHP interpretation this seems worthless. So, enumerating some interesting files is the path forward. Eventually, trying for /home/blue/.bash_history revealed something interesting:
+4. We can only read files - the `readfile` function will prevent loading PHP code (it will be read as text). Interestingly, we can read from remote addresses like the attack box, but without PHP interpretation this seems worthless. So, enumerating some interesting files is the path forward. Eventually,  trying for `/home/blue/.bash_history` revealed something interesting:
 
 	```
 	echo "Red rules"
