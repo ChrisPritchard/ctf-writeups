@@ -35,12 +35,8 @@ ssh-keygen -t ed25519 -P "" -f "/root/.ssh/id_ed25519" > /dev/null
 echo "ssh public key is:"
 cat .ssh/id_ed25519.pub
 
-echo "update-go.sh script"
-echo "wget -q https://go.dev/dl/go1.18.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz && rm go1.18.linux-amd64.tar.gz" > update-go.sh
-chmod +x update-go.sh
-
 echo "reverse_ssh.sh script"
-echo "git clone https://github.com/NHAS/reverse_ssh && cd reverse_ssh && git checkout unstable && RSSH_HOMESERVER=$(hostname -i):3232 make && cd bin/ && cp ~/.ssh/id_ed25519.pub authorized_keys && cp client* ~/ && ./server --external_address $(hostname -i):3232 :3232 &" > reverse_ssh.sh
+echo "docker run -p3232:2222 -e EXTERNAL_ADDRESS=$(hostname -i):3232 -e SEED_AUTHORIZED_KEYS=$(cat ~/.ssh/id_ed25519.pub) -v data:/data reversessh/reverse_ssh" > reverse_ssh.sh
 chmod +x reverse_ssh.sh
 
 echo "grabbing pspy64"
