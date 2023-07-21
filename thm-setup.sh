@@ -36,7 +36,7 @@ echo "ssh public key is:"
 cat .ssh/id_ed25519.pub
 
 echo "reverse_ssh.sh script"
-echo "docker run -p3232:2222 -e EXTERNAL_ADDRESS=$(hostname -i):3232 -e SEED_AUTHORIZED_KEYS=$(cat ~/.ssh/id_ed25519.pub) -v data:/data reversessh/reverse_ssh" > reverse_ssh.sh
+echo "docker run -p3232:2222 -e EXTERNAL_ADDRESS=$(hostname -i):3232 -e SEED_AUTHORIZED_KEYS='$(cat ~/.ssh/id_ed25519.pub)' -v data:/data reversessh/reverse_ssh" > reverse_ssh.sh
 chmod +x reverse_ssh.sh
 
 echo "grabbing pspy64"
