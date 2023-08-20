@@ -14,15 +14,17 @@ My approach to this room was unconventional: the room name suggests the use of g
 
 > This is the first point of deviation from the intended path. The path would have you searching github for the company name and cms software, to find a repo that the room creator has placed. This repo contains the correct API key. Additionally, there is also a postman collection you can find with the key. I however didn't go that direction - my few searches didn't find anything, and then my other approach worked.
 
-3. In the belief this is a brute forcing challenge, I needed to try different MD5 values for the API key. I used FFUF with the rockyou wordlist, but to convert the wordlist values to MD5 before passing to FFUF I used a tool called [Cook](https://github.com/glitchedgitz/cook). FFUF can take its wordlist from Stdin, and Cook will pass MD5 hashes one at a time (trying to convert rockyou to md5 in one go is extremely time consuming). The final command was:
+3. In the belief that this is a brute forcing challenge, I needed to try different MD5 values for the API key. I used FFUF with the rockyou wordlist, but to convert the wordlist values to MD5 before passing to FFUF I used a tool called [Cook](https://github.com/glitchedgitz/cook). FFUF can take its wordlist from Stdin, and Cook will pass MD5 hashes one at a time (trying to convert rockyou to md5 in one go is extremely time consuming). The final command was:
 
     `cook -f: /usr/share/wordlists/rockyou.txt f.md5 | ffuf -u https://grep.thm/api/register.php -X POST -H "X-Thm-Api-Key: FUZZ" -fr "Invalid or Expired API key" -w -`
 
-4. With the correct api key you can get a registered account and then login. The dashboard contains the second flag (the api key was the first). A pattern emerges: pages under `/public/html/FUZZ.php` and api endpoints under `/api/FUZZ.php`. With FFUF and a directory wordlist, its possible to find upload.php in both locations.
+   Note, this takes a while to run, but should take less than 15 mins to get the right answer on the THM attackbox.
 
-5. The upload form restricts to image types, but only by magic bytes, e.g. you can specify any filename. To bypass this is simple: upload the smallest possible PNG or similar (just create a 1x1 pixel image), intercept the request with something like burp, change the filename to something like `shell.php`, and append or replace all bytes in the uploaded file after the initial line of magic bytes with something like `<?php system($_GET[1]) ?>`.
+5. With the correct api key you can get a registered account and then login. The dashboard contains the second flag (the api key was the first). A pattern emerges: pages under `/public/html/FUZZ.php` and api endpoints under `/api/FUZZ.php`. With FFUF and a directory wordlist, its possible to find upload.php in both locations.
 
-6. To find the uploaded file, further enumeration will reveal an `uploads` folder under /api. Going to `/api/uploads/shell.php?1=id` finds the shell and proves code execution.
+6. The upload form restricts to image types, but only by magic bytes, e.g. you can specify any filename. To bypass this is simple: upload the smallest possible PNG or similar (just create a 1x1 pixel image), intercept the request with something like burp, change the filename to something like `shell.php`, and append or replace all bytes in the uploaded file after the initial line of magic bytes with something like `<?php system($_GET[1]) ?>`.
+
+7. To find the uploaded file, further enumeration will reveal an `uploads` folder under /api. Going to `/api/uploads/shell.php?1=id` finds the shell and proves code execution.
 
 > This was the second point of deviation from the main path - technically its possible to proceed without getting a reverse shell. You can find a database sql backup file with the answers you need to proceed. However I didn't do that.
 
