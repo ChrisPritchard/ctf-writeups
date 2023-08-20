@@ -14,7 +14,7 @@ My approach to this room was unconventional: the room name suggests the use of g
 
 > This is the first point of deviation from the intended path. The path would have you searching github for the company name and cms software, to find a repo that the room creator has placed. This repo contains the correct API key. Additionally, there is also a postman collection you can find with the key. I however didn't go that direction - my few searches didn't find anything, and then my other approach worked.
 
-3. In the believe this is a brute forcing challenge, I needed to try different MD5 values for the API key. I used FFUF with the rockyou wordlist, but to convert the wordlist values to MD5 before passing to FFUF I used a tool called [Cook](https://github.com/glitchedgitz/cook). FFUF can take its wordlist from Stdin, and Cook will pass MD5 hashes one at a time (trying to convert rockyou to md5 in one go is extremely time consuming). The final command was:
+3. In the belief this is a brute forcing challenge, I needed to try different MD5 values for the API key. I used FFUF with the rockyou wordlist, but to convert the wordlist values to MD5 before passing to FFUF I used a tool called [Cook](https://github.com/glitchedgitz/cook). FFUF can take its wordlist from Stdin, and Cook will pass MD5 hashes one at a time (trying to convert rockyou to md5 in one go is extremely time consuming). The final command was:
 
     `cook -f: /usr/share/wordlists/rockyou.txt f.md5 | ffuf -u https://grep.thm/api/register.php -X POST -H "X-Thm-Api-Key: FUZZ" -fr "Invalid or Expired API key" -w -`
 
