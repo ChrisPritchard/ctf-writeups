@@ -6,9 +6,15 @@ https://tryhackme.com/room/expose, ranked Easy
 
 In my opinion, this room should be renamed 'Rabbit's Nest', given the number of rabbit holes and misdirections it contains. However, it actually is fairly simple *assuming* you find the foothold, which can be simple or impossible based on your setup.
 
-1. A scan reveals 21 (FTP), 22 (SSH), 53 (DNS), 1337 (Apache website) and 1883 (MQTT). 21 allows ftp anon, but is blank with no write access; 53 doesn't containj any useful info, 1883 just shows broker channels and no other access. So 21, 53 and 1883 are all red herrings (probably 22 as well, as I didn't use it). I'd say this probably makes the hint published in the room discription above *also* a red herring, as the foot hold is in the web service.
+1. A scan reveals 21 (FTP), 22 (SSH), 53 (DNS), 1337 (Apache website) and 1883 (MQTT).
 
-2. The website on 1337 just shows 'EXPOSED' text. To proceed, directory brute forcing is required and this is where the challenge can be easy or impossible. I always use [directory-list-2.3-medium.txt](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/directory-list-2.3-medium.txt) as my enum wordlist of choice - its a nice 220k worth of options, and I've found it pretty reliable. Using this will reveal `/admin`, `/javascript/psl`, `javascript/jquery` and `/phpmyadmin`, however none of these are the foothold:
+   - 21 allows ftp anon, but is blank with no write access;
+   - 53 doesn't containj any useful info,
+   - 1883 just shows broker channels and no other access.
+   
+   So 21, 53 and 1883 are all red herrings (probably 22 as well, as I didn't use it). I'd say this probably makes the hint published in the room discription above *also* a red herring, as the foot hold is in the web service.
+
+3. The website on 1337 just shows 'EXPOSED' text. To proceed, directory brute forcing is required and this is where the challenge can be easy or impossible. I always use [directory-list-2.3-medium.txt](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/directory-list-2.3-medium.txt) as my enum wordlist of choice - its a nice 220k worth of options, and I've found it pretty reliable. Using this will reveal `/admin`, `/javascript/psl`, `javascript/jquery` and `/phpmyadmin`, however none of these are the foothold:
 
   - the admin site doesn't contain a html form, so is just non-functional html
   - the javascript sub folders are not relevant
