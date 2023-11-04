@@ -6,7 +6,8 @@ echo "-- THM attack box setup --"
 
 echo "linking wordlists locally (rockyou.txt and dirwordlist.txt)"
 ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
-(echo ".git"; grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt) | sort | uniq -u > dirwordlist.txt
+(grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt) | sort | uniq -u > dirwordlist.txt
+(grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt) | sort | uniq -u > filewordlist.txt
 
 echo "linpeas & les local copies"
 wget -q https://github.com/carlospolop/PEASS-ng/releases/download/refs%2Fpull%2F253%2Fmerge/linpeas.sh
