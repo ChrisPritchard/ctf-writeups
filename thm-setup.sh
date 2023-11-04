@@ -4,10 +4,9 @@ echo "-- THM attack box setup --"
 # intended to be copy pasted into the shell, or run in one command via:
 #   curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm-setup.sh | bash
 
-echo "linking wordlists locally (rockyou.txt, dirwordlist.txt and filewordlist.txt)"
+echo "linking wordlists locally (rockyou.txt and fuzzwordlist.txt)"
 ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
-(grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt) | sort | uniq -u > dirwordlist.txt
-(grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt) | sort | uniq -u > filewordlist.txt
+(grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt; grep -v "#" /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt) | sort | uniq -u > fuzzwordlist.txt
 
 echo "linpeas & les local copies"
 wget -q https://github.com/carlospolop/PEASS-ng/releases/download/refs%2Fpull%2F253%2Fmerge/linpeas.sh
