@@ -6,7 +6,7 @@ echo "-- THM attack box setup --"
 
 echo "linking wordlists locally (rockyou.txt and fuzzwordlist.txt)"
 ln -s /usr/share/wordlists/rockyou.txt rockyou.txt
-cat /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt | sort -u | uniq > fuzzwordlist.txt
+cat /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt | sort -u > fuzzwordlist.txt
 
 echo "linpeas & les local copies"
 wget -q https://github.com/carlospolop/PEASS-ng/releases/download/refs%2Fpull%2F253%2Fmerge/linpeas.sh
