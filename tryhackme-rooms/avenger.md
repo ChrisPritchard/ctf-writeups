@@ -4,7 +4,7 @@ https://tryhackme.com/room/avenger, difficulty MEDIUM
 
 A fun room thanks to its initial foothold. Always good to see some Windows machines to hack :)
 
-1. Initial scans will reveal the normal raft of ports that a windows server will expose by default. Of note is port **80**, showing the site is hosting a webserver.
+1. Initial scans will reveal the normal raft of ports that a windows server will expose by default. Of note is port **80**, showing the machine is hosting a webserver.
 
 2. On port **80** is a file listing, revealing XAMPP has been used as the webserver. There are a few pieces of information available, including a PHPInfo page that reveals the server OS as **Windows Server 2019**
 
