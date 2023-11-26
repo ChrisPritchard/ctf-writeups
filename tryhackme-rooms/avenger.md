@@ -43,6 +43,8 @@ The solution, which is common and still works on Server 2019, is the [fodhelper]
     Start-Process "C:\Windows\System32\fodhelper.exe"
     ```
 
+    You can confirm it worked by running `net user test123`
+
 12. Using remmina on linux or whatever remote desktop tool (e.g. freerdp), or mstsc/Remote Desktop from a windows attack box, connect to the machine with the new test123:Password123! credentials.
 
 You should be able to access `c:\users\administrator\desktop\root.txt` to get the final flag.
