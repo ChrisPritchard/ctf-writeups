@@ -6,6 +6,8 @@ This was a real fun challenge, these rooms, significantly due to the competitive
 
 I did these rooms with the aid of my team, made up of some of the volunteer room testers for THM (we didn't get to test these rooms, so were allowed to participate): Shamollash, Shadow Absorber and Scrubz
 
+All rooms use hints from the main AoC, except day 1 which uses social media easter eggs. You can find AoC 2023 here: https://tryhackme.com/room/adventofcyber2023
+
 ## Side Quest 1, Released Day 1
 
 Finding the address: there were four QR code fragments, one in task 5 of the main side quest room. The other three could be found in links on social media:
