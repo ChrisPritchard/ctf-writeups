@@ -18,10 +18,11 @@ Once combined they gave the address of the First challenge, which involved decip
 To answer the questions, the file must be decoded in the following way:
 - first, recognise that it is wifi traffic and use aircrack-ng or hashcat retrieve the password for the network, so you can decrypt the wifi packets
 - next recognise that there are two streams of traffic over the network: TLS and reagular HTTP. The http traffic will show a backdoor and allow retrieving the destination servers TLS signing keys
+  - one way to detect this is to look at stats
 - with the signing keys, decode the TLS traffic to get RDP traffic. Extract this traffic for further work ('Extract PDUs to File' from the file menu)
 - using a tool like pyrdp, decode the RDP traffic into an MP4 of the session, and some json info of things like clipboard contents. This will allow all questions to be answered.
 
-> with pyrdp, it has that normal dependency hell you get with python, yay.
+> with pyrdp (https://github.com/GoSecure/pyrdp), it has that normal dependency hell you get with python, yay.
 > My process to get it going was to run it with docker, mapping some directory containing the pcap e.g. `docker run -it -v c:/users/chris/downloads:/tmp/downloads gosecure/pyrdp:latest`
 > Then, once you have a shell in the container, run `export QT_QPA_PLATFORM=offscreen` to fix the QT bug that was popping up.
 > After this you can do things like `pyrdp-convert.py -f mp4 pdus.pcap` to get the mp4 file without issue (some errors, but ignorable)
