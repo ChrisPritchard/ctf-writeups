@@ -20,8 +20,8 @@ https://tryhackme.com/room/whyhackme, rated Medium
 
 7. Enumerating the machine some more, you can find under `/opt` another note and a `capture.pcap`. The note says there is a hacked site running out of `/usr/lib/cgi-bin` which is inaccessible to jack, and that the pcap will provide help. Opening the pcap reveals encrypted tls communication, with the only thing that can be recovered being the target port, 41312
 
-8. To decrypt the traffic a SSL key log or the private key of the server is required. Fortunately, the 41312 site is defined in the `000-default.conf` under /etc/apache2/sites-available. This reveals the path of the cert, which is readable: `/etc/apache2/certs/apache.key`
+8. To decrypt the traffic either a SSL key log or the private key of the server is required. Fortunately, the 41312 site is defined in the `000-default.conf` under `/etc/apache2/sites-available`. This reveals the path of the cert, which is readable: `/etc/apache2/certs/apache.key`
 
 9. Putting this into wireshark (Edit > Preferences > Protocols > TLS > RSA Keys List) will decrypt the traffic and show how to access the shell that has been placed on the system. To view the site externally, use `sudo iptables -D INPUT 1` as jack to delete the blocking rule. The shell which requires the correct query string params and path, allows shell exec as the user 'h4ck3d'.
 
-10. To finish the machine, use the shell to get a reverse shell or whoever you wish to get an interactive session (the machine has nc.openbsd). Then, by checking `sudo -l` you can see the hacker user has full access. Switch to root and get the final flag.
+10. To finish the machine, use the shell to get a reverse shell or however you wish to get an interactive session (the machine has nc.openbsd). Then, by checking `sudo -l` you can see the hacker user has full access. Switch to root and get the final flag.
