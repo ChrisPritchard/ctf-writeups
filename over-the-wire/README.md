@@ -9,8 +9,8 @@ I was put onto this after seeing it recommended by @LiveOverflow (his [youtube c
 The website is [here](http://overthewire.org/wargames/). I am doing / have done the Wargames in the order suggested.
 
 1. Bandit
-2. Leviathan
-3. Natas
+2. Natas
+3. Leviathan
 4. Krypton
 5. Narnia
 6. Behemoth
