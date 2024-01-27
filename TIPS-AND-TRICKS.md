@@ -19,6 +19,8 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 
 - [HackTricks by Carlos Polop (same guy behind linpeas)](https://book.hacktricks.xyz/)
 - [Binary Exploitation notes](https://ir0nstone.gitbook.io/notes/)
+    - [GDB exploit guide](https://www.exploit-db.com/papers/13205)
+    - Passing in data `(gdb) run < <(echo -ne "\xef\xbe\xad\xde")`
 - [Payload All The Things](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources)
 - [Revshells - a rev shell generator](https://www.revshells.com/)
 - [GTFObins - linux privesc via living off the land](https://gtfobins.github.io/)
