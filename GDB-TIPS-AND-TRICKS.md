@@ -6,6 +6,14 @@
 - `r < <(cat input.txt)` start the program with input, (not arguments, that can be done with `set args`)
 - `unset env LINES` and `unset env COLUMNS` to remove gdb env vars, which can make its stack have difficult values than running outside of gdb
 
+## Scripting languages
+
+Writing hex values with scripting languages is different, mainly with python3:
+
+- python2: `python -c 'print "\x90" * 20'`
+- perl: `perl -e 'print "\x90" * 20'`
+- python3: `python3 -c 'import sys; sys.stdout.buffer.write(b"\x90" * 20")'`
+
 ## Useful references
 
 - online x86 assembler/disassembler: https://defuse.ca/online-x86-assembler.htm
