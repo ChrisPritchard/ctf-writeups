@@ -11,3 +11,4 @@
 - online x86 assembler/disassembler: https://defuse.ca/online-x86-assembler.htm
 - sys call table (eax with int 80): https://faculty.nps.edu/cseagle/assembly/sys_call.html
 - shellcode archive: https://shell-storm.org/shellcode/index.html
+- [GDB exploit guide](https://www.exploit-db.com/papers/13205)
