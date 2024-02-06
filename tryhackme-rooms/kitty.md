@@ -9,9 +9,9 @@ I didn't get this the first time it was up, making some bad assumptions, but eve
 An initial scan reveals 22 and 80. On the website, there is a login page at index.php, a register.php page, and once you login an information-less welcome.php and a link to logout.php. Two features become apparent with additional testing:
 
   - the login form will report 'SQL Injection detected. This incident will be logged!' if you use ` or ` in one of the form fields.
-  - the register form will report if a username has already been used. by leveraging this with a brute forcing tool like ffuf you can discover that the username 'kitty' already exists
+  - the register form will report if a username has already been used. By leveraging this with a brute forcing tool like ffuf you can discover that the username 'kitty' already exists
 
-Despite the login forms filter (or perhaps *because* of it) trying different SQL injection payloads will eventually reveal you can bypass the login with a username like `' union select 1,2,3,4 -- `. However, welcome.php continued to have nothing useful. Knowing that their is a user named `kitty`, and SSH is open, the path forward appeared to be (correctly) that getting the user's site password might work over SSH.
+Despite the login forms filter (or perhaps *because* of it) trying different SQL injection payloads will eventually reveal you can bypass the login with a username like `' union select 1,2,3,4 -- `. However, welcome.php continued to have nothing useful. Knowing that there is a user named `kitty`, and SSH is open, a (correct) guess at the path forward is that getting the user kitty's site password might allow access over SSH.
 
 ## Getting SQL Map to work
 
