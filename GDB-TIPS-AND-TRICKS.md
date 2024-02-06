@@ -10,9 +10,9 @@
 
 Writing hex values with scripting languages is different, mainly with python3:
 
-- python2: `python -c 'print "\x90" * 20'`
-- perl: `perl -e 'print "\x90" x 20'` note `x` instead of `*`
-- python3: `python3 -c 'import sys; sys.stdout.buffer.write(b"\x90" * 20")'`
+- python2: `python -c 'print "\x90" * 20 + "\x41\x41\x41\x41"'`
+- perl: `perl -e 'print "\x90" x 20 . "\x41\x41\x41\x41'` note `x` instead of `*`. Also concat strings with `.` not `+`
+- python3: `python3 -c 'import sys; sys.stdout.buffer.write(b"\x90" * 20 + "\x41\x41\x41\x41")'`
 
 ## Useful references
 
