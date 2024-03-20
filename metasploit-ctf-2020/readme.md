@@ -11,6 +11,8 @@ This is the first CTF for me where I have finished all the challenges and, as I 
 
 While the top 15 get the prizes, only the top ten show on the board. Lucky lucky :D
 
+<img src="./woo.png" />
+
 The gist of the competition was that you were given a jump host and from there could reach a final vm. On that VM there were 20+ ports, with each of the initially visible ports (with a couple of exceptions) being a source for a flag. Once you had a flag in PNG form, you were to md5sum it and submit the result as the flag key on the challenge portal. In almost all cases I got the flag image and [they are saved here](./flag-cards) - a few either did not have a card, or the card was too hard to retrieve so I just grabbed the md5 via whatever RCE I was running.
 
 Tools used:
