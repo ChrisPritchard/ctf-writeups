@@ -1,5 +1,7 @@
 # GDB Tips and Tricks
 
+If possible, install [GEF](https://github.com/hugsy/gef) as it makes visualising the stack and registers much easier (and has lots of other functionality as well): `bash -c "$(curl -fsSL https://gef.blah.cat/sh)"`
+
 - `disas main` and then `b *addr` using the last ret address to break before `main` returns
 - `display/i $eip` will render the contents of $eip as assembly instructions, useful for debugging shell code or nop sleds etc
 - `si`: step instruction, works where `s` or `n` won't (e.g. running through an executable stack)
