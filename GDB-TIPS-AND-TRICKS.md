@@ -22,3 +22,4 @@ Writing hex values with scripting languages is different, mainly with python3:
 - sys call table (eax with int 80): https://faculty.nps.edu/cseagle/assembly/sys_call.html
 - shellcode archive: https://shell-storm.org/shellcode/index.html
 - [GDB exploit guide](https://www.exploit-db.com/papers/13205)
+- [pwntools cheatsheet](https://gist.github.com/ChrisPritchard/871e6aab0400e41b8158d2fcbbd38ac5)
