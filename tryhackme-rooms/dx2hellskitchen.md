@@ -1,6 +1,6 @@
 # DX2: Hell's Kitchen!
 
-Second room in the Deus Ex (2000) inspired series. This one is considerably more tricky than the first room, but not crazily so: every step is trivial, but with a twist.
+Second room in the Deus Ex (2000) inspired series. This one is considerably more tricky than the first room, but not crazily so: every step is trivial, but with a twist. The first room was [DX1: Liberty Island](https://github.com/ChrisPritchard/ctf-writeups/blob/master/tryhackme-rooms/dx1libertyisland.md)
 
 ## Website 1
 
