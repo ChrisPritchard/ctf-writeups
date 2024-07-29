@@ -14,6 +14,8 @@ https://tryhackme.com/r/room/injectics, rated **Medium**. The name suggests that
 
 5. Submitting a payload for firstname like `{{7*'7'}}` will result in `Welcome 49`, indicating this is SSTI. Some further experimentation will reveal the engine to be Twig, and using some common payloads for that will show that Twig is running in 'sandbox' mode and so most SSTI payloads for Twig will not work. However, if you set fname to `{{['id',""]|sort('system')}}` you will get an error that says the php function `system` is disabled - this indicates that this payload will work, and you just need the right php function. `{{['id',""]|sort('passthru')}}` works, given you RCE, and with this you can find the hidden flag file name under /flags (e.g. `ls flags`) for the final flag.
 
+> for an interesting writeup of this in a similar situation (but one where system wasn't blocked), see https://www.hackthebox.com/blog/business-ctf-2022-phishtale-writeup
+
 With the RCE a shell can be obtained on the machine to read the source code and work out how various things were blocked or stopped. It also provides the credentials to the database, that can be accessed via /phpmyadmin (possibly an oversight, as the password is fairly simple but not part of common wordlists surprisingly as far as I could see):
 
 functions.php (used for the basic login):
