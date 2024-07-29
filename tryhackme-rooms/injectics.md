@@ -8,7 +8,7 @@ The name suggests that it includes various forms of Injection, e.g. SQLi, SSTI, 
 
 2. There are two login pages, normal and admin. The normal page has javascript to remove SQLi terms, which indicates it is vulnerable to SQLi. A bit of experimentation will show that to bypass it the backing query needs to return at least one row - therefore sending a payload like `username=test&password='||(select 1)||'` will work, and log in to the dashboard as the `dev` user, but not as admin.
 
-> while this injection will get you through, there are filters in place that prevent you reading the value of the password field for users directly, so you are limited to an auth bypass - specifically the filter removes OR (case insensitive), which means you can't specify the passw**OR**d column name. this also prevents use of inf**OR**mation_schema. one way to get around this would be to do something like `select '4' from (select 1,2,3,4,5,6 union select * from users) limit 1 offset 1`, however `UNION` is also blocked 🤪
+> while this injection will get you through, there are filters in place that prevent you reading the value of the password field for users directly, so you are limited to an auth bypass - specifically the filter removes OR (case insensitive), which means you can't specify the passw**OR**d column name. this also prevents use of inf**OR**mation_schema. however, there is a way to bypass this, see below.
 
 3. The dashboard allows you to update the medal count for a given country. The request for this is something like `rank=1&country=USA&gold=10&silver=10&bronze=10` - this is also vulnerable to SQLi, allowing you to affect the update call. However, the goal is to corrupt the users table, so we need to use a stacked query. Sending a payload like `...bronze=10;drop table users -- ` works, showing this update supports multiple (stacked) queries, and the user table is dropped. The site will helpfully then show a status message indicating the service mentioned in mail.log is fixing the site.
 
@@ -17,6 +17,26 @@ The name suggests that it includes various forms of Injection, e.g. SQLi, SSTI, 
 5. Submitting a payload for firstname like `{{7*'7'}}` will result in `Welcome 49`, indicating this is SSTI. Some further experimentation will reveal the engine to be Twig, and using some common payloads for that will show that Twig is running in 'sandbox' mode and so most SSTI payloads for Twig will not work. However, if you set fname to `{{['id',""]|sort('system')}}` you will get an error that says the php function `system` is disabled - this indicates that this payload will work, and you just need the right php function. `{{['id',""]|sort('passthru')}}` works, given you RCE, and with this you can find the hidden flag file name under /flags (e.g. `ls flags`) for the final flag.
 
 > for an interesting writeup of this in a similar situation (but one where system wasn't blocked), see https://www.hackthebox.com/blog/business-ctf-2022-phishtale-writeup
+
+## special trick: using the first login form to skip to step 5
+
+the first login form which you bypass with `||(select 1)||` or similar can be used with a script or burp intruder to leak the pre-reset passwords for the two users, allowing you to log in directly to the admin panel. 
+
+this can be done because the filter (shown below under source code), uses `$password = str_ireplace(["AND", "OR", "UNION"], "", $password);` for example - in theory this would prevent a call like `select password from users` as it would turn `password` into `passwrd`, breaking the query, however, if instead you tried `select passwoorrd from users` (note the or between the or), the replace will turn `passwoorrd` into `password`, and the query will be functional 
+
+> this is not dissimilar to using `....//` to bypass filters on `../` for path traversal / lfi
+
+using burp intruder, cluster bomb attack with two payloads, one just the numbers 1 to 50 and the other all common characters (e.g. a-z, A-Z, 0-9), and this payload,
+
+```
+`username=test&password='||(select+1+where+substring(binary(select+passwoorrd+from+users+limit+1),§1§,1)+=+'§2§')||'
+```
+
+it is possible to extract the password for the dev user one character at a time (filter the result on 'dashboard.php', as the above will bypass the login and redirect to the dashboard only if the character matches at the given index).
+
+you can then use the admin login form, username `dev@injectics.thm` and the extracted password to get access to the admin interface, where the SSTI can be used to finish the challenge.
+
+## reading source code
 
 With the RCE a shell can be obtained on the machine to read the source code and work out how various things were blocked or stopped. It also provides the credentials to the database, that can be accessed via /phpmyadmin (possibly an oversight, as the password is fairly simple but not part of common wordlists surprisingly as far as I could see):
 
