@@ -22,7 +22,7 @@ The name suggests that it includes various forms of Injection, e.g. SQLi, SSTI, 
 
 the first login form which you bypass with `||(select 1)||` or similar can be used with a script or burp intruder to leak the pre-reset passwords for the two users, allowing you to log in directly to the admin panel. 
 
-this can be done because the filter (shown below under source code), uses `$password = str_ireplace(["AND", "OR", "UNION"], "", $password);` for example - in theory this would prevent a call like `select password from users` as it would turn `password` into `passwrd`, breaking the query, however, if instead you tried `select passwoorrd from users` (note the or between the or), the replace will turn `passwoorrd` into `password`, and the query will be functional 
+this can be done because the filter (shown below under source code), uses `$password = str_ireplace(["AND", "OR", "UNION"], "", $password);`. in theory this would prevent a call like `select password from users` as it would turn `password` into `passwrd`, breaking the query. however, if instead you tried `select passwoorrd from users` (note the or between the or), the replace will turn `passwoorrd` into `password`, and the query will be functional 
 
 > this is not dissimilar to using `....//` to bypass filters on `../` for path traversal / lfi
 
