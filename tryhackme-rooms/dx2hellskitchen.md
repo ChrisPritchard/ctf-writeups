@@ -48,7 +48,7 @@ Second room in the Deus Ex (2000) inspired series. This one is considerably more
 ## Final Privesc
 
 1. In Jojo's home folder is yet another note, this one indicating that a NSF (national successionist forces) mount will be made available. This is a bit of a play on words for nfs, and a `sudo -l` will reveal JoJo can run `mount.nfs` as root.
-2. Notably `mount.nfs` is not `mount`: there is no way to use the command by itself to get privilege escalation. To use it, something must be mounted that ideally has **no_root_squash** enabled. Exploring the machine will not find any such mounts.
+2. Notably `mount.nfs` is not `mount`: there is no way to use the command by itself to get privilege escalation. To use it, something must be mounted that ideally has **no_root_squash** enabled (e.g. `*(rw,insecure,sync,no_subtree_check,no_root_squash)`. Exploring the machine will not find any such mounts.
 3. The solution is to host a NFS mount on your attack box, and put something like a suid-set sh binary in there. Then when this is mounted by Jojo, he can run the suid binary to get root. This is complicated a little by the fact that only `80` and `443` are allowed out, not `2049`, meaning the attack box will need to host the service on one of these ports. But this is possible.
 
 There! A room with many simple approaches complicated by conditions. If any unintended paths are discoverd, please let me know at chris@grislygrotto.nz, cheers.
