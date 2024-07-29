@@ -1,6 +1,8 @@
 # Injectics
 
-https://tryhackme.com/r/room/injectics, rated **Medium**. The name suggests that it includes various forms of Injection, e.g. SQLi, SSTI, os injection or whatever. The steps to solve the room are pretty basic, but there are some twists added that can trip people up if they don't sit back and think. In my case, at least a couple of steps ate up hours they shouldn't have :)
+https://tryhackme.com/r/room/injectics, rated **Medium**. 
+
+The name suggests that it includes various forms of Injection, e.g. SQLi, SSTI, os injection or whatever. The steps to solve the room are pretty basic, but there are some twists added that can trip people up if they don't sit back and think. In my case, at least a couple of steps ate up hours they shouldn't have :)
 
 1. A scan reveals 22 and 80. On 80 is a website showing medals for some competition by country. In the source of the page is a reference to 'mail.log' which, when visited, states that if the users table is deleted or corrupted, new admin users will be created with fixed credentials.
 
