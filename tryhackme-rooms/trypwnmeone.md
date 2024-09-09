@@ -4,7 +4,7 @@ https://tryhackme.com/r/room/trypwnmeone, the fact that this is 'one' sounds lik
 
 Task 1 and 2 were an intro and provided a link to download the executables for the later tasks, which were also available on the Attack box. For pwn exercises mimicing the protections in place on the target machine (or more accurately the lack of protections) can sometimes be a challenge, but it wasn't too much of a problem here.
 
-The first four actuall challenges can be solved with just `echo` and `cat`, as they require no interaction with the target (e.g. no reading and processing of content back), while the last three were solved with pwntools.
+The first four actual challenges can be solved with just `echo` and `cat`, as they require no interaction with the target (e.g. no reading and processing of content back), while the last three were solved with pwntools.
 
 ## Task 3
 
