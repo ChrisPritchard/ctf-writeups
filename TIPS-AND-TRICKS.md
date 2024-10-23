@@ -32,6 +32,7 @@ curl -s https://raw.githubusercontent.com/ChrisPritchard/ctf-writeups/master/thm
 - [WADComs - AD stuff](https://wadcoms.github.io/)
 - [StegOnline - beyond simple steghide](https://stegonline.georgeom.net/image)
 - [Static linux binaries](https://github.com/andrew-d/static-binaries/tree/master/binaries/linux/x86_64) (copy /usr/share/nmap/nmap-services over as well for nmap)
+- [PHP Webshell Archive](https://www.r57shell.net/index.php) - some cool ones in here that do more than cmd passthru
 
 ## Reverse shells
 
