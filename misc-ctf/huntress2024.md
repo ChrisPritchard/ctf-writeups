@@ -60,7 +60,7 @@ The flag was on the rules page: https://huntress.ctf.games/rules
 
 A QR code png was provided. Using Parse QR in cyberchef would reveal hex data for another PNG, which could then be parsed again. After a few repetitions of this, the flag was uncovered.
 
-### Echo Chamber
+### The Void
 
 Connecting to the server will stream endless blank characters back. If you save these to a file you will see its repeating characters like (in hex): `1b 5b 33 30 3b 34 30 6d 20 1b 5b 30 6d `. At a certain point these will 'wrap' single readable ascii characters that make up the flag, e.g. `1b 5b 33 30 3b 34 30 6d 66 1b 5b 30 6d` where `66` is `f`. To solve, pop in cyberchef and replace `1b 5b 33 30 3b 34 30 6d` with blank, `1b 5b 30 6d` with blank, `20` with blank (it opens with mass space characters), then use from hex to see the repeating flag.
 
