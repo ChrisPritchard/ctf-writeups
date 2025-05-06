@@ -15,6 +15,28 @@ If possible, install [GEF](https://github.com/hugsy/gef) as it makes visualising
 - `vmmap` to show memory mappings (heap, libc etc)
 - `got` to show the current state of the global offset table (will have resolved and unresolved addresses)
 
+## Formats
+
+for use with `x` mostly, e.g. `x/20i address` to read 20 assembly instructions at address
+
+    o - octal
+    x - hexadecimal
+    d - decimal
+    u - unsigned decimal
+    t - binary
+    f - floating point
+    a - address
+    c - char
+    s - string
+    i - instruction
+
+The following size modifiers are supported:
+
+    b - byte
+    h - halfword (16-bit value)
+    w - word (32-bit value)
+    g - giant word (64-bit value)
+
 ## Scripting languages
 
 Writing hex values with scripting languages is different, mainly with python3:
