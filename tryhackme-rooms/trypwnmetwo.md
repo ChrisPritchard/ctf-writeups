@@ -4,9 +4,11 @@
 
 A sequel to [TryPwnMe One](https://tryhackme.com/room/trypwnmeone) ([my writeup](./trypwnmeone.md))
 
+Really enjoyed this challenge; took it slow, no time pressure, solving it over a week. Each part was a substantial bit of work, some decent binex challenges beyond the normal basic stuff.
+
 ## TryExecMe2
 
-This is a shell code executor: it reads 100 chars from the input, runs them through a function called 'forbidden' which looks for any use of `\x0f \x05` (syscall) or `\x0f \x32` (sysenter) or `\xcd \x80` (int 80, old fashioned syscall) and, if none of these are found, will then run the code as if it was a function.
+This is a shell code executor: it reads 100 chars from the input, runs them through a function called 'forbidden' which looks for any use of `\x0f \x05` (syscall), `\x0f \x32` (sysenter) or `\xcd \x80` (int 80, old fashioned syscall) and, if none of these are found, will then run the code as if it was a function.
 
 ```c
 undefined8 main(void)
@@ -123,7 +125,7 @@ void main(void)
 }
 ```
 
-Fairly standard. The binary has all protections but is not PIE, and the libc it uses is also provided. By testing with "AAAAAAAA %6$p" we find the offset to the buffer is 6. The goal will be to overwrite the got entry for exit with something, likely system. However, we need a libc leak (as libc itself is PIE) to find the address of system... as the program only reads and writes once, we will need to loop main.
+Fairly standard. The binary has all protections but is not PIE, and the libc it uses is also provided. By testing with `AAAAAAAA %6$p` we find the offset to the buffer is **6**. The goal will be to overwrite the got entry for something with libc.sym.system. However, we need a libc leak (as libc itself is PIE) to find the address of system... as the program only reads and writes once, we will need to loop main.
 
 The steps will be:
 
@@ -172,7 +174,7 @@ p.recvuntil(b"Please provide your username:\x0a")
 p.interactive()
 ```
 
-At this point main is still looping and asking for a username, but whatever is submitted will be executed with system. This includes the prior `Thanks ` text, so the output will include `sh: 1: Thanks: not found`. Using `ls` and `cat` on subsequent loops can read the flag.
+At this point main is still looping and asking for a username, but whatever is submitted will be executed with system. This includes the prior `Thanks` text, so the output will include `sh: 1: Thanks: not found`. Using `ls` and `cat` on subsequent loops can read the flag.
 
 ## TryaNote
 
@@ -372,3 +374,5 @@ p.interactive()
 ```
 
 Similar techniques (though harder given no free was available) were used in the advent of cyber 2024 side quest 3 challenge.
+
+## Slow Server
