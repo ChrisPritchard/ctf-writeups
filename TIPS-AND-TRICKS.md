@@ -80,7 +80,7 @@ If you do have python RCE, but the above is too weighty or you want something mo
 
 `ssh -L 7777:192.168.0.200:8888 user@192.168.0.100`
 
-> note that in these cases, the new port will only be available from the local machine (as it binds to 127 or localhost by default). prefix with 0.0.0.0 or a interface ip to make the forwarded port available from outside the local machine.
+> note that in these cases, the new port will only be available from the local machine (as it binds to 127 or localhost by default). prefix with `0.0.0.0` or a interface ip to make the forwarded port available from outside the local machine, e.g `0.0.0.0:7777:192.168.0.200:8888`
 
 **local-to-remote port forwarding**: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
 
