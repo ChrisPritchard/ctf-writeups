@@ -72,11 +72,17 @@ If you do have python RCE, but the above is too weighty or you want something mo
 
 ## SSH Proxies
 
-**local port forwarding**: the target host 192.168.0.100 is running a service on port 8888, and you want that service available on the localhost port 7777
+**remote-to-local port forwarding**: the target host 192.168.0.100 is running a service on port 8888, and you want that service available on the localhost port 7777
 
 `ssh -L 7777:localhost:8888 user@192.168.0.100`
 
-**remote port forwarding**: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
+**remote-to-remote-to-local port forwarding**: the target host (.100) can reach another host (.200) that is running a service on 8888, and you want that servive available on the localhost port 7777
+
+`ssh -L 7777:192.168.0.200:8888 user@192.168.0.100`
+
+> note that in these cases, the new port will only be available from the local machine (as it binds to 127 or localhost by default). prefix with 0.0.0.0 or a interface ip to make the forwarded port available from outside the local machine.
+
+**local-to-remote port forwarding**: you are running a service on localhost port 9999, and you want that service available on the target host 192.168.0.100 port 12340
 
 `ssh -R 12340:localhost:9999 user@192.168.0.100`
 
